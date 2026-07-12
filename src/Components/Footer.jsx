@@ -1,6 +1,5 @@
 import { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import {
   Share2,
   Mail,
