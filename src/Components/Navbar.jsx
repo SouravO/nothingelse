@@ -1,263 +1,147 @@
-import { useEffect, useRef, useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowUpRight } from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lenis from "lenis";
+import { Menu, X } from "lucide-react";
 
-gsap.registerPlugin(ScrollTrigger);
+/* ============================================================================
+   NAVBAR
+   ============================================================================ */
 
-/* ------------------------------------------------------------------ */
-/* Global smooth-scroll (Lenis) + GSAP ticker bridge.                  */
-/* Guarded as a module singleton so it only ever boots once, even      */
-/* through React StrictMode's double-invoke or route re-mounts.        */
-/* ------------------------------------------------------------------ */
-let __lenis = null;
-function useGlobalSmoothScroll() {
-  useEffect(() => {
-    if (__lenis) return;
-
-    const lenis = new Lenis({
-      duration: 1.1,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.1,
-    });
-    __lenis = lenis;
-
-    lenis.on("scroll", ScrollTrigger.update);
-
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-    gsap.ticker.lagSmoothing(0);
-
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-    if (reduceMotion) {
-      lenis.stop();
-    }
-
-    return () => {
-      // Intentionally not destroyed — Navbar acts as a persistent
-      // layout element for the app's lifetime.
-    };
-  }, []);
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 const NAV_LINKS = [
-  { label: "Home", to: "/" },
-  { label: "About", to: "/about" },
-  { label: "Products", to: "/products" },
-  { label: "Contact", to: "/contact" },
+  { id: "home", label: "Home" },
+  { id: "about", label: "About" },
+  { id: "products", label: "Products" },
+  { id: "system", label: "System" },
+  { id: "presence", label: "Presence" },
+  { id: "contact", label: "Contact" },
 ];
 
 export default function Navbar() {
-  useGlobalSmoothScroll();
-
   const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-  const barRef = useRef(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeId, setActiveId] = useState("home");
 
+  // Navbar goes solid the moment the (pinned) hero has fully scrolled away —
+  // until then it rides transparent over the hero's dark background.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Lock body scroll while mobile menu is open
-  useEffect(() => {
-    document.documentElement.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.documentElement.style.overflow = "";
-    };
-  }, [open]);
-
-  // Entrance animation for the bar itself
-  useEffect(() => {
-    gsap.fromTo(
-      barRef.current,
-      { y: -40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.9, ease: "power3.out", delay: 0.15 }
+    const heroEl = document.getElementById("home");
+    if (!heroEl) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setScrolled(!entry.isIntersecting),
+      { threshold: 0 }
     );
+    observer.observe(heroEl);
+    return () => observer.disconnect();
   }, []);
+
+  // Track which section is currently in view to highlight the matching nav item
+  useEffect(() => {
+    const sections = NAV_LINKS.map((l) => document.getElementById(l.id)).filter(Boolean);
+    if (!sections.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveId(entry.target.id);
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
+
+  const onNavClick = (e, id) => {
+    e.preventDefault();
+    setMobileOpen(false);
+    scrollToSection(id);
+  };
 
   return (
-    <>
-      {/* Site-wide font + brand tokens. Navbar mounts on every page so
-          this only needs to live here once. */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap');
-        :root{
-          --ne-blue:#0C4DD5;
-          --ne-blue-deep:#082F8A;
-          --ne-blue-soft:#3B6FE0;
-          --ne-ink:#111111;
-          --ne-grey:#EDEDED;
-          --ne-tint:#EAF0FE;
-        }
-        .font-display{ font-family:'Montserrat', sans-serif; }
-        .font-head{ font-family:'Helvetica Neue', Inter, Arial, sans-serif; }
-        .font-body{ font-family:'Inter', sans-serif; }
-        html{ scroll-behavior:auto; }
-        ::selection{ background:#0C4DD5; color:#fff; }
-      `}</style>
+    <header
+      className={`fixed top-0 left-0 right-0 z-[110] transition-colors duration-500 ${
+        scrolled ? "bg-white/95 backdrop-blur-md border-b border-[#111111]/8" : "bg-transparent"
+      }`}
+    >
+      <div className="mx-auto max-w-[1280px] px-5 sm:px-8 h-[68px] sm:h-[76px] flex items-center justify-between">
+        <a
+          href="#home"
+          aria-label="Nothing Else — Home"
+          onClick={(e) => onNavClick(e, "home")}
+          className="font-display font-extrabold text-[19px] tracking-[-0.02em] select-none"
+        >
+          <span className={scrolled ? "text-[#111111]" : "text-white"}>nothing</span>{" "}
+          <span className={scrolled ? "text-[#111111]/95" : "text-white/95"}>else</span>
+          <span className="text-[#0C4DD5]">.</span>
+        </a>
 
-      <header
-        ref={barRef}
-        className={`fixed top-0 inset-x-0 z-[100] transition-all duration-500 ${
-          scrolled || open
-            ? "bg-white/90 backdrop-blur-md shadow-[0_1px_0_0_rgba(17,17,17,0.06)]"
-            : "bg-transparent"
-        }`}
-      >
-        <div className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
-          <div className="flex items-center justify-between h-[76px] sm:h-[84px]">
-            {/* Logo */}
-            <Link
-              to="/"
-              onClick={() => setOpen(false)}
-              className="group flex items-center gap-2 select-none"
-              aria-label="Nothing Else — Home"
+        <nav className="hidden md:flex items-center gap-1">
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.id}
+              href={`#${link.id}`}
+              onClick={(e) => onNavClick(e, link.id)}
+              className={`relative px-3.5 py-2 rounded-full font-body text-[13.5px] font-medium transition-colors duration-300 ${
+                activeId === link.id
+                  ? scrolled ? "text-[#0C4DD5]" : "text-white"
+                  : scrolled ? "text-[#111111]/55 hover:text-[#111111]" : "text-white/65 hover:text-white"
+              }`}
             >
-              <span
-                className={`font-display font-extrabold text-[22px] sm:text-[26px] tracking-[-0.02em] transition-colors duration-500 ${
-                  scrolled || open ? "text-[#111111]" : "text-white"
-                }`}
-              >
-                nothing
-                <span
-                  className={`transition-colors duration-500 ${
-                    scrolled || open ? "text-[#0C4DD5]" : "text-white"
+              {link.label}
+              {activeId === link.id && (
+                <span className={`absolute left-3.5 right-3.5 -bottom-0.5 h-[2px] rounded-full ${scrolled ? "bg-[#0C4DD5]" : "bg-white"}`} />
+              )}
+            </a>
+          ))}
+          <a
+            href="#contact"
+            onClick={(e) => onNavClick(e, "contact")}
+            className={`ml-2 inline-flex items-center gap-1.5 rounded-full px-4 py-2 font-body font-semibold text-[13.5px] transition-colors duration-300 ${
+              scrolled ? "bg-[#0C4DD5] text-white hover:bg-[#111111]" : "bg-white text-[#0A3FB0] hover:bg-[#111111] hover:text-white"
+            }`}
+          >
+            Get in touch
+          </a>
+        </nav>
+
+        <button
+          onClick={() => setMobileOpen((v) => !v)}
+          aria-label="Toggle menu"
+          className={`md:hidden p-2 -mr-2 transition-colors duration-300 ${scrolled ? "text-[#111111]" : "text-white"}`}
+        >
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="md:hidden bg-white border-t border-[#111111]/8 overflow-hidden"
+          >
+            <div className="px-5 py-3 flex flex-col gap-1">
+              {NAV_LINKS.map((link) => (
+                <a
+                  key={link.id}
+                  href={`#${link.id}`}
+                  onClick={(e) => onNavClick(e, link.id)}
+                  className={`px-3 py-2.5 rounded-xl font-body text-[15px] font-medium transition-colors duration-300 ${
+                    activeId === link.id ? "text-[#0C4DD5] bg-[#EAF0FE]" : "text-[#111111]/75"
                   }`}
                 >
-                  {" "}
-                  else
-                </span>
-                <span className="text-[#0C4DD5]">.</span>
-              </span>
-            </Link>
-
-            {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-1">
-              {NAV_LINKS.map((link) => (
-                <NavLink
-                  key={link.to}
-                  to={link.to}
-                  end={link.to === "/"}
-                  className={({ isActive }) =>
-                    `relative px-4 py-2 font-body text-[15px] font-medium rounded-full transition-colors duration-300 ${
-                      scrolled
-                        ? isActive
-                          ? "text-[#0C4DD5]"
-                          : "text-[#111111]/70 hover:text-[#111111]"
-                        : isActive
-                        ? "text-white"
-                        : "text-white/75 hover:text-white"
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <span className="relative inline-flex items-center gap-1.5">
-                      {isActive && (
-                        <span className="h-[6px] w-[6px] rounded-[2px] bg-[#0C4DD5]" />
-                      )}
-                      {link.label}
-                    </span>
-                  )}
-                </NavLink>
+                  {link.label}
+                </a>
               ))}
-            </nav>
-
-            {/* CTA + mobile toggle */}
-            <div className="flex items-center gap-3">
-              <Link
-                to="/contact"
-                className={`hidden sm:inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 font-body text-[14px] font-semibold transition-all duration-300 ${
-                  scrolled
-                    ? "bg-[#111111] text-white hover:bg-[#0C4DD5]"
-                    : "bg-white text-[#111111] hover:bg-[#0C4DD5] hover:text-white"
-                }`}
-              >
-                Get in touch
-                <ArrowUpRight
-                  size={15}
-                  className="transition-transform duration-300 group-hover:translate-x-0.5"
-                />
-              </Link>
-
-              <button
-                onClick={() => setOpen((v) => !v)}
-                aria-label={open ? "Close menu" : "Open menu"}
-                aria-expanded={open}
-                className={`md:hidden relative z-[110] h-10 w-10 flex items-center justify-center rounded-full transition-colors ${
-                  open
-                    ? "text-white"
-                    : scrolled
-                    ? "text-[#111111]"
-                    : "text-white"
-                }`}
-              >
-                {open ? <X size={22} /> : <Menu size={22} />}
-              </button>
             </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Mobile full-screen menu */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ clipPath: "circle(0% at 92% 5%)" }}
-            animate={{ clipPath: "circle(150% at 92% 5%)" }}
-            exit={{ clipPath: "circle(0% at 92% 5%)" }}
-            transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[105] bg-[#0C4DD5] flex flex-col justify-center px-8"
-          >
-            <nav className="flex flex-col gap-2">
-              {NAV_LINKS.map((link, i) => (
-                <motion.div
-                  key={link.to}
-                  initial={{ y: 40, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{
-                    delay: 0.15 + i * 0.07,
-                    duration: 0.5,
-                    ease: "power3.out",
-                  }}
-                >
-                  <NavLink
-                    to={link.to}
-                    end={link.to === "/"}
-                    onClick={() => setOpen(false)}
-                    className={({ isActive }) =>
-                      `font-display font-extrabold text-[13vw] leading-[1.05] block ${
-                        isActive ? "text-white" : "text-white/50"
-                      }`
-                    }
-                  >
-                    {link.label}
-                  </NavLink>
-                </motion.div>
-              ))}
-            </nav>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="font-body text-white/70 mt-10 text-sm"
-            >
-              Good everyday products. Honest pricing.{" "}
-              <span className="text-white font-semibold">Nothing else.</span>
-            </motion.p>
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </header>
   );
 }
