@@ -1,19 +1,15 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowUpRight, CheckCircle2, Mail, Phone, MapPin } from "lucide-react";
-
-/* ============================================================================
-   SECTION 6: CONTACT
-   ============================================================================ */
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUpRight, CheckCircle2, Mail, Phone, MapPin, Send } from "lucide-react";
 
 /* Shared reveal-on-scroll wrapper */
 function Reveal({ children, delay = 0, className = "" }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 22 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >
       {children}
@@ -23,82 +19,228 @@ function Reveal({ children, delay = 0, className = "" }) {
 
 function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
   return (
-    <div className="rounded-[24px] border border-[#111111]/8 bg-[#FAFBFF] p-6 sm:p-7">
-      <p className="font-body text-[13px] tracking-[0.2em] uppercase text-[#0C4DD5]/70 mb-3">Reach out</p>
-      <h3 className="font-head font-bold text-[#111111] text-[24px] sm:text-[28px] leading-[1.08] tracking-[-0.02em] mb-6">
-        Start a conversation.
-      </h3>
+    <div className="relative rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-md p-6 sm:p-10">
+      <AnimatePresence mode="wait">
+        {!submitted ? (
+          <motion.div
+            key="form-fields"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.3 }}
+          >
+            <p className="font-body text-[12px] tracking-[0.25em] uppercase text-[#0C4DD5] font-semibold mb-3">
+              Get in Touch
+            </p>
+            <h3 className="font-head font-bold text-white text-2xl sm:text-3xl tracking-tight mb-8">
+              Start a conversation.
+            </h3>
 
-      <form className="grid gap-3.5" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
-        <div className="grid sm:grid-cols-2 gap-3.5">
-          <label className="grid gap-1.5">
-            <span className="text-[12.5px] font-medium text-[#111111]/60">Name</span>
-            <input required type="text" className="rounded-xl border border-[#111111]/10 bg-white px-3.5 py-3 outline-none focus:border-[#0C4DD5] transition-colors" placeholder="Your name" />
-          </label>
-          <label className="grid gap-1.5">
-            <span className="text-[12.5px] font-medium text-[#111111]/60">Email</span>
-            <input required type="email" className="rounded-xl border border-[#111111]/10 bg-white px-3.5 py-3 outline-none focus:border-[#0C4DD5] transition-colors" placeholder="you@example.com" />
-          </label>
-        </div>
-        <label className="grid gap-1.5">
-          <span className="text-[12.5px] font-medium text-[#111111]/60">Message</span>
-          <textarea required rows={4} className="rounded-xl border border-[#111111]/10 bg-white px-3.5 py-3 outline-none focus:border-[#0C4DD5] transition-colors resize-none" placeholder="Tell us a little about what you need." />
-        </label>
-        <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0C4DD5] px-6 py-3 font-body font-semibold text-white transition-colors hover:bg-[#111111]">
-          Send message
-          <ArrowUpRight size={16} />
-        </button>
-      </form>
+            <form className="grid gap-6" onSubmit={handleSubmit}>
+              <div className="grid sm:grid-cols-2 gap-6">
+                {/* Name Input */}
+                <div className="relative">
+                  <input
+                    required
+                    type="text"
+                    id="name"
+                    placeholder=" "
+                    className="peer w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-4 text-white text-sm outline-none focus:border-[#0C4DD5] transition-all placeholder-transparent"
+                  />
+                  <label
+                    htmlFor="name"
+                    className="absolute left-5 top-4 text-white/40 text-sm pointer-events-none transition-all 
+                    peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 
+                    peer-focus:-top-2.5 peer-focus:text-[11px] peer-focus:text-[#0C4DD5] peer-focus:bg-[#111111] peer-focus:px-2
+                    not-placeholder-shown:-top-2.5 not-placeholder-shown:text-[11px] not-placeholder-shown:text-white/40 not-placeholder-shown:bg-[#111111] not-placeholder-shown:px-2"
+                  >
+                    Your Name
+                  </label>
+                </div>
 
-      {submitted && (
-        <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#EAF0FE] px-4 py-2 text-[#0C4DD5] text-sm font-medium">
-          <CheckCircle2 size={16} />
-          Message ready — connect this form to your backend.
-        </div>
-      )}
+                {/* Email Input */}
+                <div className="relative">
+                  <input
+                    required
+                    type="email"
+                    id="email"
+                    placeholder=" "
+                    className="peer w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-4 text-white text-sm outline-none focus:border-[#0C4DD5] transition-all placeholder-transparent"
+                  />
+                  <label
+                    htmlFor="email"
+                    className="absolute left-5 top-4 text-white/40 text-sm pointer-events-none transition-all 
+                    peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 
+                    peer-focus:-top-2.5 peer-focus:text-[11px] peer-focus:text-[#0C4DD5] peer-focus:bg-[#111111] peer-focus:px-2
+                    not-placeholder-shown:-top-2.5 not-placeholder-shown:text-[11px] not-placeholder-shown:text-white/40 not-placeholder-shown:bg-[#111111] not-placeholder-shown:px-2"
+                  >
+                    Email Address
+                  </label>
+                </div>
+              </div>
+
+              {/* Message Input */}
+              <div className="relative">
+                <textarea
+                  required
+                  id="message"
+                  rows={4}
+                  placeholder=" "
+                  className="peer w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-4 text-white text-sm outline-none focus:border-[#0C4DD5] transition-all placeholder-transparent resize-none"
+                />
+                <label
+                  htmlFor="message"
+                  className="absolute left-5 top-4 text-white/40 text-sm pointer-events-none transition-all 
+                  peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 
+                  peer-focus:-top-2.5 peer-focus:text-[11px] peer-focus:text-[#0C4DD5] peer-focus:bg-[#111111] peer-focus:px-2
+                  not-placeholder-shown:-top-2.5 not-placeholder-shown:text-[11px] not-placeholder-shown:text-white/40 not-placeholder-shown:bg-[#111111] not-placeholder-shown:px-2"
+                >
+                  How can we help you?
+                </label>
+              </div>
+
+              {/* Styled Submit Button */}
+              <button
+                type="submit"
+                className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-[#0C4DD5] px-8 py-4 font-head font-bold text-sm tracking-wider uppercase text-white overflow-hidden transition-all duration-300 hover:bg-[#093ca8] active:scale-95"
+              >
+                Send Message
+                <Send size={15} className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5" />
+              </button>
+            </form>
+          </motion.div>
+        ) : (
+          /* Smooth Success Morph */
+          <motion.div
+            key="form-success"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4 }}
+            className="flex flex-col items-center justify-center py-12 text-center"
+          >
+            <div className="w-16 h-16 bg-[#0C4DD5]/10 text-[#0C4DD5] rounded-full flex items-center justify-center mb-6">
+              <CheckCircle2 size={32} />
+            </div>
+            <h4 className="text-white text-2xl font-bold font-head mb-3">
+              Message Sent!
+            </h4>
+            <p className="text-white/60 text-sm max-w-xs leading-relaxed">
+              Thank you for reaching out. A representative from Nothing Else will connect with you shortly.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
 export default function ContactSection() {
   return (
-    <section id="contact" className="relative bg-white px-5 sm:px-8 py-20 sm:py-24 scroll-mt-[68px] sm:scroll-mt-[76px] border-t border-[#111111]/5">
-      <div className="mx-auto grid max-w-[1280px] gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
-        <Reveal>
-          <div className="max-w-xl">
-            <p className="font-body text-[13px] tracking-[0.2em] uppercase text-[#0C4DD5]/70 mb-4">Contact Nothing Else</p>
-            <h2 className="font-head font-bold text-[#111111] text-[10vw] sm:text-[5.5vw] lg:text-[3.6vw] leading-[1] tracking-[-0.03em] mb-6">
-              Good product.
-              <br />
-              Fair price.
-              <br />
-              Nothing else.
-            </h2>
+    <section 
+      id="contact" 
+      className="relative bg-[#111111] overflow-hidden pt-24 pb-12 scroll-mt-[68px] sm:scroll-mt-[76px] border-t border-white/5"
+    >
+      {/* Dynamic Background Glows */}
+      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#0C4DD5]/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#0C4DD5]/5 rounded-full blur-[120px] pointer-events-none" />
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <a href="mailto:hello@nothingelse.co.in" className="rounded-2xl border border-[#111111]/8 bg-[#FAFBFF] p-4 hover:border-[#0C4DD5]/25 transition-colors">
-                <Mail className="text-[#0C4DD5] mb-3" size={17} />
-                <p className="text-[11.5px] uppercase tracking-[0.16em] text-[#111111]/40 mb-1">Email</p>
-                <p className="font-medium text-[#111111] text-[14px]">hello@nothingelse.co.in</p>
+      <div className="mx-auto max-w-[1280px] px-6 lg:px-8 relative z-10">
+        <div className="grid gap-16 lg:grid-cols-2 items-start lg:gap-20 pb-20 border-b border-white/10">
+          
+          {/* Left Side branding + cards */}
+          <Reveal className="flex flex-col justify-between h-full">
+            <div>
+              <p className="font-body text-[12px] tracking-[0.25em] uppercase text-[#0C4DD5] font-semibold mb-4">
+                Connect
+              </p>
+              <h2 className="font-head font-bold text-white text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.08] mb-8">
+                Good product. <br />
+                Fair price. <br />
+                <span className="text-[#0C4DD5]">Nothing else.</span>
+              </h2>
+            </div>
+
+            {/* Quick Contact Info Cards */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <a 
+                href="mailto:hello@nothingelse.co.in" 
+                className="group rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#0C4DD5]/40 hover:bg-white/[0.04] transition-all duration-300"
+              >
+                <div className="p-2.5 bg-white/5 rounded-xl text-[#0C4DD5] w-fit mb-4 group-hover:bg-[#0C4DD5] group-hover:text-white transition-all duration-300">
+                  <Mail size={16} />
+                </div>
+                <p className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-1">Email</p>
+                <p className="font-semibold text-white text-sm">hello@nothingelse.co.in</p>
               </a>
-              <a href="tel:+911800000000" className="rounded-2xl border border-[#111111]/8 bg-[#FAFBFF] p-4 hover:border-[#0C4DD5]/25 transition-colors">
-                <Phone className="text-[#0C4DD5] mb-3" size={17} />
-                <p className="text-[11.5px] uppercase tracking-[0.16em] text-[#111111]/40 mb-1">Phone</p>
-                <p className="font-medium text-[#111111] text-[14px]">1800-000-000</p>
+
+              <a 
+                href="tel:+911800000000" 
+                className="group rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#0C4DD5]/40 hover:bg-white/[0.04] transition-all duration-300"
+              >
+                <div className="p-2.5 bg-white/5 rounded-xl text-[#0C4DD5] w-fit mb-4 group-hover:bg-[#0C4DD5] group-hover:text-white transition-all duration-300">
+                  <Phone size={16} />
+                </div>
+                <p className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-1">Phone</p>
+                <p className="font-semibold text-white text-sm">1800-000-000</p>
               </a>
-              <a href="https://instagram.com/nothing_else" target="_blank" rel="noreferrer" className="rounded-2xl border border-[#111111]/8 bg-[#FAFBFF] p-4 hover:border-[#0C4DD5]/25 transition-colors sm:col-span-2">
-                <MapPin className="text-[#0C4DD5] mb-3" size={17} />
-                <p className="text-[11.5px] uppercase tracking-[0.16em] text-[#111111]/40 mb-1">Visit</p>
-                <p className="font-medium text-[#111111] text-[14px]">Nothing Else House, Andheri East, Mumbai 400069</p>
+
+              <a 
+                href="https://instagram.com/nothing_else" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="group rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#0C4DD5]/40 hover:bg-white/[0.04] transition-all duration-300 sm:col-span-2"
+              >
+                <div className="p-2.5 bg-white/5 rounded-xl text-[#0C4DD5] w-fit mb-4 group-hover:bg-[#0C4DD5] group-hover:text-white transition-all duration-300">
+                  <MapPin size={16} />
+                </div>
+                <p className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-1">Visit Us</p>
+                <p className="font-semibold text-white text-sm leading-relaxed">
+                  Nothing Else House, Andheri East, Mumbai 400069
+                </p>
               </a>
             </div>
-          </div>
-        </Reveal>
+          </Reveal>
 
-        <Reveal delay={0.1}>
-          <ContactForm />
-        </Reveal>
+          {/* Right Side Form */}
+          <Reveal delay={0.15}>
+            <ContactForm />
+          </Reveal>
+        </div>
+
+        {/* =========================================
+            STYLISH FOOTER BLOCK
+            ========================================= */}
+        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-xs text-white/40 font-body">
+          <div className="text-center md:text-left">
+            <p className="font-head font-extrabold text-white text-xl tracking-tight mb-1">
+              NOTHING ELSE<span className="text-[#0C4DD5]">.</span>
+            </p>
+            <p className="text-white/40">
+              © {new Date().getFullYear()} Nothing Else Private Limited. All rights reserved.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-2">
+            <a href="#about" className="hover:text-[#0C4DD5] transition-colors">Privacy Policy</a>
+            <a href="#system" className="hover:text-[#0C4DD5] transition-colors">Terms of Service</a>
+            <a href="#presence" className="hover:text-[#0C4DD5] transition-colors">Sitemap</a>
+          </div>
+
+          <button 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center gap-2 hover:text-white transition-colors group py-2"
+          >
+            Back to top 
+            <ArrowUpRight size={14} className="transform transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </button>
+        </div>
+
       </div>
     </section>
   );
