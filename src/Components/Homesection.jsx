@@ -1,69 +1,20 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Square } from "lucide-react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
-
-/* ============================================================================
-   SECTION 1: HOME (HERO)
-   ----------------------------------------------------------------------------
-   Auto-playing product showcase (images/copy cycle on a timer, looping),
-   with the cinematic "nothing else." pinned title-morph intro layered on
-   top: giant wordmark shrinks and slides into the navbar's logo position as
-   you scroll, then fades out to reveal the showcase running underneath.
-   Looks up the Navbar's logo anchor by aria-label to compute the morph
-   target, so this must render on the same page as <Navbar />.
-   ============================================================================ */
 
 const PRODUCT_IMAGES = ["/pdt1.png", "/pdt2.png", "/pdt3.png", "/pdt4.png", "/pdt5.png"];
+const PRODUCT_NAMES = ["Shampoo", "Premium Rice", "Dishwash", "Almonds", "Body Wash"];
 
-const SHOWCASE_DATA = [
-  {
-    eyebrow: "Pantry Essential",
-    title: "Rice",
-    description:
-      "Single-origin grains, milled slowly for a cleaner, more consistent cook. Nothing added, nothing to hide.",
-    button: "Shop Rice",
-    image: PRODUCT_IMAGES[0],
-  },
-  {
-    eyebrow: "Home Care",
-    title: "Dishwash Liquid",
-    description:
-      "A concentrated citrus formula that cuts through grease without stripping your hands. Simple chemistry, done right.",
-    button: "Shop Dishwash",
-    image: PRODUCT_IMAGES[1],
-  },
-  {
-    eyebrow: "Daily Staple",
-    title: "Atta",
-    description:
-      "Stone-ground from whole wheat, keeping the bran and the flavor intact. Just flour, the way it should be.",
-    button: "Shop Atta",
-    image: PRODUCT_IMAGES[2],
-  },
-  {
-    eyebrow: "Morning Ritual",
-    title: "Black Tea",
-    description:
-      "Slow-oxidized leaves for a bold, malty cup, no blends, no shortcuts, no filler.",
-    button: "Shop Black Tea",
-    image: PRODUCT_IMAGES[3],
-  },
-  {
-    eyebrow: "Hair Care",
-    title: "Shampoo",
-    description:
-      "A gentle, sulfate-free wash built on exactly what your scalp needs, and not one ingredient more.",
-    button: "Shop Shampoo",
-    image: PRODUCT_IMAGES[4],
-  },
-];
+const SHOWCASE_COUNT = PRODUCT_IMAGES.length;
+const AUTO_ADVANCE_MS = 7500;
+const NAV_LOGO_SELECTOR = 'header a[aria-label="Nothing Else — Home"]';
 
-const SHOWCASE_N = SHOWCASE_DATA.length;
-const AUTO_ADVANCE_MS = 4000;
+const INTRO_START_DELAY = 0.1;
+const INTRO_HOLD_DURATION = 0.4;
+const INTRO_TITLE_DURATION = 0.55;
+const INTRO_HANDOFF_DURATION = 0.2;
+const INTRO_REVEAL_DURATION = 0.45;
+const INTRO_CONTENT_STAGGER = 0.05;
 
 export default function HomeSection() {
   const sectionRef = useRef(null);
@@ -78,290 +29,385 @@ export default function HomeSection() {
     }
   };
 
+  const productsRef = useRef([]);
+  const shadowsRef = useRef([]);
+  const pulsesRef = useRef([]);
+  const labelsRef = useRef([]);
+  const platformRef = useRef(null);
+  const sweepRef = useRef(null);
+
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Auto-advance the showcase — runs continuously, independent of the intro animation
   useEffect(() => {
     const id = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % SHOWCASE_N);
+      setActiveIndex((prev) => (prev + 1) % SHOWCASE_COUNT);
     }, AUTO_ADVANCE_MS);
     return () => clearInterval(id);
   }, []);
 
+  useEffect(() => {
+    let ctx = gsap.context(() => {
+      if (!productsRef.current.length || !platformRef.current) return;
+
+      const tl = gsap.timeline();
+
+      gsap.set(productsRef.current, { y: -1000, opacity: 0 }); 
+      gsap.set(shadowsRef.current, { scale: 2.2, opacity: 0, filter: "blur(15px)" });
+      gsap.set(pulsesRef.current, { scale: 0.2, opacity: 0 });
+      gsap.set(labelsRef.current, { y: -15, opacity: 0 });
+      gsap.set(platformRef.current, { y: 0 });
+      gsap.set(sweepRef.current, { xPercent: -180, opacity: 0 });
+
+      let currentTime = 0;
+
+      productsRef.current.forEach((el, i) => {
+        const dropDuration = 0.55;
+        const bounceDuration = 0.15;
+
+        tl.to(el, { 
+          y: 0, 
+          opacity: 1, 
+          ease: "power2.out", 
+          duration: dropDuration 
+        }, currentTime);
+
+        tl.to(shadowsRef.current[i], {
+          scale: 1,
+          opacity: 0.85,
+          filter: "blur(2px)",
+          ease: "power2.out",
+          duration: dropDuration
+        }, currentTime);
+
+        const landTime = currentTime + dropDuration;
+
+        tl.to(platformRef.current, { y: 4, duration: 0.06, ease: "power1.out" }, landTime);
+        tl.to(platformRef.current, { y: 0, duration: 0.18, ease: "power2.out" }, landTime + 0.06);
+
+        tl.fromTo(pulsesRef.current[i], 
+          { scale: 0.3, opacity: 0.95 },
+          { scale: 2.4, opacity: 0, duration: 0.55, ease: "power1.out" }, 
+          landTime
+        );
+
+        tl.to(el, { y: -12, ease: "power1.out", duration: bounceDuration }, landTime);
+        tl.to(shadowsRef.current[i], { 
+          scale: 1.25, 
+          opacity: 0.45, 
+          filter: "blur(6px)", 
+          ease: "power1.out", 
+          duration: bounceDuration 
+        }, landTime);
+
+        tl.to(el, { y: 0, ease: "power1.in", duration: bounceDuration }, landTime + bounceDuration);
+        tl.to(shadowsRef.current[i], { 
+          scale: 1, 
+          opacity: 0.85, 
+          filter: "blur(2px)", 
+          ease: "power1.in", 
+          duration: bounceDuration 
+        }, landTime + bounceDuration);
+
+        tl.to(labelsRef.current[i], {
+          y: 0,
+          opacity: 1,
+          duration: 0.3,
+          ease: "power2.out"
+        }, landTime + 0.1);
+
+        currentTime = landTime + (bounceDuration * 2) + 0.3;
+      });
+
+      const sweepStartTime = currentTime + 1.0;
+      
+      tl.to(sweepRef.current, { opacity: 1, duration: 0.1 }, sweepStartTime);
+      tl.to(sweepRef.current, { xPercent: 250, duration: 1.8, ease: "power2.inOut" }, sweepStartTime);
+      tl.to(sweepRef.current, { opacity: 0, duration: 0.4 }, sweepStartTime + 1.4);
+
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, [activeIndex]);
+
   useLayoutEffect(() => {
-    // Guard against React StrictMode / hot-reload double-invoking this effect,
-    // which otherwise leaves a stale ScrollTrigger pinned underneath the new one.
-    ScrollTrigger.getById("home-pin")?.kill();
+    let ctx = null;
+    let observer = null;
+    let cancelled = false;
 
-    const ctx = gsap.context(() => {
-      // Prevent Flash of Unstyled Content (FOUC)
-      gsap.set(contentRefs.current, { opacity: 0, y: 40 });
-      gsap.set(titleRef.current, {
-        xPercent: -50,
-        yPercent: -50,
-        top: "50%",
-        left: "50%",
-        scale: 1,
-        transformOrigin: "center center",
+    gsap.set(contentRefs.current, { opacity: 0, y: 30 });
+    gsap.set(titleRef.current, {
+      xPercent: -50,
+      yPercent: -50,
+      top: "50%",
+      left: "50%",
+      scale: 1,
+      transformOrigin: "center center",
+      autoAlpha: 1,
+    });
+
+    const build = (navLogo) => {
+      if (cancelled) return;
+
+      gsap.set(navLogo, { autoAlpha: 0 });
+
+      ctx = gsap.context(() => {
+        const getTargetX = () => {
+          const rect = navLogo.getBoundingClientRect();
+          return rect.left + rect.width / 2 - window.innerWidth / 2;
+        };
+        const getTargetY = () => {
+          const rect = navLogo.getBoundingClientRect();
+          return rect.top + rect.height / 2 - window.innerHeight / 2;
+        };
+        const getTargetScale = () => {
+          const rect = navLogo.getBoundingClientRect();
+          const baseWidth = titleRef.current.offsetWidth;
+          return baseWidth ? rect.width / baseWidth : 1;
+        };
+
+        const tl = gsap.timeline({ delay: INTRO_START_DELAY });
+
+        tl.addLabel("hold")
+          .addLabel("start", `hold+=${INTRO_HOLD_DURATION}`)
+          .to(
+            titleRef.current,
+            {
+              x: getTargetX,
+              y: getTargetY,
+              scale: getTargetScale,
+              duration: INTRO_TITLE_DURATION,
+              ease: "power2.inOut",
+            },
+            "start"
+          )
+          .addLabel("titleArrives", `start+=${INTRO_TITLE_DURATION}`)
+          .to(titleRef.current, { autoAlpha: 0, duration: INTRO_HANDOFF_DURATION, ease: "power1.inOut" }, "titleArrives")
+          .to(navLogo, { autoAlpha: 1, duration: INTRO_HANDOFF_DURATION, ease: "power1.inOut" }, "titleArrives")
+          .addLabel("heroReveal", `titleArrives+=${INTRO_HANDOFF_DURATION}`)
+          .to(overlayRef.current, { opacity: 0, duration: INTRO_REVEAL_DURATION, ease: "power1.out" }, "heroReveal")
+          .to(
+            contentRefs.current,
+            { opacity: 1, y: 0, duration: INTRO_REVEAL_DURATION, stagger: INTRO_CONTENT_STAGGER, ease: "power3.out" },
+            "heroReveal"
+          );
+      }, sectionRef);
+    };
+
+    const existingNavLogo = document.querySelector(NAV_LOGO_SELECTOR);
+    if (existingNavLogo) {
+      build(existingNavLogo);
+    } else {
+      observer = new MutationObserver(() => {
+        const found = document.querySelector(NAV_LOGO_SELECTOR);
+        if (found) {
+          observer.disconnect();
+          observer = null;
+          build(found);
+        }
       });
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
 
-      // Target the external Navbar logo to calculate bounds and crossfade
-      const navLogo = document.querySelector('header a[aria-label="Nothing Else — Home"]');
-      if (navLogo) {
-        gsap.set(navLogo, { opacity: 0 }); // Hide actual nav logo initially
-      }
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          id: "home-pin",
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "+=250%", // Total scroll distance (cinematic duration)
-          scrub: 0.8,    // Smooth, slight lag for premium feel
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true, // Recalculate on window resize
-        },
-      });
-
-      // Phase 1 (0-25%): Fade dark overlay slightly to hint at the showcase behind it
-      tl.to(overlayRef.current, { opacity: 0.4, duration: 25, ease: "none" }, 0);
-
-      // Phase 2 & 3 (25-75%): Morph giant title to navbar logo position
-      tl.to(
-        titleRef.current,
-        {
-          x: () => {
-            if (!navLogo) return 0;
-            const targetRect = navLogo.getBoundingClientRect();
-            const targetCenterX = targetRect.left + targetRect.width / 2;
-            const startCenterX = window.innerWidth / 2;
-            return targetCenterX - startCenterX;
-          },
-          y: () => {
-            if (!navLogo) return 0;
-            const targetRect = navLogo.getBoundingClientRect();
-            const targetCenterY = targetRect.top + targetRect.height / 2;
-            const startCenterY = window.innerHeight / 2;
-            return targetCenterY - startCenterY;
-          },
-          scale: () => {
-            if (!navLogo) return 1;
-            const targetRect = navLogo.getBoundingClientRect();
-            const baseWidth = titleRef.current.offsetWidth;
-            return targetRect.width / baseWidth;
-          },
-          duration: 50,
-          ease: "power2.inOut",
-        },
-        25
-      );
-
-      // Phase 4 (60-85%): Reveal the showcase content behind the title
-      tl.to(
-        contentRefs.current,
-        { opacity: 1, y: 0, duration: 25, stagger: 4, ease: "power2.out" },
-        60
-      );
-
-      // Phase 5 (75-80%): Seamless crossfade into the permanent Navbar logo
-      if (navLogo) {
-        tl.to(titleRef.current, { opacity: 0, duration: 5, ease: "none" }, 75);
-        tl.to(navLogo, { opacity: 1, duration: 5, ease: "none" }, 75);
-      }
-
-      // Phase 6 (80-95%): Clear the dark overlay fully so the showcase reads at full color
-      tl.to(overlayRef.current, { opacity: 0, duration: 15, ease: "none" }, 80);
-
-      // Safety net: fonts/images finishing late can shift layout after the
-      // ScrollTrigger has already measured it, which is the #1 cause of a
-      // pin that seems to "not work" (wrong start/end points). Re-measure
-      // once everything has actually settled.
-      const refresh = () => ScrollTrigger.refresh();
-      window.addEventListener("load", refresh);
-      const raf = requestAnimationFrame(refresh);
-
-      return () => {
-        window.removeEventListener("load", refresh);
-        cancelAnimationFrame(raf);
-      };
-    }, sectionRef);
-
-    // Cleanup: restore nav logo visibility if hero unmounts
     return () => {
-      ctx.revert();
-      const navLogo = document.querySelector('header a[aria-label="Nothing Else — Home"]');
-      if (navLogo) gsap.set(navLogo, { opacity: 1 });
+      cancelled = true;
+      if (observer) observer.disconnect();
+      if (ctx) ctx.revert();
+      const navLogo = document.querySelector(NAV_LOGO_SELECTOR);
+      if (navLogo) gsap.set(navLogo, { autoAlpha: 1 });
     };
   }, []);
 
   return (
-    <section id="home" ref={sectionRef} className="relative bg-[#040A18]">
-      {/* This container acts as our pinned viewport.
-        It locks at 100vh while the ScrollTrigger scrubs the animation timeline.
-      */}
+    <section id="home" ref={sectionRef} className="relative bg-[#0A3DAE]">
       <div
         ref={containerRef}
-        className="relative h-[100svh] w-full overflow-hidden"
-        style={{ background: "radial-gradient(circle at 20% 50%, #2950F5 0%, #1E3FE0 60%, #152EAA 100%)" }}
+        className="relative h-[100vh] w-full overflow-hidden bg-[#0A3DAE]"
       >
-        {/* Subtle background noise overlay to break up flat digital colors */}
-        <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
-
-        {/* ELEGANT CIRCLE STAGE */}
-        <div ref={addToRefs} className="absolute -right-[15%] top-[6%] w-[90%] sm:w-[70%] md:w-[52%] aspect-square">
-
-          {/* Accent Rings */}
-          <motion.div
-            className="absolute -top-4 -left-10 w-16 h-16 rounded-full border border-white/30 flex items-center justify-center backdrop-blur-md"
-            animate={{ y: [0, -12, 0], rotate: [0, 90, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <svg
+            viewBox="0 0 1440 900"
+            preserveAspectRatio="none"
+            className="absolute inset-0 w-full h-full"
           >
-            <span className="w-2.5 h-2.5 rounded-full bg-white/90 shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
-          </motion.div>
+            <defs>
+              <filter id="waveRibbonShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="10" stdDeviation="14" floodColor="#111111" floodOpacity="0.35" />
+              </filter>
+            </defs>
 
-          {/* Premium Soft-Gradient Circle */}
-          <div
-            className="absolute inset-0 rounded-full bg-gradient-to-tr from-white to-blue-50/95"
-            style={{
-              boxShadow: "0 30px 80px rgba(0,0,0,0.15), inset 0 0 40px rgba(255,255,255,0.8)",
-              border: "1px solid rgba(255,255,255,0.6)"
-            }}
-          />
-          {/* Inner decorative rim for an editorial touch */}
-          <div className="absolute inset-6 rounded-full border border-blue-200/40 pointer-events-none" />
+            <path
+              d="M0,0 L1440,0 L1440,400
+                 C1320,430 1200,500 1080,460
+                 C1000,430 900,400 800,440
+                 C700,480 650,600 560,580
+                 C480,560 420,445 320,460
+                 C200,480 120,560 0,640 Z"
+              fill="#0A3DAE"
+            />
 
-          {/* Floating Glass element */}
-          <motion.div
-            className="absolute bottom-12 right-12 w-24 h-24 rounded-3xl bg-white/10 border border-white/30 backdrop-blur-md flex items-center justify-center shadow-xl"
-            animate={{ rotate: [12, -5, 12], y: [0, -15, 0] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            style={{ rotate: 12 }}
-          >
-            <span className="w-8 h-8 rounded-full border-[1.5px] border-white/60" />
-          </motion.div>
+            <path
+              d="M0,900 L1440,900 L1440,400
+                 C1320,430 1200,500 1080,460
+                 C1000,430 900,400 800,440
+                 C700,480 650,600 560,580
+                 C480,560 420,445 320,460
+                 C200,480 120,560 0,640 Z"
+              fill="#FFFFFF"
+            />
+
+            <path
+              d="M0,640
+                 C120,560 200,480 320,460
+                 C420,445 480,560 560,580
+                 C650,600 700,480 800,440
+                 C900,400 1000,430 1080,460
+                 C1200,500 1320,430 1440,400"
+              fill="none"
+              stroke="#EDEDED"
+              strokeWidth="46"
+              strokeLinecap="round"
+              filter="url(#waveRibbonShadow)"
+            />
+          </svg>
+
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[110%] h-[55%] bg-[radial-gradient(ellipse_60%_100%_at_50%_100%,rgba(10,61,174,0.08)_0%,rgba(10,61,174,0.03)_35%,transparent_70%)]" />
+
+          <div className="absolute inset-0 opacity-[0.08] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_85%_50%_at_50%_26%,transparent_50%,rgba(4,16,50,0.35)_100%)]" />
         </div>
 
-        {/* Vertical filmstrip column — Product Images */}
-        <div ref={addToRefs} className="relative z-10 w-full h-[280px] sm:h-[340px] md:absolute md:inset-y-0 md:right-0 md:h-full md:w-[56%] overflow-hidden">
-          <motion.div
-            className="absolute inset-x-0 top-0"
-            style={{ height: `${SHOWCASE_N * 100}%` }}
-            animate={{ y: `-${activeIndex * (100 / SHOWCASE_N)}%` }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {SHOWCASE_DATA.map((item, i) => (
-              <div
-                key={i}
-                className="w-full flex items-center justify-center"
-                style={{ height: `${100 / SHOWCASE_N}%` }}
-              >
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="h-[68%] sm:h-[72%] md:h-[78%] object-contain mt-10 md:mt-0"
-                  style={{ filter: "drop-shadow(0 30px 40px rgba(0,0,0,0.25))" }}
-                />
-              </div>
-            ))}
-          </motion.div>
-        </div>
+        <div
+          ref={addToRefs}
+          className="absolute inset-0 z-30 flex flex-col justify-center items-start pb-[30vh] pointer-events-none"
+        >
+          <div className="relative w-full pl-7 sm:pl-14 lg:pl-20 xl:pl-24 pr-6 pointer-events-auto">
+            <span className="absolute left-0 sm:left-6 lg:left-11 xl:left-13 top-1 bottom-8 w-[3px] rounded-full bg-gradient-to-b from-[#3B5BDB] via-[#3B5BDB]/40 to-transparent shadow-[0_0_16px_#3B5BDB]" />
 
-        {/* PREMIUM TEXT PANEL */}
-        <div ref={addToRefs} className="relative z-20 h-[calc(100%-280px)] sm:h-[calc(100%-340px)] md:h-full flex items-center">
-          <div className="mx-auto max-w-[1280px] w-full px-6 sm:px-12">
-            <div className="max-w-xl md:pl-8">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeIndex}
-                  initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -40, filter: "blur(8px)" }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                >
+            <h2 className="font-head text-white leading-[1.04] text-left">
+              <span className="block sm:whitespace-nowrap font-medium italic tracking-normal text-2xl sm:text-3xl md:text-4xl lg:text-[2.65rem] text-blue-50/75">
+                Good everyday products.
+              </span>
+              <span className="block sm:whitespace-nowrap font-black tracking-[-0.03em] text-4xl sm:text-5xl md:text-6xl lg:text-7xl mt-2">
+                Honest pricing.{" "}
+                <span className="whitespace-nowrap">
+                  <span className="bg-gradient-to-r from-white via-white to-[#AFC4FF] bg-clip-text text-transparent drop-shadow-[0_4px_26px_rgba(59,91,219,0.5)]">
+                    Nothing else
+                  </span>
+                  <span className="text-[#7C97EE]">.</span>
+                </span>
+              </span>
+            </h2>
 
-                  {/* Styled Eyebrow Badge instead of raw text */}
-                  <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-6 shadow-sm">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                    <span className="font-mono font-semibold text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-white">
-                      0{activeIndex + 1} &mdash; {SHOWCASE_DATA[activeIndex].eyebrow}
-                    </span>
-                  </div>
+            <div className="my-7 h-[2px] w-16 rounded-full bg-gradient-to-r from-[#3B5BDB] via-[#3B5BDB]/70 to-transparent shadow-[0_0_12px_#3B5BDB]" />
 
-                  {/* High-end gradient title */}
-                  <h2 className="font-head font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-blue-200 text-6xl sm:text-7xl lg:text-8xl leading-[1] tracking-tighter mb-6">
-                    {SHOWCASE_DATA[activeIndex].title}
-                  </h2>
-
-                  {/* Softened body text for better contrast harmony */}
-                  <p className="font-body text-lg sm:text-xl text-blue-50/80 font-light mb-10 leading-relaxed max-w-md">
-                    {SHOWCASE_DATA[activeIndex].description}
-                  </p>
-
-                  {/* Elevated Button with hover dynamics */}
-                  <button
-                    className="group flex items-center gap-4 bg-white hover:bg-blue-50 text-[#1E3FE0] px-8 py-4 rounded-full font-bold text-sm sm:text-base tracking-wide shadow-[0_10px_30px_rgba(0,0,0,0.15)] transition-all duration-300 hover:shadow-[0_15px_40px_rgba(0,0,0,0.25)] hover:-translate-y-1"
-                  >
-                    <span>{SHOWCASE_DATA[activeIndex].button}</span>
-                    <svg
-                      width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                      className="transition-transform duration-300 group-hover:translate-x-1"
-                    >
-                      <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                  </button>
-
-                </motion.div>
-              </AnimatePresence>
-            </div>
+            <p className="font-body text-lg sm:text-xl text-blue-50/70 font-light leading-relaxed max-w-md text-left">
+              A minimalist FMCG brand built for India first, then GCC and global markets.
+            </p>
           </div>
         </div>
 
-        {/* Elegant Side Progress Indicators */}
-        <div ref={addToRefs} className="hidden md:flex flex-col gap-4 absolute right-8 top-1/2 -translate-y-1/2 z-30">
-          {SHOWCASE_DATA.map((_, i) => (
-            <div key={i} className="flex items-center justify-center w-4 h-4">
+        <div ref={addToRefs} className="absolute bottom-[10vh] inset-x-0 z-20 w-full pointer-events-none flex flex-col items-center">
+          
+          <div className="relative w-[96%] max-w-[1800px] flex flex-col items-center">
+            
+            <div 
+              ref={platformRef} 
+              className="relative z-10 w-full h-[12px] rounded-full bg-gradient-to-b from-white/12 via-white/5 to-transparent border-t border-white/20 shadow-[0_20px_45px_rgba(0,0,0,0.7)]"
+            >
+              <div className="absolute inset-x-3 bottom-0 h-[3px] bg-[#3B5BDB] rounded-full opacity-90 shadow-[0_0_15px_#3B5BDB]" />
+              <div className="absolute inset-x-10 -bottom-[12px] h-[16px] bg-[#3B5BDB]/40 blur-[12px]" />
+              <div className="absolute inset-x-16 -bottom-[28px] h-[20px] bg-black/60 blur-[18px]" />
+            </div>
+
+            <div className="absolute bottom-[12px] inset-x-0 flex justify-center items-end gap-2 md:gap-4 px-[2%] z-20">
+              {PRODUCT_IMAGES.map((img, i) => (
+                <div key={i} className="relative w-[19%] md:w-[18%] flex flex-col items-center">
+                  
+                  <div
+                    ref={el => pulsesRef.current[i] = el}
+                    className="absolute bottom-0 w-32 h-8 bg-gradient-to-r from-[#3B5BDB]/80 to-transparent rounded-full blur-[6px] opacity-0 mix-blend-screen pointer-events-none transform -translate-y-1/2"
+                    style={{ transformOrigin: "center center" }}
+                  />
+
+                  <div
+                    ref={el => shadowsRef.current[i] = el}
+                    className="absolute bottom-0 w-[85%] h-[5px] bg-black/95 rounded-full blur-[2px] opacity-0 pointer-events-none transform -translate-y-1/2"
+                    style={{ transformOrigin: "center center" }}
+                  />
+
+                  <img
+                    ref={el => productsRef.current[i] = el}
+                    src={img}
+                    alt={`Premium FMCG Product ${i+1}`}
+                    className="relative z-10 w-full max-h-[240px] sm:max-h-[320px] md:max-h-[420px] lg:max-h-[500px] object-contain origin-bottom will-change-transform drop-shadow-[0_12px_24px_rgba(0,0,0,0.35)]"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="absolute top-[24px] inset-x-0 flex justify-center items-start gap-2 md:gap-4 px-[2%] z-20">
+              {PRODUCT_NAMES.map((name, i) => (
+                <div key={i} className="relative w-[19%] md:w-[18%] flex flex-col items-center">
+                  <span 
+                    ref={el => labelsRef.current[i] = el} 
+                    className="font-display font-medium text-[10px] sm:text-xs md:text-sm tracking-widest uppercase text-white/60 text-center opacity-0 mt-2"
+                  >
+                    {name}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="absolute inset-x-0 bottom-[12px] top-[-350px] overflow-hidden pointer-events-none z-30">
+              <div 
+                ref={sweepRef} 
+                className="absolute top-0 bottom-0 w-[15%] bg-gradient-to-r from-transparent via-white/[0.15] to-transparent skew-x-[-22deg] blur-sm mix-blend-overlay" 
+              />
+            </div>
+
+          </div>
+        </div>
+
+        <div ref={addToRefs} className="hidden md:flex flex-col gap-6 absolute right-12 top-1/2 -translate-y-1/2 z-40">
+          {Array.from({ length: SHOWCASE_COUNT }).map((_, i) => (
+            <div key={i} className="group flex items-center justify-center w-4 h-12 relative cursor-pointer pointer-events-auto" onClick={() => setActiveIndex(i)}>
               <span
-                className="rounded-full transition-all duration-500 ease-out"
+                className="w-[2px] rounded-full transition-all duration-700 ease-in-out absolute"
                 style={{
-                  width: i === activeIndex ? "12px" : "6px",
-                  height: i === activeIndex ? "12px" : "6px",
-                  background: i === activeIndex ? "#ffffff" : "rgba(255,255,255,0.3)",
-                  boxShadow: i === activeIndex ? "0 0 15px rgba(255,255,255,0.5)" : "none",
+                  height: i === activeIndex ? "100%" : "25%",
+                  background: i === activeIndex ? "#ffffff" : "rgba(255,255,255,0.15)",
+                  boxShadow: i === activeIndex ? "0 0 20px rgba(255,255,255,0.8)" : "none",
                 }}
               />
             </div>
           ))}
         </div>
 
-        {/* Cinematic Dark Overlay — covers the showcase at the start, fades away on scroll */}
         <div
           ref={overlayRef}
-          className="absolute inset-0 bg-[#040A18] opacity-[0.98] pointer-events-none z-40"
+          className="absolute inset-0 bg-[#111111] opacity-100 pointer-events-none z-50"
         />
 
-        {/* The Giant Morphing Title (Standalone Layer) */}
         <h1
           ref={titleRef}
-          className="fixed z-[105] font-display font-extrabold tracking-[-0.02em] whitespace-nowrap pointer-events-none text-white select-none"
+          className="fixed z-[105] font-display font-extrabold tracking-[-0.02em] whitespace-nowrap pointer-events-none text-white select-none drop-shadow-2xl"
           style={{ fontSize: "min(13vw, 140px)" }}
         >
-          nothing <span className="text-white/95">else</span><span className="text-[#0C4DD5]">.</span>
+          nothing <span className="text-white/90">else</span><span className="text-[#3B5BDB]">.</span>
         </h1>
       </div>
 
-      {/* Marquee Strip (Sits below the pinned section) */}
-      <div className="relative z-10 w-full border-t border-white/10 bg-[#040A18] overflow-hidden py-3">
+      <div className="relative z-10 w-full border-t border-white/[0.04] bg-[#111111] overflow-hidden py-4">
         <div className="flex whitespace-nowrap animate-[homeMarquee_20s_linear_infinite]">
           {Array.from({ length: 8 }).map((_, i) => (
             <span
               key={i}
-              className="font-display font-extrabold text-[12px] sm:text-[13px] tracking-[0.28em] uppercase mx-6 flex items-center gap-6 text-white/60"
+              className="font-display font-bold text-[11px] sm:text-[12px] tracking-[0.3em] uppercase mx-8 flex items-center gap-8 text-white/30"
             >
-              Blue first <Square size={7} className="fill-white/30" />
-              Product second <Square size={7} className="fill-white/30" />
-              Nothing else <Square size={7} className="fill-white/30" />
+              Blue first <Square size={5} className="fill-white/20 text-transparent" />
+              Product second <Square size={5} className="fill-white/20 text-transparent" />
+              Nothing else <Square size={5} className="fill-white/20 text-transparent" />
             </span>
           ))}
         </div>
