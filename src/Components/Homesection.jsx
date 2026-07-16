@@ -3,7 +3,8 @@ import { Square } from "lucide-react";
 import gsap from "gsap";
 
 const PRODUCT_IMAGES = ["/pdt1.png", "/pdt2.png", "/pdt3.png", "/pdt4.png", "/pdt5.png"];
-const PRODUCT_NAMES = ["Shampoo", "Premium Rice", "Dishwash", "Almonds", "Body Wash"];
+const PRODUCT_NAMES = ["Shampoo", "Rice", "Dishwash", "Oils", "Tea"];
+const PRODUCT_SLUGS = ["shampoo", "rice", "dishwash", "oils", "tea"];
 
 const SHOWCASE_COUNT = PRODUCT_IMAGES.length;
 const AUTO_ADVANCE_MS = 7500;
@@ -37,6 +38,11 @@ export default function HomeSection() {
   const sweepRef = useRef(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // TODO: wire this up to actual routing/navigation logic later
+  const handleCategoryClick = (slug) => {
+    console.log(`Navigate to "${slug}" category page`);
+  };
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -346,15 +352,17 @@ export default function HomeSection() {
               ))}
             </div>
 
-            <div className="absolute top-[24px] inset-x-0 flex justify-center items-start gap-2 md:gap-4 px-[2%] z-20">
+            <div className="absolute top-[24px] inset-x-0 flex justify-center items-start gap-2 md:gap-4 px-[2%] z-20 pointer-events-auto">
               {PRODUCT_NAMES.map((name, i) => (
                 <div key={i} className="relative w-[19%] md:w-[18%] flex flex-col items-center">
-                  <span 
-                    ref={el => labelsRef.current[i] = el} 
-                    className="font-display font-medium text-[10px] sm:text-xs md:text-sm tracking-widest uppercase text-white/60 text-center opacity-0 mt-2"
+                  <button
+                    type="button"
+                    ref={el => labelsRef.current[i] = el}
+                    onClick={() => handleCategoryClick(PRODUCT_SLUGS[i])}
+                    className="cursor-pointer font-display font-semibold text-[10px] sm:text-xs md:text-sm tracking-widest uppercase text-[#0A3DAE]/80 text-center opacity-0 mt-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full border border-black/10 bg-white/80 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.06)] transition-all duration-300 hover:bg-[#0A3DAE] hover:text-white hover:border-[#0A3DAE] hover:shadow-[0_6px_18px_rgba(10,61,174,0.35)] hover:-translate-y-0.5"
                   >
                     {name}
-                  </span>
+                  </button>
                 </div>
               ))}
             </div>

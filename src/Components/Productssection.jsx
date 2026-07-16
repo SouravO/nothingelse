@@ -162,27 +162,7 @@ export function ProductsSection() {
 }
 
 /* ============================================================================
-   SECTION 4: SCROLL-DRIVEN PRODUCT SHOWCASE  — REDESIGNED
-   ----------------------------------------------------------------------------
-   Concept: "The Pour." Everything the brand promises — single-origin rice,
-   concentrated dishwash liquid, stone-ground atta, slow-oxidized tea,
-   sulfate-free shampoo — comes down to one honest gesture: pouring a pure
-   ingredient out with nothing else added. That idea now runs through the
-   whole section instead of sitting on a flat gradient:
-
-   - WaveField: a soft poured-wave backdrop with fine contour lines, echoing
-     the reference image but reframed as "flow" rather than pure decoration.
-   - The product stage is an organic, gently breathing pool (not a static
-     circle) that a droplet trails into on a loop — the section's one
-     signature beat, kept singular and quiet everywhere else.
-   - The corner labels reuse real copy ("Nothing else.") and a real count
-     (SHOWCASE_N) instead of invented text.
-   - The side index is a rising level gauge instead of plain dots — the same
-     positional information, but it reads as "filling up," reinforcing the
-     pour idea rather than decorating for its own sake.
-
-   All scroll math, state, refs and data props are unchanged from the
-   original — only markup/visual styling was touched.
+   SECTION 4: SCROLL-DRIVEN PRODUCT SHOWCASE
    ============================================================================ */
 
 const BRAND = {
@@ -190,6 +170,9 @@ const BRAND = {
   base: "#1E3FE0",
   bright: "#2950F5",
   ice: "#DCE6FF",
+  gold: "#D9A84A",
+  goldLight: "#F3CE7C",
+  goldGlow: "#FFEFC7",
 };
 
 const SHOWCASE_DATA = [
@@ -239,48 +222,84 @@ const SHOWCASE_N = SHOWCASE_DATA.length;
 const HOLD_FRACTION = 0.62;
 const SEG = 1 / (SHOWCASE_N - 1);
 
-/* Poured-wave backdrop: one soft filled sweep + two fine contour lines,
-   directly inspired by the reference image but adapted to a full-bleed
-   landscape stage. */
+/* NEW HORIZONTAL BACKGROUND
+  Replaces the old flat blue. Adapts the reference image horizontally:
+  - The rich blue stays on the left behind the text.
+  - A beautiful sweeping white curve swoops out toward the bottom right.
+  - The S-curve is separated by a glowing, realistic gold border with glints. 
+*/
 function WaveField() {
   return (
     <svg
-      className="absolute inset-0 w-full h-full"
+      className="absolute inset-0 w-full h-full pointer-events-none"
       viewBox="0 0 1600 900"
-      preserveAspectRatio="none"
+      preserveAspectRatio="xMidYMid slice"
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="waveFade" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor={BRAND.bright} stopOpacity="0.45" />
-          <stop offset="100%" stopColor={BRAND.deep} stopOpacity="0" />
+        {/* Rich Blue Base Gradient */}
+        <linearGradient id="bgBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#042D5A" />
+          <stop offset="100%" stopColor="#0A4587" />
         </linearGradient>
+
+        {/* Dynamic Gold Gradient for the S-Curve */}
+        <linearGradient id="goldEdge" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#FFF2B2" />
+          <stop offset="20%" stopColor="#D4AF37" />
+          <stop offset="50%" stopColor="#9C7311" />
+          <stop offset="80%" stopColor="#D4AF37" />
+          <stop offset="100%" stopColor="#FFF2B2" />
+        </linearGradient>
+
+        <filter id="glowGold" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="8" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+
+        <radialGradient id="glint" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+          <stop offset="25%" stopColor="#FFF2B2" stopOpacity="0.8" />
+          <stop offset="100%" stopColor="#D4AF37" stopOpacity="0" />
+        </radialGradient>
       </defs>
+
+      {/* 1. Base Rich Blue (covering the left side naturally) */}
+      <rect width="100%" height="100%" fill="url(#bgBlue)" />
+
+      {/* 2. Soft shadow dropping beneath the white curve */}
       <path
-        d="M-100,340 C 260,180 480,520 800,380 C 1120,250 1320,540 1750,400 L1750,-100 L-100,-100 Z"
-        fill="url(#waveFade)"
+        d="M -100,750 C 400,750 900,200 1700,200 L 1700,1000 L -100,1000 Z"
+        fill="rgba(0,0,0,0.2)"
+        transform="translate(0, 18)"
+        filter="blur(16px)"
       />
+
+      {/* 3. Sweeping White Area (on the right/bottom) */}
       <path
-        d="M-100,540 C 300,400 520,660 860,510 C 1150,380 1350,610 1750,490"
+        d="M -100,750 C 400,750 900,200 1700,200 L 1700,1000 L -100,1000 Z"
+        fill="#ffffff"
+      />
+
+      {/* 4. Glowing Gold S-Curve Boundary */}
+      <path
+        d="M -100,750 C 400,750 900,200 1700,200"
         fill="none"
-        stroke={BRAND.ice}
-        strokeOpacity="0.16"
-        strokeWidth="1.5"
+        stroke="url(#goldEdge)"
+        strokeWidth="10"
+        filter="url(#glowGold)"
       />
-      <path
-        d="M-100,600 C 320,470 540,710 880,570 C 1160,440 1360,670 1750,550"
-        fill="none"
-        stroke={BRAND.ice}
-        strokeOpacity="0.1"
-        strokeWidth="1"
-      />
+
+      {/* 5. Specular Glints matching reference */}
+      <circle cx="688" cy="475" r="30" fill="url(#glint)" />
+      <circle cx="1254" cy="257" r="22" fill="url(#glint)" />
     </svg>
   );
 }
 
-/* A droplet trailing down a curved line into the stage, rippling on
-   impact — the section's single signature moment. Ambient/looping,
-   independent of scroll position. */
 function PourDrop() {
   return (
     <div className="absolute -top-[12%] left-[34%] w-[10%] h-[24%] hidden sm:block pointer-events-none">
@@ -359,13 +378,11 @@ export function ProductShowcase() {
     <section
       ref={containerRef}
       className="relative h-[600vh]"
-      style={{
-        background: `radial-gradient(circle at 18% 18%, ${BRAND.bright} 0%, ${BRAND.base} 48%, ${BRAND.deep} 100%)`,
-      }}
+      style={{ backgroundColor: BRAND.deep }}
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
 
-        {/* Poured-wave backdrop */}
+        {/* New Gold/blue/white design replaces flat backdrop */}
         <WaveField />
 
         {/* Grounding vignette for depth */}
@@ -377,7 +394,7 @@ export function ProductShowcase() {
         {/* Grain overlay */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
 
-        {/* Corner label — brand line, reused verbatim from the packaging */}
+        {/* Corner label — brand line */}
         <div className="hidden sm:flex absolute top-6 left-6 md:top-8 md:left-10 z-30 items-center gap-3">
           <span className="w-6 h-px bg-white/40" />
           <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/60">
@@ -385,7 +402,7 @@ export function ProductShowcase() {
           </span>
         </div>
 
-        {/* Corner label — real product count, not invented copy */}
+        {/* Corner label — real product count */}
         <div className="hidden sm:flex absolute bottom-6 right-6 md:bottom-8 md:right-10 z-30 items-center gap-3">
           <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/50">
             {String(SHOWCASE_N).padStart(2, "0")} staples — zero fillers
@@ -393,7 +410,7 @@ export function ProductShowcase() {
           <span className="w-6 h-px bg-white/30" />
         </div>
 
-        {/* Oversized index watermark, fills the empty lower-left field */}
+        {/* Oversized index watermark */}
         <div
           className="hidden md:block absolute left-6 lg:left-12 bottom-0 z-0 overflow-hidden pointer-events-none select-none"
           style={{ width: "45%", height: "60%" }}
@@ -413,10 +430,8 @@ export function ProductShowcase() {
           </AnimatePresence>
         </div>
 
-        {/* PRODUCT STAGE */}
+        {/* PRODUCT STAGE (Untouched) */}
         <div className="absolute -right-[15%] top-[6%] w-[90%] sm:w-[70%] md:w-[52%] aspect-square">
-
-          {/* Accent ring */}
           <motion.div
             className="absolute -top-4 -left-10 w-16 h-16 rounded-full border border-white/30 flex items-center justify-center backdrop-blur-md"
             animate={{ y: [0, -12, 0], rotate: [0, 90, 0] }}
@@ -425,27 +440,10 @@ export function ProductShowcase() {
             <span className="w-2.5 h-2.5 rounded-full bg-white/90 shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
           </motion.div>
 
-          {/* Organic, gently breathing pool — replaces the flat circle */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-tr from-white to-blue-50/95"
-            animate={{ borderRadius: blobRadii }}
-            transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-            style={{
-              boxShadow: "0 30px 80px rgba(0,0,0,0.15), inset 0 0 40px rgba(255,255,255,0.8)",
-              border: "1px solid rgba(255,255,255,0.6)",
-            }}
-          />
-          {/* Inner rim, synced to the same breathing shape */}
-          <motion.div
-            className="absolute inset-6 border border-blue-200/40 pointer-events-none"
-            animate={{ borderRadius: blobRadii }}
-            transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-          />
+          {/* Removed the large circular/organic background behind the product image per design request. */}
 
-          {/* Droplet trailing into the pool */}
           <PourDrop />
 
-          {/* Floating glass chip */}
           <motion.div
             className="absolute bottom-12 right-12 w-24 h-24 rounded-3xl bg-white/10 border border-white/30 backdrop-blur-md flex items-center justify-center shadow-xl"
             animate={{ rotate: [12, -5, 12], y: [0, -15, 0] }}
@@ -474,7 +472,6 @@ export function ProductShowcase() {
                   className="h-[68%] sm:h-[72%] md:h-[78%] object-contain mt-10 md:mt-0"
                   style={{ filter: "drop-shadow(0 30px 40px rgba(0,0,0,0.25))" }}
                 />
-                {/* Grounding puddle shadow, keeps products from feeling like they float in empty space */}
                 <div className="w-[34%] h-3 rounded-[100%] bg-black/25 blur-md -mt-3" />
               </div>
             ))}
@@ -493,7 +490,6 @@ export function ProductShowcase() {
                   exit={{ opacity: 0, y: -40, filter: "blur(8px)" }}
                   transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  {/* Eyebrow tag, split with a tick mark like a shelf label */}
                   <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-6 shadow-sm">
                     <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                     <span className="font-mono font-semibold text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-white">
@@ -505,7 +501,6 @@ export function ProductShowcase() {
                     </span>
                   </div>
 
-                  {/* Title with a soft outlined echo behind it for depth */}
                   <div className="relative mb-2">
                     <div
                       aria-hidden="true"
@@ -545,7 +540,7 @@ export function ProductShowcase() {
           </div>
         </div>
 
-        {/* Level gauge — same positional info as the old dots, reads as a rising fill line */}
+        {/* Level gauge */}
         <div className="hidden md:flex flex-col items-center gap-3 absolute right-8 lg:right-12 top-1/2 -translate-y-1/2 z-30">
           <span className="font-mono text-[9px] tracking-[0.2em] text-white/50">01</span>
           <div className="relative w-[3px] h-[180px] rounded-full bg-white/15 overflow-visible">
