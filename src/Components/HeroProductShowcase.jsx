@@ -106,19 +106,29 @@ function HeroHeadline() {
   return (
     <div className="relative mb-6">
       <style>{`
-        .hero-line-1 { font-size: clamp(1.9rem, 8vw, 2.75rem); }
-        .hero-line-2 { font-size: clamp(1.5rem, 6vw, 2.25rem); }
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
+
+        .hero-title-font {
+          font-family: 'Bricolage Grotesque', sans-serif;
+          font-optical-sizing: auto;
+        }
+        .hero-line-1 { font-size: clamp(1.9rem, 8vw, 2.75rem); letter-spacing: -0.01em; }
+        .hero-line-2 { font-size: clamp(1.5rem, 6vw, 2.25rem); letter-spacing: -0.005em; }
         @media (min-width: 768px) {
-          .hero-line-1 { font-size: clamp(2.75rem, 5vw, 5.5rem); }
-          .hero-line-2 { font-size: clamp(2.25rem, 3.8vw, 4.25rem); }
+          .hero-line-1 { font-size: clamp(2rem, 3.6vw, 3.5rem); }
+          .hero-line-2 { font-size: clamp(1.6rem, 2.8vw, 2.5rem); }
+        }
+        @media (min-width: 1024px) {
+          .hero-line-1 { font-size: clamp(2.25rem, 3.2vw, 4rem); }
+          .hero-line-2 { font-size: clamp(1.75rem, 2.5vw, 3rem); }
         }
       `}</style>
-      <h1 className="relative font-head font-black leading-[1.05] tracking-tight">
+      <h1 className="hero-title-font relative font-black leading-[1.05] tracking-normal">
         <motion.span
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="hero-line-1 block w-fit max-w-none whitespace-normal md:whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-[#AFC7FF]"
+          className="hero-line-1 block max-w-full break-words text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-[#AFC7FF]"
           style={{ textShadow: "0 0 60px rgba(175,199,255,0.45)" }}
         >
           Good everyday products.
@@ -128,7 +138,7 @@ function HeroHeadline() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-          className="hero-line-2 block w-fit max-w-none whitespace-normal md:whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-br from-[#F3CE7C] via-[#FFEFC7] to-[#D9A84A] mt-1 sm:mt-2"
+          className="hero-line-2 block max-w-full break-words text-transparent bg-clip-text bg-gradient-to-br from-[#F3CE7C] via-[#FFEFC7] to-[#D9A84A] mt-1 sm:mt-2"
           style={{ textShadow: "0 0 60px rgba(217,168,74,0.45)" }}
         >
           Honest pricing. Nothing else.
@@ -192,9 +202,9 @@ export default function ProductShowcase() {
         </motion.div>
       </div>
 
-      <div className="relative z-40 h-[calc(100%-280px)] sm:h-[calc(100%-340px)] md:h-full flex items-center md:items-start">
-        <div className="w-full px-6 sm:px-12 md:w-[68%] lg:w-[64%] md:pt-40 lg:pt-52">
-          <div className="max-w-none md:pl-8">
+      <div className="relative z-40 h-[calc(100%-280px)] sm:h-[calc(100%-340px)] md:h-full flex items-center">
+        <div className="w-full px-6 sm:px-12 md:w-[44%] md:pr-6">
+          <div className="max-w-full md:pl-8">
             <HeroHeadline />
 
             <div className="w-14 h-[3px] rounded-full bg-gradient-to-r from-white to-transparent opacity-70 mb-6" />
