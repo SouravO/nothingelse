@@ -28,7 +28,7 @@ export default function Navbar() {
   // Navbar goes solid the moment the (pinned) hero has fully scrolled away —
   // until then it rides transparent over the hero's dark background.
   useEffect(() => {
-    const heroEl = document.getElementById("home");
+    const heroEl = document.getElementById("hero");
     if (!heroEl) return;
     const observer = new IntersectionObserver(
       ([entry]) => setScrolled(!entry.isIntersecting),
@@ -63,7 +63,9 @@ export default function Navbar() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-[110] transition-colors duration-500 ${
-        scrolled ? "bg-white/95 backdrop-blur-md border-b border-[#111111]/8" : "bg-transparent"
+        scrolled
+          ? "bg-white/95 backdrop-blur-md border-b border-[#111111]/8"
+          : "bg-transparent border-b border-transparent"
       }`}
     >
       <div className="mx-auto max-w-[1280px] px-5 sm:px-8 h-[68px] sm:h-[76px] flex items-center justify-between">
@@ -71,7 +73,7 @@ export default function Navbar() {
           href="#home"
           aria-label="Nothing Else — Home"
           onClick={(e) => onNavClick(e, "home")}
-          className="font-display font-extrabold text-[19px] tracking-[-0.02em] select-none"
+          className="font-logo font-extrabold text-[19px] tracking-[-0.02em] select-none"
         >
           <span className={scrolled ? "text-[#111111]" : "text-white"}>nothing</span>{" "}
           <span className={scrolled ? "text-[#111111]/95" : "text-white/95"}>else</span>

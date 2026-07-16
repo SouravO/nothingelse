@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -6,15 +6,15 @@
   --color-brand-black: #111111;
   --color-brand-grey: #eeeeee;
 
-  --font-logo: "Poppins", sans-serif;
-  --font-heading: "Poppins", sans-serif;
-  --font-body: "Poppins", sans-serif;
+  --font-logo: "Montserrat", sans-serif;
+  --font-heading: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   --spacing-content: 72rem;
 }
 
 :root {
-  font-family: "Poppins", sans-serif;
+  font-family: var(--font-body);
   color: #111111;
   background: #ffffff;
   font-synthesis: none;
@@ -49,15 +49,25 @@ h6,
 .font-heading,
 .font-display,
 .font-logo {
+  /* Headings + display use Helvetica Neue per design rules */
   font-family: var(--font-heading);
   font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
 .font-body {
+  /* Body text + navigation + buttons use Inter */
   font-family: var(--font-body);
   font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.45;
+}
+
+/* Logo uses Montserrat */
+.font-logo {
+  font-family: var(--font-logo) !important;
+  font-weight: 700;
 }
 
 button,

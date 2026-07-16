@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Square } from "lucide-react";
 import gsap from "gsap";
 
@@ -20,8 +20,6 @@ const INTRO_CONTENT_STAGGER = 0.05;
 export default function HomeSection() {
   const sectionRef = useRef(null);
   const containerRef = useRef(null);
-  const titleRef = useRef(null);
-  const overlayRef = useRef(null);
 
   const contentRefs = useRef([]);
   const addToRefs = (el) => {
@@ -135,93 +133,7 @@ export default function HomeSection() {
     return () => ctx.revert();
   }, [activeIndex]);
 
-  useLayoutEffect(() => {
-    let ctx = null;
-    let observer = null;
-    let cancelled = false;
-
-    gsap.set(contentRefs.current, { opacity: 0, y: 30 });
-    gsap.set(titleRef.current, {
-      xPercent: -50,
-      yPercent: -50,
-      top: "50%",
-      left: "50%",
-      scale: 1,
-      transformOrigin: "center center",
-      autoAlpha: 1,
-    });
-
-    const build = (navLogo) => {
-      if (cancelled) return;
-
-      gsap.set(navLogo, { autoAlpha: 0 });
-
-      ctx = gsap.context(() => {
-        const getTargetX = () => {
-          const rect = navLogo.getBoundingClientRect();
-          return rect.left + rect.width / 2 - window.innerWidth / 2;
-        };
-        const getTargetY = () => {
-          const rect = navLogo.getBoundingClientRect();
-          return rect.top + rect.height / 2 - window.innerHeight / 2;
-        };
-        const getTargetScale = () => {
-          const rect = navLogo.getBoundingClientRect();
-          const baseWidth = titleRef.current.offsetWidth;
-          return baseWidth ? rect.width / baseWidth : 1;
-        };
-
-        const tl = gsap.timeline({ delay: INTRO_START_DELAY });
-
-        tl.addLabel("hold")
-          .addLabel("start", `hold+=${INTRO_HOLD_DURATION}`)
-          .to(
-            titleRef.current,
-            {
-              x: getTargetX,
-              y: getTargetY,
-              scale: getTargetScale,
-              duration: INTRO_TITLE_DURATION,
-              ease: "power2.inOut",
-            },
-            "start"
-          )
-          .addLabel("titleArrives", `start+=${INTRO_TITLE_DURATION}`)
-          .to(titleRef.current, { autoAlpha: 0, duration: INTRO_HANDOFF_DURATION, ease: "power1.inOut" }, "titleArrives")
-          .to(navLogo, { autoAlpha: 1, duration: INTRO_HANDOFF_DURATION, ease: "power1.inOut" }, "titleArrives")
-          .addLabel("heroReveal", `titleArrives+=${INTRO_HANDOFF_DURATION}`)
-          .to(overlayRef.current, { opacity: 0, duration: INTRO_REVEAL_DURATION, ease: "power1.out" }, "heroReveal")
-          .to(
-            contentRefs.current,
-            { opacity: 1, y: 0, duration: INTRO_REVEAL_DURATION, stagger: INTRO_CONTENT_STAGGER, ease: "power3.out" },
-            "heroReveal"
-          );
-      }, sectionRef);
-    };
-
-    const existingNavLogo = document.querySelector(NAV_LOGO_SELECTOR);
-    if (existingNavLogo) {
-      build(existingNavLogo);
-    } else {
-      observer = new MutationObserver(() => {
-        const found = document.querySelector(NAV_LOGO_SELECTOR);
-        if (found) {
-          observer.disconnect();
-          observer = null;
-          build(found);
-        }
-      });
-      observer.observe(document.body, { childList: true, subtree: true });
-    }
-
-    return () => {
-      cancelled = true;
-      if (observer) observer.disconnect();
-      if (ctx) ctx.revert();
-      const navLogo = document.querySelector(NAV_LOGO_SELECTOR);
-      if (navLogo) gsap.set(navLogo, { autoAlpha: 1 });
-    };
-  }, []);
+  // Initial content animations handled locally (products drop etc.).
 
   return (
     <section id="home" ref={sectionRef} className="relative bg-[#0A3DAE]">
@@ -359,7 +271,7 @@ export default function HomeSection() {
                     type="button"
                     ref={el => labelsRef.current[i] = el}
                     onClick={() => handleCategoryClick(PRODUCT_SLUGS[i])}
-                    className="cursor-pointer font-display font-semibold text-[10px] sm:text-xs md:text-sm tracking-widest uppercase text-[#0A3DAE]/80 text-center opacity-0 mt-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full border border-black/10 bg-white/80 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.06)] transition-all duration-300 hover:bg-[#0A3DAE] hover:text-white hover:border-[#0A3DAE] hover:shadow-[0_6px_18px_rgba(10,61,174,0.35)] hover:-translate-y-0.5"
+                    className="cursor-pointer font-body font-semibold text-[10px] sm:text-xs md:text-sm tracking-widest uppercase text-[#0A3DAE]/80 text-center opacity-0 mt-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full border border-black/10 bg-white/80 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.06)] transition-all duration-300 hover:bg-[#0A3DAE] hover:text-white hover:border-[#0A3DAE] hover:shadow-[0_6px_18px_rgba(10,61,174,0.35)] hover:-translate-y-0.5"
                   >
                     {name}
                   </button>
@@ -392,18 +304,7 @@ export default function HomeSection() {
           ))}
         </div>
 
-        <div
-          ref={overlayRef}
-          className="absolute inset-0 bg-[#111111] opacity-100 pointer-events-none z-50"
-        />
-
-        <h1
-          ref={titleRef}
-          className="fixed z-[105] font-display font-extrabold tracking-[-0.02em] whitespace-nowrap pointer-events-none text-white select-none drop-shadow-2xl"
-          style={{ fontSize: "min(13vw, 140px)" }}
-        >
-          nothing <span className="text-white/90">else</span><span className="text-[#3B5BDB]">.</span>
-        </h1>
+        {/* Title/overlay moved to SiteIntro component */}
       </div>
 
       <div className="relative z-10 w-full border-t border-white/[0.04] bg-[#111111] overflow-hidden py-4">
@@ -411,7 +312,7 @@ export default function HomeSection() {
           {Array.from({ length: 8 }).map((_, i) => (
             <span
               key={i}
-              className="font-display font-bold text-[11px] sm:text-[12px] tracking-[0.3em] uppercase mx-8 flex items-center gap-8 text-white/30"
+              className="font-body font-bold text-[11px] sm:text-[12px] tracking-[0.3em] uppercase mx-8 flex items-center gap-8 text-white/30"
             >
               Blue first <Square size={5} className="fill-white/20 text-transparent" />
               Product second <Square size={5} className="fill-white/20 text-transparent" />
