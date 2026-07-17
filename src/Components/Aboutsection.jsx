@@ -147,51 +147,80 @@ export default function AboutSection() {
       <div className="relative z-10 w-full px-6 md:px-16 xl:px-24 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 
         {/* LEFT COLUMN — Text Content (Occupies 7/12th of screen width) */}
-        <div className="relative lg:col-span-7 w-full">
-          
-          {/* Decorative faint background initial */}
-          <span
+        {/* Framed as its own panel — rounded + overflow-hidden so the shelf
+            photo and its overlay stay clipped to this card, matching the
+            gallery card's rounded treatment on the right. */}
+        <div className="relative lg:col-span-7 w-full rounded-[2rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(16,31,122,0.35)]">
+          {/* Shelf photo, behind everything in this panel */}
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: "url('/abt.jpg')" }}
             aria-hidden="true"
-            className="absolute -left-10 -top-24 font-head font-black text-[280px] leading-none text-[#0B1220]/[0.02] select-none pointer-events-none hidden lg:block animate-word opacity-0"
-          >
-            N
-          </span>
+          />
 
-          <div className="relative flex items-center gap-3 mb-6 animate-word opacity-0">
-            <span className="w-8 h-px bg-blue-600/50" />
-          </div>
+          {/* Dark navy overlay (matches the hero's palette) so the copy on
+              top stays readable against the photo — darkest on the left
+              where the longest text lines sit, easing off to the right. */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(120deg, rgba(16,31,122,0.95) 0%, rgba(11,35,88,0.92) 45%, rgba(8,28,68,0.85) 100%)",
+            }}
+            aria-hidden="true"
+          />
 
-          {/* Clean, unboxed Title Frame */}
-          <div className="relative mb-10 md:mb-12">
-            <h2 className="font-head font-black text-[#1E3FE0] text-6xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tighter">
-              <SplitText text="Honest Food." /><br />
-              <SplitText text="Nothing Else." />
-            </h2>
-          </div>
+          <div className="relative z-10 p-8 sm:p-10 md:p-14 xl:p-16">
 
-          {/* Primary Statement */}
-          <p className="relative font-body text-[#4B5567] text-lg md:text-xl leading-relaxed mb-6">
-            <SplitText text="We exist because we believe that cooking for family and friends is one of life's simple pleasures — and that the products you use to make it should be simple too." />
-          </p>
+            {/* Decorative faint background initial */}
+            <span
+              aria-hidden="true"
+              className="absolute -left-4 -top-10 font-head font-black text-[280px] leading-none text-white/[0.05] select-none pointer-events-none hidden lg:block animate-word opacity-0"
+            >
+              N
+            </span>
 
-          <p className="relative font-body text-[#4B5567] text-base md:text-lg leading-relaxed mb-10">
-            <SplitText text="From our own kitchens to yours, every product starts with one question: would we serve this to our own family? If the answer isn't yes, it doesn't make the cut. That's the standard behind every batch — no exceptions, no fine print, no shortcuts." />
-          </p>
-
-          {/* Replacement Editorial Paragraphs */}
-          <div className="relative border-t border-gray-200/70 pt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Treating these smaller blocks as entire pieces rather than splitting every single word keeps the DOM light */}
-            <div className="animate-word opacity-0">
-              <h3 className="font-head font-bold text-lg text-[#0B1220] mb-2">Our Absolute Standard</h3>
-              <p className="font-body text-sm text-[#4B5567] leading-relaxed">
-                By maintaining complete control over sourcing, packing, and design, we preserve our commitment to transparency. What you read on our labels is exactly what enters your kitchen.
-              </p>
+            <div className="relative flex items-center gap-3 mb-6 animate-word opacity-0">
+              <span className="w-8 h-px bg-[#D9A84A]/70" />
             </div>
-            <div className="animate-word opacity-0">
-              <h3 className="font-head font-bold text-lg text-[#0B1220] mb-2">Everyday Integrity</h3>
-              <p className="font-body text-sm text-[#4B5567] leading-relaxed">
-                We work alongside responsible producers to eliminate unnecessary hand-offs, assuring premium grade ingredients make it to your pantry shelf at direct, fair pricing.
-              </p>
+
+            {/* Clean, unboxed Title Frame — same white-to-gold treatment as
+                the hero headline, so the two sections read as one brand. */}
+            <div className="relative mb-10 md:mb-12">
+              <h2 className="font-head font-black text-6xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tighter">
+                <span className="animate-word opacity-0 block text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-[#AFC7FF]">
+                  Honest Food.
+                </span>
+                <span className="animate-word opacity-0 block text-transparent bg-clip-text bg-gradient-to-br from-[#F3CE7C] via-[#FFEFC7] to-[#D9A84A] mt-1">
+                  Nothing Else.
+                </span>
+              </h2>
+            </div>
+
+            {/* Primary Statement */}
+            <p className="relative font-body text-blue-50/85 text-lg md:text-xl leading-relaxed mb-6">
+              <SplitText text="We exist because we believe that cooking for family and friends is one of life's simple pleasures — and that the products you use to make it should be simple too." />
+            </p>
+
+            <p className="relative font-body text-blue-50/70 text-base md:text-lg leading-relaxed mb-10">
+              <SplitText text="From our own kitchens to yours, every product starts with one question: would we serve this to our own family? If the answer isn't yes, it doesn't make the cut. That's the standard behind every batch — no exceptions, no fine print, no shortcuts." />
+            </p>
+
+            {/* Replacement Editorial Paragraphs */}
+            <div className="relative border-t border-white/15 pt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Treating these smaller blocks as entire pieces rather than splitting every single word keeps the DOM light */}
+              <div className="animate-word opacity-0">
+                <h3 className="font-head font-bold text-lg text-white mb-2">Our Absolute Standard</h3>
+                <p className="font-body text-sm text-blue-50/70 leading-relaxed">
+                  By maintaining complete control over sourcing, packing, and design, we preserve our commitment to transparency. What you read on our labels is exactly what enters your kitchen.
+                </p>
+              </div>
+              <div className="animate-word opacity-0">
+                <h3 className="font-head font-bold text-lg text-white mb-2">Everyday Integrity</h3>
+                <p className="font-body text-sm text-blue-50/70 leading-relaxed">
+                  We work alongside responsible producers to eliminate unnecessary hand-offs, assuring premium grade ingredients make it to your pantry shelf at direct, fair pricing.
+                </p>
+              </div>
             </div>
           </div>
         </div>
