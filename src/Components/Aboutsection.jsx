@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Register the ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 // Vertical gallery columns — mix of product renders (pdt1–5) and the
 // two lifestyle shelf shots (about.png, abt.jpg), pulled straight from /public.
 const COLUMN_A = ["/pdt1.png", "/pdt3.png", "/pdt5.png", "/about.png"];
-const COLUMN_B = ["/pdt2.png", "/pdt4.png", "/abt.jpg", "/pdt1.png"];
+const COLUMN_B = ["/pdt2.png", "/pdt4.png", "/pdt3.png", "/pdt1.png"];
 
 const isProductShot = (src) => src.includes("pdt");
 
@@ -66,9 +71,72 @@ function MarqueeColumn({ images, direction = "up", duration = 28, className = ""
   );
 }
 
-export default function AboutSection() {
+/**
+ * Custom SplitText Component 
+ * Breaks a string of text into individual word spans for staggered animation.
+ */
+const SplitText = ({ text }) => {
   return (
-    <section id="about" className="relative bg-[#FAFBFF] py-20 lg:py-28 overflow-hidden w-full">
+    <>
+      {text.split(/\s+/).map((word, i) => (
+        <React.Fragment key={i}>
+          <span className="inline-block animate-word opacity-0">
+            {word}
+          </span>
+          {" "}
+        </React.Fragment>
+      ))}
+    </>
+  );
+};
+
+export default function AboutSection() {
+  const sectionRef = useRef(null);
+  const galleryRef = useRef(null);
+
+  useEffect(() => {
+    // gsap.context ensures all animations are scoped to this component and cleaned up safely
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 70%", // Triggers the animation when the top of the section hits 70% of the viewport height
+          toggleActions: "play none none none"
+        }
+      });
+
+      // 1. Animate words flying in from the right (Mimics the Matisse Reference)
+      tl.fromTo(
+        ".animate-word",
+        { x: "50vw", opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          stagger: 0.02, // Adjust this to make the word-by-word flow faster/slower
+          duration: 0.8,
+          ease: "power3.out"
+        }
+      )
+      // 2. Animate the full Gallery block from the right after the text finishes
+      .fromTo(
+        galleryRef.current,
+        { x: "30vw", opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1.2,
+          ease: "power3.out"
+        },
+        "-=0.2" // Starts just slightly before the last words settle for a smooth transition
+      );
+
+    }, sectionRef);
+
+    return () => ctx.revert(); // Cleanup on unmount
+  }, []);
+
+  return (
+    <section id="about" ref={sectionRef} className="relative bg-[#FAFBFF] py-20 lg:py-28 overflow-hidden w-full">
       <MarqueeStyles />
 
       {/* Background Ambient Orbs */}
@@ -84,47 +152,42 @@ export default function AboutSection() {
           {/* Decorative faint background initial */}
           <span
             aria-hidden="true"
-            className="absolute -left-10 -top-24 font-head font-black text-[280px] leading-none text-[#0B1220]/[0.02] select-none pointer-events-none hidden lg:block"
+            className="absolute -left-10 -top-24 font-head font-black text-[280px] leading-none text-[#0B1220]/[0.02] select-none pointer-events-none hidden lg:block animate-word opacity-0"
           >
             N
           </span>
 
-          <div className="relative flex items-center gap-3 mb-6">
+          <div className="relative flex items-center gap-3 mb-6 animate-word opacity-0">
             <span className="w-8 h-px bg-blue-600/50" />
-            <span className="font-mono text-xs font-bold tracking-[0.2em] uppercase text-blue-600">The Philosophy</span>
           </div>
 
-          {/* Styled Border Title Frame */}
-          <div className="relative border-l-4 border-t border-b border-r border-gray-200/80 border-l-[#1E3FE0] bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-[0_15px_30px_-15px_rgba(30,63,224,0.08)] mb-8">
-            <h2 className="font-head font-black text-[#1E3FE0] text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight">
-              Honest Food.<br />
-              Nothing Else.
+          {/* Clean, unboxed Title Frame */}
+          <div className="relative mb-10 md:mb-12">
+            <h2 className="font-head font-black text-[#1E3FE0] text-6xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tighter">
+              <SplitText text="Honest Food." /><br />
+              <SplitText text="Nothing Else." />
             </h2>
           </div>
 
           {/* Primary Statement */}
           <p className="relative font-body text-[#4B5567] text-lg md:text-xl leading-relaxed mb-6">
-            We exist because we believe that cooking for family and friends
-            is one of life's simple pleasures — and that the products you
-            use to make it should be simple too.
+            <SplitText text="We exist because we believe that cooking for family and friends is one of life's simple pleasures — and that the products you use to make it should be simple too." />
           </p>
 
           <p className="relative font-body text-[#4B5567] text-base md:text-lg leading-relaxed mb-10">
-            From our own kitchens to yours, every product starts with one
-            question: would we serve this to our own family? If the answer
-            isn't yes, it doesn't make the cut. That's the standard behind
-            every batch — no exceptions, no fine print, no shortcuts.
+            <SplitText text="From our own kitchens to yours, every product starts with one question: would we serve this to our own family? If the answer isn't yes, it doesn't make the cut. That's the standard behind every batch — no exceptions, no fine print, no shortcuts." />
           </p>
 
-          {/* Replacement Editorial Paragraphs (Replacing Stats and Lists) */}
+          {/* Replacement Editorial Paragraphs */}
           <div className="relative border-t border-gray-200/70 pt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
+            {/* Treating these smaller blocks as entire pieces rather than splitting every single word keeps the DOM light */}
+            <div className="animate-word opacity-0">
               <h3 className="font-head font-bold text-lg text-[#0B1220] mb-2">Our Absolute Standard</h3>
               <p className="font-body text-sm text-[#4B5567] leading-relaxed">
                 By maintaining complete control over sourcing, packing, and design, we preserve our commitment to transparency. What you read on our labels is exactly what enters your kitchen.
               </p>
             </div>
-            <div>
+            <div className="animate-word opacity-0">
               <h3 className="font-head font-bold text-lg text-[#0B1220] mb-2">Everyday Integrity</h3>
               <p className="font-body text-sm text-[#4B5567] leading-relaxed">
                 We work alongside responsible producers to eliminate unnecessary hand-offs, assuring premium grade ingredients make it to your pantry shelf at direct, fair pricing.
@@ -133,16 +196,15 @@ export default function AboutSection() {
           </div>
         </div>
 
-        {/* RIGHT COLUMN — Vertical Auto-Scrolling Gallery (Occupies 5/12th of screen width) */}
-        <div className="relative lg:col-span-5 w-full flex justify-center lg:justify-end mt-4 lg:mt-0">
+        {/* RIGHT COLUMN — Vertical Auto-Scrolling Gallery */}
+        {/* We apply the ref and initial opacity-0 here to stage it for the final animation */}
+        <div 
+          ref={galleryRef} 
+          className="relative lg:col-span-5 w-full flex justify-center lg:justify-end mt-4 lg:mt-0 opacity-0"
+        >
           <div className="relative w-full max-w-md lg:max-w-none">
             
-            {/* Floating pill tag */}
-            <div className="absolute -top-5 left-6 z-20 bg-white border border-gray-200/70 shadow-lg rounded-full px-4 py-1.5 flex items-center gap-2 -rotate-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1E3FE0]" />
-              <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-[#0B1220]/70">On the shelf</span>
-            </div>
-
+           
             {/* Gallery frame with top/bottom fade mask */}
             <div
               className="relative rounded-3xl bg-gradient-to-b from-blue-50/60 to-white border border-gray-200/70 shadow-[0_30px_60px_-15px_rgba(30,63,224,0.15)] p-3 sm:p-4 lg:p-3 xl:p-5 overflow-hidden"
@@ -157,16 +219,7 @@ export default function AboutSection() {
               </div>
             </div>
 
-            {/* Floating Glassmorphism Badge */}
-            <div className="absolute -bottom-8 left-4 sm:-left-6 z-20 bg-white/75 backdrop-blur-xl border border-white/60 p-4 sm:p-5 rounded-2xl shadow-xl flex items-center gap-3 sm:gap-4 w-[200px] sm:w-[230px] -rotate-1">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-[#1E3FE0] to-[#2950F5] flex items-center justify-center flex-shrink-0">
-                <span className="font-head font-black text-white text-xl">0</span>
-              </div>
-              <div>
-                <p className="font-head font-bold text-gray-900 text-sm leading-tight">Zero Compromise</p>
-                <p className="font-body text-xs text-gray-500 mt-0.5">On quality & pricing</p>
-              </div>
-            </div>
+            
           </div>
         </div>
 

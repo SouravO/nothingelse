@@ -219,9 +219,7 @@ export default function HomeSection() {
 
             <div className="my-7 h-[2px] w-16 rounded-full bg-gradient-to-r from-[#3B5BDB] via-[#3B5BDB]/70 to-transparent shadow-[0_0_12px_#3B5BDB]" />
 
-            <p className="font-body text-lg sm:text-xl text-blue-50/70 font-light leading-relaxed max-w-md text-left">
-              A minimalist FMCG brand built for India first, then GCC and global markets.
-            </p>
+           
           </div>
         </div>
 

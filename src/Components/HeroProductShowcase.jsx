@@ -128,7 +128,7 @@ function HeroHeadline() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="hero-line-1 block max-w-full break-words text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-[#AFC7FF]"
+          className="hero-line-1 block max-w-full whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-[#AFC7FF]"
           style={{ textShadow: "0 0 60px rgba(175,199,255,0.45)" }}
         >
           Good everyday products.
