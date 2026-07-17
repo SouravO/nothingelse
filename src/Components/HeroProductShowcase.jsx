@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const BRAND = {
   deep: "#101F7A",
@@ -23,12 +23,100 @@ const SHOWCASE_DATA = [
 
 const SHOWCASE_N = SHOWCASE_DATA.length;
 
-// Animation state sequence
-const ANIMATION_STATE = {
-  MOVING_IN: 0,
-  SITTING: 1,
-  MOVING_OUT: 2,
-};
+// ---- Table asset tuning ---------------------------------------------------
+const TABLE_ASPECT_RATIO = "1221 / 681";
+
+// Where the tabletop line sits inside the table.png box, measured up from
+// the bottom of the aspect-ratio box. This should be the SAME for every
+// product, since it's a property of table.png, not of the bottle photos.
+const TABLE_SURFACE_FROM_BOTTOM = "53%";
+
+// Moves the whole table+product group up/down within its section. Using a
+// transform here (instead of padding-top on the centering wrapper) so it's
+// a single predictable knob that doesn't also change how flex distributes
+// space above/below — positive = further down the page.
+const TABLE_VERTICAL_SHIFT = "20%";
+
+// ---- Per-product tuning ----------------------------------------------------
+// Each product PNG almost certainly has a different amount of transparent
+// padding baked into its canvas (different bottle heights, different export
+// margins), so one global "sits on the table" number can't work for all
+// five. Nudge each one individually here until its base visually touches
+// the tabletop. Positive px = move that product DOWN (closer to the table),
+// negative = move it UP. Start at 0 and adjust per product while previewing.
+const PRODUCT_Y_NUDGE_PX = [0, 0, 0, 0, 0];
+
+function WaveField() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+      <svg
+        className="absolute inset-0 w-full h-full"
+        viewBox="0 0 1600 900"
+        preserveAspectRatio="none"
+      >
+        <defs>
+          <linearGradient id="bgBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0A3D7A" />
+            <stop offset="45%" stopColor="#082F63" />
+            <stop offset="100%" stopColor="#062750" />
+          </linearGradient>
+        </defs>
+
+        <rect width="1600" height="900" fill="url(#bgBlue)" />
+
+        <path
+          d="M-60,760 C150,650 380,625 620,660 C860,695 1080,760 1600,980 L1600,900 L-60,900 Z"
+          fill="#FFFFFF"
+        />
+
+        <path
+          d="M-80,835 C160,710 420,700 700,740 C980,780 1230,860 1600,1040"
+          fill="none"
+          stroke="#FFFFFF"
+          strokeWidth="18"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M-70,860 C170,740 430,730 715,770 C1000,810 1250,890 1600,1060"
+          fill="none"
+          stroke="#082F63"
+          strokeWidth="28"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  );
+}
+
+function PourDrop() {
+  return (
+    <div className="absolute -top-[12%] left-[34%] w-[10%] h-[24%] hidden sm:block pointer-events-none">
+      <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 40 140" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="pourStroke" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+            <stop offset="55%" stopColor="#ffffff" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.85" />
+          </linearGradient>
+        </defs>
+        <path d="M20,0 C8,35 32,70 16,110" fill="none" stroke="url(#pourStroke)" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+
+      <motion.span
+        className="absolute left-1/2 top-0 w-[6px] h-[6px] -ml-[3px] rounded-full bg-white"
+        style={{ boxShadow: "0 0 8px rgba(255,255,255,0.9)" }}
+        animate={{ top: ["0%", "82%"], opacity: [0, 1, 1, 0], x: [0, -5, 4, -2] }}
+        transition={{ duration: 2.4, repeat: Infinity, ease: "easeIn", times: [0, 0.15, 0.85, 1] }}
+      />
+      <motion.span
+        className="absolute left-1/2 top-[82%] -ml-[5px] w-[10px] h-[10px] rounded-full border border-white/70"
+        animate={{ scale: [0.4, 2.6], opacity: [0.8, 0] }}
+        transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut" }}
+      />
+    </div>
+  );
+}
 
 function HeroHeadline() {
   return (
@@ -56,7 +144,7 @@ function HeroHeadline() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="hero-line-1 block max-w-full whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-[#AFC7FF]"
+          className="hero-line-1 block max-w-full break-words text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-[#AFC7FF]"
           style={{ textShadow: "0 0 60px rgba(175,199,255,0.45)" }}
         >
           Good everyday products.
@@ -76,110 +164,128 @@ function HeroHeadline() {
   );
 }
 
-// Sub-component for the dynamic product animation
-// ... (previous imports and constants remain the same)
-
-// Sub-component for the dynamic product animation
-function ProductAnimateSlot({ currentPdtImage, animState }) {
-  const variants = {
-    movingIn: { y: "-40%", opacity: 0, scale: 0.95 }, 
-    sitting: { y: "0%", opacity: 1, scale: 1.1 }, 
-    movingOut: { y: "40%", opacity: 0, scale: 0.95 }, 
-  };
+function LandingProduct({ activeIndex }) {
+  const nudge = PRODUCT_Y_NUDGE_PX[activeIndex] ?? 0;
 
   return (
-    <motion.div
-      key={currentPdtImage} 
-      initial="movingIn"
-      animate={
-        animState === ANIMATION_STATE.MOVING_IN ? "movingIn" :
-        animState === ANIMATION_STATE.SITTING ? "sitting" :
-        "movingOut"
-      }
-      variants={variants}
-      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }} 
-      className="absolute z-20 flex flex-col items-center justify-end pointer-events-none"
-      style={{
-        // UPDATED: 'top' increased to 65% to position the product on the bottom shelf
-        width: "16%", 
-        height: "26%", 
-        top: "65%", 
-        right: "7%", 
-      }}
-    >
-      <img
-        src={currentPdtImage}
-        alt="Product"
-        className="w-full h-full object-contain"
-        style={{ filter: "drop-shadow(0 20px 30px rgba(0,0,0,0.35))" }}
-      />
-      <div className="w-[85%] h-3 rounded-[100%] bg-black/40 blur-md -mt-2" />
-    </motion.div>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={activeIndex}
+        className="relative flex flex-col items-center"
+        style={{ transform: `translateY(${nudge}px)` }}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <motion.img
+          src={SHOWCASE_DATA[activeIndex].image}
+          alt="Product"
+          className="relative z-10 h-[200px] sm:h-[260px] md:h-[340px] lg:h-[420px] xl:h-[480px] w-auto object-contain"
+          style={{ filter: "drop-shadow(0 22px 22px rgba(0,0,0,0.35))" }}
+          variants={{
+            // Starting offset kept small enough to stay inside the clipped
+            // section on mobile (~380px tall). The old -300px pushed the
+            // bottle above that boundary, so it was being hard-clipped
+            // (invisible) rather than faded, then "popped" into view the
+            // instant it crossed back into the visible area — that hard
+            // pop is what read as flashing.
+            hidden: { y: -140, opacity: 0, scale: 0.92 },
+            visible: {
+              y: [-140, 10, -4, 0],
+              // Opacity now reaches 1 by 35% of the fall and holds there,
+              // so the bottle is fully visible for the rest of the fall
+              // and the whole sit-down — it only goes invisible again on
+              // exit, never mid-entrance.
+              opacity: [0, 1, 1, 1],
+              scale: 1,
+              transition: { duration: 0.8, times: [0, 0.35, 0.75, 1], ease: [0.16, 1, 0.3, 1] },
+            },
+            exit: { y: 15, opacity: 0, scale: 0.95, transition: { duration: 0.25, ease: "easeOut" } },
+          }}
+        />
+
+        {/* contact shadow — anchored to the same element as the bottle so the
+            nudge above keeps the shadow glued to the bottle's own base */}
+        <motion.div
+          className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-black/40 blur-md"
+          style={{ width: "65%", height: 12 }}
+          variants={{
+            hidden: { scaleX: 0.35, opacity: 0 },
+            visible: {
+              scaleX: [0.35, 1.2, 1],
+              opacity: [0, 0.65, 0.45],
+              transition: { duration: 0.9, times: [0, 0.62, 1] },
+            },
+            exit: { opacity: 0, transition: { duration: 0.2 } },
+          }}
+        />
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
-// ... (rest of the component remains the same)
-
 export default function ProductShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [animState, setAnimState] = useState(ANIMATION_STATE.MOVING_IN);
 
   useEffect(() => {
-    setAnimState(ANIMATION_STATE.MOVING_IN);
+    // Preload all product images so cycling never waits on a network
+    // fetch mid-transition (that wait was the source of the flicker).
+    PRODUCT_IMAGES.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
 
-    // Starts sitting after 1s
-    const sitTimer = setTimeout(() => {
-      setAnimState(ANIMATION_STATE.SITTING);
-    }, 1000);
-
-    // Exits after 2s total
-    const exitTimer = setTimeout(() => {
-      setAnimState(ANIMATION_STATE.MOVING_OUT);
-    }, 2000);
-
-    // Complete cycle and move to next product after 3s total
-    const cycleInterval = setInterval(() => {
+    const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % SHOWCASE_N);
-      setAnimState(ANIMATION_STATE.MOVING_IN); 
-    }, 3000);
-
-    return () => {
-      clearTimeout(sitTimer);
-      clearTimeout(exitTimer);
-      clearInterval(cycleInterval);
-    };
-  }, [activeIndex]);
-
-  const currentPdt = SHOWCASE_DATA[activeIndex];
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section
       id="hero"
-      className="relative h-[100svh] md:h-screen w-full overflow-hidden bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: `url('/shelf.png')`, 
-        backgroundColor: BRAND.deep, 
-      }}
+      className="relative h-[100svh] md:h-screen w-full overflow-hidden"
+      style={{ backgroundColor: BRAND.deep }}
     >
+      <WaveField />
       <div
         className="absolute inset-0 pointer-events-none z-[6]"
-        style={{ background: "linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)" }}
+        style={{ background: "radial-gradient(ellipse at 25% 100%, rgba(0,0,0,0.18), transparent 60%)" }}
       />
 
       <div className="hidden sm:flex absolute bottom-6 right-6 md:bottom-8 md:right-10 z-30 items-center gap-3">
-        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/70">
+        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/50">
           {String(SHOWCASE_N).padStart(2, "0")} staples — zero fillers
         </span>
-        <span className="w-6 h-px bg-white/40" />
+        <span className="w-6 h-px bg-white/30" />
       </div>
 
-      {/* Main product animation area */}
-      <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
-        <ProductAnimateSlot currentPdtImage={currentPdt.image} animState={animState} />
+      <div className="relative z-10 w-full h-[440px] sm:h-[520px] md:absolute md:inset-y-0 md:right-0 md:h-full md:w-[56%] overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div
+            className="relative w-[100%] sm:w-[95%] md:w-[98%] lg:w-[90%] xl:w-[85%] max-w-[1050px]"
+            style={{ aspectRatio: TABLE_ASPECT_RATIO, transform: `translateY(${TABLE_VERTICAL_SHIFT})` }}
+          >
+            <img
+              src="/table.png"
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
+              style={{ filter: "drop-shadow(0 30px 26px rgba(0,0,0,0.4))" }}
+            />
+
+            <div
+              className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+              style={{ bottom: TABLE_SURFACE_FROM_BOTTOM }}
+            >
+              <LandingProduct activeIndex={activeIndex} />
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="relative z-40 h-full flex items-center">
-        <div className="w-full px-6 sm:px-12 md:w-[50%] md:pr-6">
+      <div className="relative z-40 h-[calc(100%-440px)] sm:h-[calc(100%-520px)] md:h-full flex items-center">
+        <div className="w-full px-6 sm:px-12 md:w-[44%] md:pr-6">
           <div className="max-w-full md:pl-8">
             <HeroHeadline />
 
@@ -206,8 +312,7 @@ export default function ProductShowcase() {
         </div>
       </div>
 
-      {/* Right side navigation dots */}
-      <div className="hidden md:flex flex-col items-center gap-3 absolute right-6 lg:right-10 top-1/2 -translate-y-1/2 z-30">
+      <div className="hidden md:flex flex-col items-center gap-3 absolute right-8 lg:right-12 top-1/2 -translate-y-1/2 z-30">
         <div className="relative w-[3px] h-[180px] rounded-full bg-white/15 overflow-visible">
           <motion.div
             className="absolute bottom-0 left-0 w-full rounded-full bg-gradient-to-t from-white to-[#AFC7FF]"
