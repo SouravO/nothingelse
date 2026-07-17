@@ -23,84 +23,12 @@ const SHOWCASE_DATA = [
 
 const SHOWCASE_N = SHOWCASE_DATA.length;
 
-function WaveField() {
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-      <svg
-        className="absolute inset-0 w-full h-full"
-        viewBox="0 0 1600 900"
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <linearGradient id="bgBlue" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0A3D7A" />
-            <stop offset="45%" stopColor="#082F63" />
-            <stop offset="100%" stopColor="#062750" />
-          </linearGradient>
-          <radialGradient id="circleFill" cx="50%" cy="45%" r="65%">
-            <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="100%" stopColor="#F7FBFF" />
-          </radialGradient>
-        </defs>
-
-        <rect width="1600" height="900" fill="url(#bgBlue)" />
-
-        <circle cx="1240" cy="430" r="255" fill="none" stroke="#0A2E63" strokeWidth="32" />
-        <circle cx="1240" cy="430" r="235" fill="url(#circleFill)" />
-
-        <path
-          d="M-60,760 C150,650 380,625 620,660 C860,695 1080,760 1600,980 L1600,900 L-60,900 Z"
-          fill="#FFFFFF"
-        />
-
-        <path
-          d="M-80,835 C160,710 420,700 700,740 C980,780 1230,860 1600,1040"
-          fill="none"
-          stroke="#FFFFFF"
-          strokeWidth="18"
-          strokeLinecap="round"
-        />
-
-        <path
-          d="M-70,860 C170,740 430,730 715,770 C1000,810 1250,890 1600,1060"
-          fill="none"
-          stroke="#082F63"
-          strokeWidth="28"
-          strokeLinecap="round"
-        />
-      </svg>
-    </div>
-  );
-}
-
-function PourDrop() {
-  return (
-    <div className="absolute -top-[12%] left-[34%] w-[10%] h-[24%] hidden sm:block pointer-events-none">
-      <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 40 140" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="pourStroke" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-            <stop offset="55%" stopColor="#ffffff" stopOpacity="0.5" />
-            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.85" />
-          </linearGradient>
-        </defs>
-        <path d="M20,0 C8,35 32,70 16,110" fill="none" stroke="url(#pourStroke)" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-
-      <motion.span
-        className="absolute left-1/2 top-0 w-[6px] h-[6px] -ml-[3px] rounded-full bg-white"
-        style={{ boxShadow: "0 0 8px rgba(255,255,255,0.9)" }}
-        animate={{ top: ["0%", "82%"], opacity: [0, 1, 1, 0], x: [0, -5, 4, -2] }}
-        transition={{ duration: 2.4, repeat: Infinity, ease: "easeIn", times: [0, 0.15, 0.85, 1] }}
-      />
-      <motion.span
-        className="absolute left-1/2 top-[82%] -ml-[5px] w-[10px] h-[10px] rounded-full border border-white/70"
-        animate={{ scale: [0.4, 2.6], opacity: [0.8, 0] }}
-        transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut" }}
-      />
-    </div>
-  );
-}
+// Animation state sequence
+const ANIMATION_STATE = {
+  MOVING_IN: 0,
+  SITTING: 1,
+  MOVING_OUT: 2,
+};
 
 function HeroHeadline() {
   return (
@@ -148,62 +76,110 @@ function HeroHeadline() {
   );
 }
 
+// Sub-component for the dynamic product animation
+// ... (previous imports and constants remain the same)
+
+// Sub-component for the dynamic product animation
+function ProductAnimateSlot({ currentPdtImage, animState }) {
+  const variants = {
+    movingIn: { y: "-40%", opacity: 0, scale: 0.95 }, 
+    sitting: { y: "0%", opacity: 1, scale: 1.1 }, 
+    movingOut: { y: "40%", opacity: 0, scale: 0.95 }, 
+  };
+
+  return (
+    <motion.div
+      key={currentPdtImage} 
+      initial="movingIn"
+      animate={
+        animState === ANIMATION_STATE.MOVING_IN ? "movingIn" :
+        animState === ANIMATION_STATE.SITTING ? "sitting" :
+        "movingOut"
+      }
+      variants={variants}
+      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }} 
+      className="absolute z-20 flex flex-col items-center justify-end pointer-events-none"
+      style={{
+        // UPDATED: 'top' increased to 65% to position the product on the bottom shelf
+        width: "16%", 
+        height: "26%", 
+        top: "65%", 
+        right: "7%", 
+      }}
+    >
+      <img
+        src={currentPdtImage}
+        alt="Product"
+        className="w-full h-full object-contain"
+        style={{ filter: "drop-shadow(0 20px 30px rgba(0,0,0,0.35))" }}
+      />
+      <div className="w-[85%] h-3 rounded-[100%] bg-black/40 blur-md -mt-2" />
+    </motion.div>
+  );
+}
+
+// ... (rest of the component remains the same)
+
 export default function ProductShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [animState, setAnimState] = useState(ANIMATION_STATE.MOVING_IN);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    setAnimState(ANIMATION_STATE.MOVING_IN);
+
+    // Starts sitting after 1s
+    const sitTimer = setTimeout(() => {
+      setAnimState(ANIMATION_STATE.SITTING);
+    }, 1000);
+
+    // Exits after 2s total
+    const exitTimer = setTimeout(() => {
+      setAnimState(ANIMATION_STATE.MOVING_OUT);
+    }, 2000);
+
+    // Complete cycle and move to next product after 3s total
+    const cycleInterval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % SHOWCASE_N);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, []);
+      setAnimState(ANIMATION_STATE.MOVING_IN); 
+    }, 3000);
+
+    return () => {
+      clearTimeout(sitTimer);
+      clearTimeout(exitTimer);
+      clearInterval(cycleInterval);
+    };
+  }, [activeIndex]);
+
+  const currentPdt = SHOWCASE_DATA[activeIndex];
 
   return (
     <section
       id="hero"
-      className="relative h-[100svh] md:h-screen w-full overflow-hidden"
-      style={{ backgroundColor: BRAND.deep }}
+      className="relative h-[100svh] md:h-screen w-full overflow-hidden bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: `url('/shelf.png')`, 
+        backgroundColor: BRAND.deep, 
+      }}
     >
-      <WaveField />
       <div
         className="absolute inset-0 pointer-events-none z-[6]"
-        style={{ background: "radial-gradient(ellipse at 25% 100%, rgba(0,0,0,0.18), transparent 60%)" }}
+        style={{ background: "linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)" }}
       />
 
       <div className="hidden sm:flex absolute bottom-6 right-6 md:bottom-8 md:right-10 z-30 items-center gap-3">
-        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/50">
+        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/70">
           {String(SHOWCASE_N).padStart(2, "0")} staples — zero fillers
         </span>
-        <span className="w-6 h-px bg-white/30" />
+        <span className="w-6 h-px bg-white/40" />
       </div>
 
-      <div className="relative z-10 w-full h-[280px] sm:h-[340px] md:absolute md:inset-y-0 md:right-0 md:h-full md:w-[56%] overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute inset-x-0 top-0"
-          style={{ height: `${SHOWCASE_N * 100}%` }}
-          animate={{ y: `-${(activeIndex / SHOWCASE_N) * 100}%` }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          {SHOWCASE_DATA.map((item, i) => (
-            <div
-              key={i}
-              className="w-full flex flex-col items-center justify-center pointer-events-auto"
-              style={{ height: `${100 / SHOWCASE_N}%` }}
-            >
-              <img
-                src={item.image}
-                alt="Product"
-                className="h-[68%] sm:h-[72%] md:h-[78%] object-contain mt-10 md:mt-0"
-                style={{ filter: "drop-shadow(0 30px 40px rgba(0,0,0,0.25))" }}
-              />
-              <div className="w-[34%] h-3 rounded-[100%] bg-black/25 blur-md -mt-3" />
-            </div>
-          ))}
-        </motion.div>
+      {/* Main product animation area */}
+      <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
+        <ProductAnimateSlot currentPdtImage={currentPdt.image} animState={animState} />
       </div>
 
-      <div className="relative z-40 h-[calc(100%-280px)] sm:h-[calc(100%-340px)] md:h-full flex items-center">
-        <div className="w-full px-6 sm:px-12 md:w-[44%] md:pr-6">
+      <div className="relative z-40 h-full flex items-center">
+        <div className="w-full px-6 sm:px-12 md:w-[50%] md:pr-6">
           <div className="max-w-full md:pl-8">
             <HeroHeadline />
 
@@ -230,7 +206,8 @@ export default function ProductShowcase() {
         </div>
       </div>
 
-      <div className="hidden md:flex flex-col items-center gap-3 absolute right-8 lg:right-12 top-1/2 -translate-y-1/2 z-30">
+      {/* Right side navigation dots */}
+      <div className="hidden md:flex flex-col items-center gap-3 absolute right-6 lg:right-10 top-1/2 -translate-y-1/2 z-30">
         <div className="relative w-[3px] h-[180px] rounded-full bg-white/15 overflow-visible">
           <motion.div
             className="absolute bottom-0 left-0 w-full rounded-full bg-gradient-to-t from-white to-[#AFC7FF]"
