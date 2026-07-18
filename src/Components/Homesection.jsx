@@ -7,7 +7,19 @@ const PRODUCT_NAMES = ["Shampoo", "Rice", "Dishwash", "Oils", "Tea"];
 const PRODUCT_SLUGS = ["shampoo", "rice", "dishwash", "oils", "tea"];
 
 const SHOWCASE_COUNT = PRODUCT_IMAGES.length;
-const AUTO_ADVANCE_MS = 7500;
+
+// Was: a fixed setInterval(AUTO_ADVANCE_MS) that retriggered the drop-in
+// timeline. Problem: the full 5-item stagger + sweep sequence takes ~8.5s
+// to finish, longer than the old 7.5s interval — so each replay could start
+// before the previous one had finished landing every product, resetting
+// mid-air items (like #3, sitting in the middle of the stagger) back to
+// invisible. That's the intermittent "3rd item missing" bug.
+// Fix: the timeline now schedules its own next cycle via onComplete, so a
+// new cycle can only ever start once the current one has fully finished —
+// no possible overlap, regardless of exact durations. This is just the
+// pause *after* everything has landed, before it resets and falls again.
+const CYCLE_HOLD_MS = 1500;
+
 const NAV_LOGO_SELECTOR = 'header a[aria-label="Nothing Else — Home"]';
 
 const INTRO_START_DELAY = 0.1;
@@ -37,23 +49,70 @@ export default function HomeSection() {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
+  // ---- Broken-image safety net -----------------------------------------
+  const [imageErrors, setImageErrors] = useState({});
+
+  const markImageError = (i, src) => {
+    console.warn(`[HomeSection] Product image failed to load: "${src}" (index ${i}, "${PRODUCT_NAMES[i]}"). Check that the file exists in /public with that exact name/casing.`);
+    setImageErrors((prev) => (prev[i] ? prev : { ...prev, [i]: true }));
+  };
+
+  useEffect(() => {
+    PRODUCT_IMAGES.forEach((src, i) => {
+      const img = new Image();
+      img.onerror = () => markImageError(i, src);
+      img.src = src;
+    });
+  }, []);
+
   // TODO: wire this up to actual routing/navigation logic later
   const handleCategoryClick = (slug) => {
     console.log(`Navigate to "${slug}" category page`);
   };
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % SHOWCASE_COUNT);
-    }, AUTO_ADVANCE_MS);
-    return () => clearInterval(id);
-  }, []);
+  // ---- Hover shake ----------------------------------------------------
+  const handleProductEnter = (i) => {
+    const el = productsRef.current[i];
+    if (!el) return;
+    gsap.killTweensOf(el);
+    gsap
+      .timeline()
+      .to(el, { rotation: -8, y: -10, scale: 1.045, duration: 0.12, ease: "power2.out" })
+      .to(el, { rotation: 7, duration: 0.13, ease: "power1.inOut" })
+      .to(el, { rotation: -5, duration: 0.13, ease: "power1.inOut" })
+      .to(el, { rotation: 3, duration: 0.12, ease: "power1.inOut" })
+      .to(el, { rotation: -1.5, duration: 0.12, ease: "power1.inOut" })
+      .to(el, { rotation: 0, duration: 0.14, ease: "power1.inOut" });
+  };
 
+  const handleProductLeave = (i) => {
+    const el = productsRef.current[i];
+    if (!el) return;
+    gsap.killTweensOf(el);
+    gsap.to(el, { rotation: 0, y: 0, scale: 1, duration: 0.45, ease: "elastic.out(1, 0.55)" });
+  };
+
+  // ---- Drop-in animation, self-scheduling repeat ------------------------
+  // The animation sequence below (drop, land-bounce, pulse ring, label
+  // reveal, sweep) is UNCHANGED from before. What changed is only how the
+  // *next* cycle gets triggered: instead of an external setInterval racing
+  // against this timeline's actual duration, the timeline schedules its own
+  // continuation in onComplete. That guarantees the reset-and-refall for
+  // the next round never starts until every product (including #3) has
+  // fully landed in this round.
   useEffect(() => {
+    let timeoutId;
+
     let ctx = gsap.context(() => {
       if (!productsRef.current.length || !platformRef.current) return;
 
-      const tl = gsap.timeline();
+      const tl = gsap.timeline({
+        onComplete: () => {
+          timeoutId = setTimeout(() => {
+            setActiveIndex((prev) => (prev + 1) % SHOWCASE_COUNT);
+          }, CYCLE_HOLD_MS);
+        },
+      });
 
       gsap.set(productsRef.current, { y: -1000, opacity: 0 }); 
       gsap.set(shadowsRef.current, { scale: 2.2, opacity: 0, filter: "blur(15px)" });
@@ -130,10 +189,11 @@ export default function HomeSection() {
 
     }, containerRef);
 
-    return () => ctx.revert();
+    return () => {
+      clearTimeout(timeoutId);
+      ctx.revert();
+    };
   }, [activeIndex]);
-
-  // Initial content animations handled locally (products drop etc.).
 
   return (
     <section id="home" ref={sectionRef} className="relative bg-[#0A3DAE]">
@@ -239,7 +299,7 @@ export default function HomeSection() {
             <div className="absolute bottom-[12px] inset-x-0 flex justify-center items-end gap-2 md:gap-4 px-[2%] z-20">
               {PRODUCT_IMAGES.map((img, i) => (
                 <div key={i} className="relative w-[19%] md:w-[18%] flex flex-col items-center">
-                  
+
                   <div
                     ref={el => pulsesRef.current[i] = el}
                     className="absolute bottom-0 w-32 h-8 bg-gradient-to-r from-[#3B5BDB]/80 to-transparent rounded-full blur-[6px] opacity-0 mix-blend-screen pointer-events-none transform -translate-y-1/2"
@@ -252,12 +312,28 @@ export default function HomeSection() {
                     style={{ transformOrigin: "center center" }}
                   />
 
-                  <img
-                    ref={el => productsRef.current[i] = el}
-                    src={img}
-                    alt={`Premium FMCG Product ${i+1}`}
-                    className="relative z-10 w-full max-h-[240px] sm:max-h-[320px] md:max-h-[420px] lg:max-h-[500px] object-contain origin-bottom will-change-transform drop-shadow-[0_12px_24px_rgba(0,0,0,0.35)]"
-                  />
+                  <div className="relative flex items-end justify-center w-full h-[240px] sm:h-[320px] md:h-[420px] lg:h-[500px]">
+                    <img
+                      ref={el => productsRef.current[i] = el}
+                      src={img}
+                      alt={`Premium FMCG Product ${i+1}`}
+                      onError={() => markImageError(i, img)}
+                      onMouseEnter={() => handleProductEnter(i)}
+                      onMouseLeave={() => handleProductLeave(i)}
+                      className={`relative z-10 w-full max-h-[240px] sm:max-h-[320px] md:max-h-[420px] lg:max-h-[500px] object-contain origin-bottom will-change-transform drop-shadow-[0_12px_24px_rgba(0,0,0,0.35)] pointer-events-auto ${imageErrors[i] ? "invisible" : ""}`}
+                    />
+
+                    {imageErrors[i] && (
+                      <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-end gap-2 pb-4">
+                        <div className="w-16 h-24 sm:w-20 sm:h-28 rounded-lg border border-dashed border-white/30 bg-white/5 flex items-center justify-center">
+                          <Square size={18} className="text-white/30" />
+                        </div>
+                        <span className="text-[9px] tracking-widest uppercase text-white/40 text-center px-1">
+                          {PRODUCT_NAMES[i]}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

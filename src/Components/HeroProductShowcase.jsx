@@ -11,25 +11,51 @@ const BRAND = {
   goldGlow: "#FFEFC7",
 };
 
-const PRODUCT_IMAGES = ["/pdt1.png", "/pdt2.png", "/pdt3.png", "/pdt4.png", "/pdt5.png"];
+const PRODUCT_IMAGES = ["/pdt2.png", "/pdt3.png", "/pdt4.png", "/pdt5.png"];
 
 const SHOWCASE_DATA = [
   { image: PRODUCT_IMAGES[0] },
   { image: PRODUCT_IMAGES[1] },
   { image: PRODUCT_IMAGES[2] },
   { image: PRODUCT_IMAGES[3] },
-  { image: PRODUCT_IMAGES[4] },
 ];
 
 const SHOWCASE_N = SHOWCASE_DATA.length;
 
-// ---- Table asset tuning ---------------------------------------------------
-const TABLE_ASPECT_RATIO = "1221 / 681";
+// ---- Table geometry (single source of truth) -------------------------------
+// The table used to be a PNG with its own baked-in proportions, and the
+// bottle's "rest here" position was a hand-tuned % guess against it, and the
+// bottle's height jumped between fixed px values at each Tailwind breakpoint.
+// Three independently-scaling things that only agreed by coincidence at the
+// sizes that got tested — which is exactly why it looked fine on some
+// desktops and broken on others.
+//
+// Now the table is drawn from this viewBox, and the bottle's rest line and
+// size are both *fractions of this same box* (via CSS container query units,
+// `cqw`, on the stage below). There's one number line, not three, so it
+// can't drift out of sync at any viewport width.
+const TABLE_VB_W = 1221;
+const TABLE_VB_H = 681;
+const TABLE_ASPECT_RATIO = `${TABLE_VB_W} / ${TABLE_VB_H}`;
 
-// Where the tabletop line sits inside the table.png box, measured up from
-// the bottom of the aspect-ratio box. This should be the SAME for every
-// product, since it's a property of table.png, not of the bottle photos.
-const TABLE_SURFACE_FROM_BOTTOM = "53%";
+const TABLE_CENTER_X = TABLE_VB_W / 2;
+const TABLE_TOP_CENTER_Y = 250;
+const TABLE_TOP_RX = 300;
+const TABLE_TOP_RY = 46;
+const TABLE_EDGE_THICKNESS = 16;
+
+const LEG_WIDTH = 16;
+const LEG_BOTTOM_Y = 600;
+
+const BASE_CENTER_Y = 604;
+const BASE_RX = 130;
+const BASE_RY = 18;
+const BASE_THICKNESS = 12;
+
+// Front-most point of the tabletop disc — where a centered bottle's base
+// should sit for it to read as resting on the table.
+const SURFACE_Y = TABLE_TOP_CENTER_Y + TABLE_TOP_RY;
+const SURFACE_FROM_BOTTOM_PCT = ((TABLE_VB_H - SURFACE_Y) / TABLE_VB_H) * 100;
 
 // Moves the whole table+product group up/down within its section. Using a
 // transform here (instead of padding-top on the centering wrapper) so it's
@@ -37,14 +63,24 @@ const TABLE_SURFACE_FROM_BOTTOM = "53%";
 // space above/below — positive = further down the page.
 const TABLE_VERTICAL_SHIFT = "20%";
 
+// Bottle height as a fraction of the STAGE's own width (cqw = % of the
+// nearest `container-type` ancestor, set on the stage wrapper below).
+// Because it's expressed the same way as the table geometry — as a fraction
+// of the same box — it stays in proportion at every screen size, instead of
+// only at the breakpoint it was tuned on.
+const PRODUCT_HEIGHT = "clamp(170px, 50cqw, 540px)";
+
 // ---- Per-product tuning ----------------------------------------------------
 // Each product PNG almost certainly has a different amount of transparent
 // padding baked into its canvas (different bottle heights, different export
-// margins), so one global "sits on the table" number can't work for all
-// five. Nudge each one individually here until its base visually touches
-// the tabletop. Positive px = move that product DOWN (closer to the table),
-// negative = move it UP. Start at 0 and adjust per product while previewing.
-const PRODUCT_Y_NUDGE_PX = [0, 0, 0, 0, 0];
+// margins), so one global "sits on the table" number can't work for all of
+// them. Nudge each one individually here until its base visually touches
+// the tabletop. In cqw, so a value tuned at one size stays correct at every
+// size. Positive = further down (closer to the table), negative = further
+// up. Started all four at the same value (pdt2's tuned nudge) since they're
+// likely from the same shoot/export — check pdt3/pdt4/pdt5 individually as
+// they cycle through and adjust their own index if any still show a gap.
+const PRODUCT_Y_NUDGE_CQW = [3, 3, 3, 3];
 
 function WaveField() {
   return (
@@ -118,6 +154,116 @@ function PourDrop() {
   );
 }
 
+// ---- Ambient depth --------------------------------------------------------
+// The product stage was a flat gradient with a table dropped in the middle —
+// nothing to give it depth. A handful of slow, low-opacity drifting dots
+// behind the table reads as ambient dust/light without competing with the
+// product or text. Cheap (no canvas, no images), same visual language as
+// the particle work on Pitch Studio.
+// ---- Ambient depth --------------------------------------------------------
+// Previous version was uniform dots jittering on the spot — random noise,
+// no sense of intent. This version gives them a single shared direction
+// (slow upward drift, like light motes rising past the product) and ties
+// size to blur so nearer/farther particles read as actual depth rather
+// than identical dots at different opacities. One in four uses the brand
+// gold instead of ice-blue, echoing the badge/CTA color so it feels tied
+// to the palette instead of generic sparkle.
+function AmbientDust() {
+  const particles = [
+    { size: 8, top: "70%", left: "10%", delay: 0, dur: 11, gold: false },
+    { size: 4, top: "85%", left: "30%", delay: 1.6, dur: 14, gold: false },
+    { size: 10, top: "60%", left: "92%", delay: 0.8, dur: 10, gold: true },
+    { size: 5, top: "78%", left: "60%", delay: 2.4, dur: 13, gold: false },
+    { size: 6, top: "90%", left: "78%", delay: 1.2, dur: 12, gold: false },
+    { size: 9, top: "65%", left: "42%", delay: 3.1, dur: 10.5, gold: true },
+    { size: 4, top: "94%", left: "18%", delay: 0.4, dur: 15, gold: false },
+    { size: 7, top: "55%", left: "20%", delay: 2.0, dur: 11.5, gold: false },
+  ];
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+      {particles.map((p, i) => {
+        // Bigger particle = "closer" = sharper + brighter. Smaller = "farther"
+        // = softer + dimmer. Same rule for every dot, so the variation reads
+        // as depth rather than randomness.
+        const blur = Math.max(0, 3 - p.size * 0.3);
+        const peakOpacity = 0.25 + (p.size / 10) * 0.45;
+        const color = p.gold ? "#F3CE7C" : "#AFC7FF";
+
+        return (
+          <motion.span
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: p.size,
+              height: p.size,
+              top: p.top,
+              left: p.left,
+              background: `radial-gradient(circle, #ffffff 0%, ${color} 65%, transparent 100%)`,
+              filter: `blur(${blur}px)`,
+              boxShadow: `0 0 ${p.size * 1.8}px rgba(${p.gold ? "243,206,124" : "175,199,255"},0.4)`,
+            }}
+            animate={{
+              y: [0, -140 - p.size * 6],
+              opacity: [0, peakOpacity, peakOpacity, 0],
+              x: [0, i % 2 === 0 ? 10 : -10],
+            }}
+            transition={{
+              duration: p.dur,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: p.delay,
+              times: [0, 0.15, 0.8, 1],
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function HeroBadge() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className="inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full border border-white/15 bg-white/5 backdrop-blur-sm"
+    >
+      <span className="w-1.5 h-1.5 rounded-full" style={{ background: BRAND.gold }} />
+      <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-[#F3CE7C]">
+        4 staples — zero fillers
+      </span>
+    </motion.div>
+  );
+}
+
+function HeroCTA() {
+  return (
+    <motion.a
+      href="#products"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.97 }}
+      className="group inline-flex items-center gap-2.5 mt-8 px-6 py-3.5 rounded-full font-body font-medium text-[15px] text-[#0B1B5C] shadow-[0_8px_30px_rgba(217,168,74,0.35)]"
+      style={{ background: `linear-gradient(135deg, ${BRAND.goldLight}, ${BRAND.gold})` }}
+    >
+      Explore the range
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        className="transition-transform duration-300 group-hover:translate-x-1"
+      >
+        <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="#0B1B5C" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </motion.a>
+  );
+}
+
 function HeroHeadline() {
   return (
     <div className="relative mb-6">
@@ -164,15 +310,98 @@ function HeroHeadline() {
   );
 }
 
+// ---- The table, drawn in code -----------------------------------------------
+// Same disc trick for both the tabletop and the base: an "edge" ellipse
+// drawn first, offset down by the material's thickness, then the "top face"
+// ellipse drawn on top of it — the thin crescent that peeks out below the
+// top face reads as the rim/thickness of the object.
+function TableGraphic() {
+  return (
+    <svg
+      className="absolute inset-0 w-full h-full"
+      viewBox={`0 0 ${TABLE_VB_W} ${TABLE_VB_H}`}
+      preserveAspectRatio="xMidYMid meet"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="tableTop" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#E7E0D2" />
+          <stop offset="55%" stopColor="#CFC7B6" />
+          <stop offset="100%" stopColor="#B7AE9A" />
+        </linearGradient>
+        <linearGradient id="tableEdge" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#A79E8C" />
+          <stop offset="100%" stopColor="#8C8271" />
+        </linearGradient>
+        <linearGradient id="metalLeg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#1C1C1F" />
+          <stop offset="45%" stopColor="#4A4A50" />
+          <stop offset="55%" stopColor="#4A4A50" />
+          <stop offset="100%" stopColor="#0A0A0C" />
+        </linearGradient>
+        <linearGradient id="metalBaseTop" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#5A5A60" />
+          <stop offset="100%" stopColor="#232326" />
+        </linearGradient>
+        <radialGradient id="floorShadow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#000000" stopOpacity="0.38" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      {/* ground contact shadow */}
+      <ellipse
+        cx={TABLE_CENTER_X}
+        cy={BASE_CENTER_Y + BASE_THICKNESS + 18}
+        rx={BASE_RX * 1.6}
+        ry={22}
+        fill="url(#floorShadow)"
+      />
+
+      {/* leg */}
+      <rect
+        x={TABLE_CENTER_X - LEG_WIDTH / 2}
+        y={SURFACE_Y + TABLE_EDGE_THICKNESS - 4}
+        width={LEG_WIDTH}
+        height={LEG_BOTTOM_Y - (SURFACE_Y + TABLE_EDGE_THICKNESS - 4)}
+        rx={LEG_WIDTH / 2}
+        fill="url(#metalLeg)"
+      />
+
+      {/* base */}
+      <ellipse cx={TABLE_CENTER_X} cy={BASE_CENTER_Y + BASE_THICKNESS} rx={BASE_RX} ry={BASE_RY} fill="#161618" />
+      <ellipse cx={TABLE_CENTER_X} cy={BASE_CENTER_Y} rx={BASE_RX} ry={BASE_RY} fill="url(#metalBaseTop)" />
+
+      {/* tabletop */}
+      <ellipse
+        cx={TABLE_CENTER_X}
+        cy={TABLE_TOP_CENTER_Y + TABLE_EDGE_THICKNESS}
+        rx={TABLE_TOP_RX}
+        ry={TABLE_TOP_RY}
+        fill="url(#tableEdge)"
+      />
+      <ellipse cx={TABLE_CENTER_X} cy={TABLE_TOP_CENTER_Y} rx={TABLE_TOP_RX} ry={TABLE_TOP_RY} fill="url(#tableTop)" />
+      <ellipse
+        cx={TABLE_CENTER_X - TABLE_TOP_RX * 0.25}
+        cy={TABLE_TOP_CENTER_Y - TABLE_TOP_RY * 0.35}
+        rx={TABLE_TOP_RX * 0.4}
+        ry={TABLE_TOP_RY * 0.3}
+        fill="#FFFFFF"
+        opacity="0.25"
+      />
+    </svg>
+  );
+}
+
 function LandingProduct({ activeIndex }) {
-  const nudge = PRODUCT_Y_NUDGE_PX[activeIndex] ?? 0;
+  const nudgeCqw = PRODUCT_Y_NUDGE_CQW[activeIndex] ?? 0;
 
   return (
     <AnimatePresence mode="wait">
       <motion.div
         key={activeIndex}
         className="relative flex flex-col items-center"
-        style={{ transform: `translateY(${nudge}px)` }}
+        style={{ transform: `translateY(${nudgeCqw}cqw)` }}
         initial="hidden"
         animate="visible"
         exit="exit"
@@ -180,8 +409,8 @@ function LandingProduct({ activeIndex }) {
         <motion.img
           src={SHOWCASE_DATA[activeIndex].image}
           alt="Product"
-          className="relative z-10 h-[200px] sm:h-[260px] md:h-[340px] lg:h-[420px] xl:h-[480px] w-auto object-contain"
-          style={{ filter: "drop-shadow(0 22px 22px rgba(0,0,0,0.35))" }}
+          className="relative z-10 w-auto object-contain"
+          style={{ height: PRODUCT_HEIGHT, filter: "drop-shadow(0 22px 22px rgba(0,0,0,0.35))" }}
           variants={{
             // Starting offset kept small enough to stay inside the clipped
             // section on mobile (~380px tall). The old -300px pushed the
@@ -253,30 +482,22 @@ export default function ProductShowcase() {
         style={{ background: "radial-gradient(ellipse at 25% 100%, rgba(0,0,0,0.18), transparent 60%)" }}
       />
 
-      <div className="hidden sm:flex absolute bottom-6 right-6 md:bottom-8 md:right-10 z-30 items-center gap-3">
-        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/50">
-          {String(SHOWCASE_N).padStart(2, "0")} staples — zero fillers
-        </span>
-        <span className="w-6 h-px bg-white/30" />
-      </div>
-
       <div className="relative z-10 w-full h-[440px] sm:h-[520px] md:absolute md:inset-y-0 md:right-0 md:h-full md:w-[56%] overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center">
           <div
             className="relative w-[100%] sm:w-[95%] md:w-[98%] lg:w-[90%] xl:w-[85%] max-w-[1050px]"
-            style={{ aspectRatio: TABLE_ASPECT_RATIO, transform: `translateY(${TABLE_VERTICAL_SHIFT})` }}
+            style={{
+              aspectRatio: TABLE_ASPECT_RATIO,
+              transform: `translateY(${TABLE_VERTICAL_SHIFT})`,
+              containerType: "inline-size",
+            }}
           >
-            <img
-              src="/table.png"
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
-              style={{ filter: "drop-shadow(0 30px 26px rgba(0,0,0,0.4))" }}
-            />
+            <AmbientDust />
+            <TableGraphic />
 
             <div
               className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
-              style={{ bottom: TABLE_SURFACE_FROM_BOTTOM }}
+              style={{ bottom: `${SURFACE_FROM_BOTTOM_PCT}%` }}
             >
               <LandingProduct activeIndex={activeIndex} />
             </div>
@@ -287,6 +508,8 @@ export default function ProductShowcase() {
       <div className="relative z-40 h-[calc(100%-440px)] sm:h-[calc(100%-520px)] md:h-full flex items-center">
         <div className="w-full px-6 sm:px-12 md:w-[44%] md:pr-6">
           <div className="max-w-full md:pl-8">
+            <HeroBadge />
+
             <HeroHeadline />
 
             <div className="w-14 h-[3px] rounded-full bg-gradient-to-r from-white to-transparent opacity-70 mb-6" />
@@ -294,6 +517,8 @@ export default function ProductShowcase() {
             <p className="font-body text-lg sm:text-xl text-blue-50/90 font-light leading-relaxed max-w-lg drop-shadow-md">
               A minimalist FMCG brand built for India first, then GCC and global markets.
             </p>
+
+            <HeroCTA />
 
             <div className="flex md:hidden items-center gap-2 mt-6" aria-hidden="true">
               {SHOWCASE_DATA.map((_, i) => (
