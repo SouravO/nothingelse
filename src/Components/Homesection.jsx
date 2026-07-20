@@ -29,6 +29,7 @@ export default function HomeSection() {
   };
 
   const productsRef = useRef([]);
+  const productInnerRef = useRef([]);
   const shadowsRef = useRef([]);
   const pulsesRef = useRef([]);
   const labelsRef = useRef([]);
@@ -59,8 +60,15 @@ export default function HomeSection() {
   };
 
   // ---- Hover shake ----------------------------------------------------
+  // IMPORTANT: this animates productInnerRef (the <img> itself), NOT
+  // productsRef (the outer wrapper). productsRef is owned by the master
+  // falling/exit timeline below. If we ever killTweensOf/animate the same
+  // node the master timeline targets, killTweensOf will rip that node's
+  // tweens OUT of the repeating master timeline permanently, and that
+  // product will never animate again on future loops. Keeping hover on a
+  // separate inner node means it can never touch the master timeline.
   const handleProductEnter = (i) => {
-    const el = productsRef.current[i];
+    const el = productInnerRef.current[i];
     if (!el) return;
     gsap.killTweensOf(el);
     gsap
@@ -74,84 +82,55 @@ export default function HomeSection() {
   };
 
   const handleProductLeave = (i) => {
-    const el = productsRef.current[i];
+    const el = productInnerRef.current[i];
     if (!el) return;
     gsap.killTweensOf(el);
     gsap.to(el, { rotation: 0, y: 0, scale: 1, duration: 0.45, ease: "elastic.out(1, 0.55)" });
   };
 
-  // ---- Drop-in animation ------------------------------------------------
-  // Initial entrance drops every product once. The loop after that re-drops
-  // one product at a time so the full row is never reset to invisible.
+  // ---- Drop-in / hold / disappear-together cycle -------------------------
+  // One single repeating timeline drives the whole sequence:
+  //   1) every product drops in ONE AT A TIME (in order)
+  //   2) once ALL are visible on the shelf, a shimmer sweep plays and the
+  //      full row holds there together for a moment
+  //   3) ALL products disappear together (not one at a time)
+  //   4) the timeline repeats, resetting everything to hidden and starting
+  //      the one-by-one drop again
+  // Because every repeat starts by explicitly resetting every product to
+  // opacity:0/hidden before playing, there is never a stray moment where a
+  // single product is randomly invisible while the rest sit static — the
+  // "hidden" state only ever happens for the whole group together, not per item.
   useEffect(() => {
-    let timeoutId;
-    let loopTl;
-    let loopIndex = 0;
-
     let ctx = gsap.context(() => {
       if (!productsRef.current.length || !platformRef.current) return;
 
-      const dropOne = (i) => {
-        const el = productsRef.current[i];
-        const shadow = shadowsRef.current[i];
-        const pulse = pulsesRef.current[i];
-        if (!el || !shadow || !pulse) return;
+      const dropDuration = 0.55;
+      const bounceDuration = 0.15;
+      const gapBetweenDrops = 0.3;
+      const holdAllVisible = INTRO_HOLD_DURATION + 0.8;
+      const exitDuration = 0.5;
+      const cycleGap = 0.4;
 
-        setActiveIndex(i);
-        gsap.killTweensOf([el, shadow, pulse, platformRef.current]);
+      const masterTl = gsap.timeline({ repeat: -1 });
 
-        loopTl = gsap.timeline({
-          onComplete: () => {
-            loopIndex = (i + 1) % SHOWCASE_COUNT;
-            timeoutId = setTimeout(() => dropOne(loopIndex), 900);
-          },
-        });
+      // Reset everything to its hidden starting state at the top of every cycle
+      masterTl.set(productsRef.current, { y: -1000, opacity: 0, rotation: 0, scale: 1 });
+      // Also reset the hover layer every cycle, in case a hover tween was
+      // still mid-flight when the loop restarted — guarantees a clean slate.
+      masterTl.set(productInnerRef.current, { y: 0, rotation: 0, scale: 1 });
+      masterTl.set(shadowsRef.current, { scale: 2.2, opacity: 0, filter: "blur(15px)" });
+      masterTl.set(pulsesRef.current, { scale: 0.2, opacity: 0 });
+      masterTl.set(labelsRef.current, { y: -15, opacity: 0 });
+      masterTl.set(platformRef.current, { y: 0 });
+      masterTl.set(sweepRef.current, { xPercent: -180, opacity: 0 });
 
-        loopTl.set(el, { y: -360, opacity: 0, rotation: 0, scale: 1 });
-        loopTl.set(shadow, { scale: 2.2, opacity: 0, filter: "blur(15px)" }, 0);
-        loopTl.fromTo(
-          el,
-          { y: -360, opacity: 0 },
-          { y: 0, opacity: 1, ease: "power2.out", duration: 0.55 },
-          0
-        );
-        loopTl.to(shadow, { scale: 1, opacity: 0.85, filter: "blur(2px)", ease: "power2.out", duration: 0.55 }, 0);
-        loopTl.to(platformRef.current, { y: 4, duration: 0.06, ease: "power1.out" }, 0.55);
-        loopTl.to(platformRef.current, { y: 0, duration: 0.18, ease: "power2.out" }, 0.61);
-        loopTl.fromTo(pulse, { scale: 0.3, opacity: 0.95 }, { scale: 2.4, opacity: 0, duration: 0.55, ease: "power1.out" }, 0.55);
-        loopTl.to(el, { y: -12, ease: "power1.out", duration: 0.15 }, 0.55);
-        loopTl.to(shadow, { scale: 1.25, opacity: 0.45, filter: "blur(6px)", ease: "power1.out", duration: 0.15 }, 0.55);
-        loopTl.to(el, { y: 0, ease: "power1.in", duration: 0.15 }, 0.7);
-        loopTl.to(shadow, { scale: 1, opacity: 0.85, filter: "blur(2px)", ease: "power1.in", duration: 0.15 }, 0.7);
-      };
-
-      const tl = gsap.timeline({
-        onComplete: () => {
-          timeoutId = setTimeout(() => dropOne(loopIndex), 1200);
-        },
-      });
-
-      gsap.set(productsRef.current, { y: -1000, opacity: 0 }); 
-      gsap.set(shadowsRef.current, { scale: 2.2, opacity: 0, filter: "blur(15px)" });
-      gsap.set(pulsesRef.current, { scale: 0.2, opacity: 0 });
-      gsap.set(labelsRef.current, { y: -15, opacity: 0 });
-      gsap.set(platformRef.current, { y: 0 });
-      gsap.set(sweepRef.current, { xPercent: -180, opacity: 0 });
-
-      let currentTime = 0;
+      let currentTime = INTRO_START_DELAY;
 
       productsRef.current.forEach((el, i) => {
-        const dropDuration = 0.55;
-        const bounceDuration = 0.15;
+        masterTl.call(() => setActiveIndex(i), null, currentTime);
 
-        tl.to(el, { 
-          y: 0, 
-          opacity: 1, 
-          ease: "power2.out", 
-          duration: dropDuration 
-        }, currentTime);
-
-        tl.to(shadowsRef.current[i], {
+        masterTl.to(el, { y: 0, opacity: 1, ease: "power2.out", duration: dropDuration }, currentTime);
+        masterTl.to(shadowsRef.current[i], {
           scale: 1,
           opacity: 0.85,
           filter: "blur(2px)",
@@ -161,54 +140,81 @@ export default function HomeSection() {
 
         const landTime = currentTime + dropDuration;
 
-        tl.to(platformRef.current, { y: 4, duration: 0.06, ease: "power1.out" }, landTime);
-        tl.to(platformRef.current, { y: 0, duration: 0.18, ease: "power2.out" }, landTime + 0.06);
+        masterTl.to(platformRef.current, { y: 4, duration: 0.06, ease: "power1.out" }, landTime);
+        masterTl.to(platformRef.current, { y: 0, duration: 0.18, ease: "power2.out" }, landTime + 0.06);
 
-        tl.fromTo(pulsesRef.current[i], 
+        masterTl.fromTo(pulsesRef.current[i],
           { scale: 0.3, opacity: 0.95 },
-          { scale: 2.4, opacity: 0, duration: 0.55, ease: "power1.out" }, 
+          { scale: 2.4, opacity: 0, duration: 0.55, ease: "power1.out" },
           landTime
         );
 
-        tl.to(el, { y: -12, ease: "power1.out", duration: bounceDuration }, landTime);
-        tl.to(shadowsRef.current[i], { 
-          scale: 1.25, 
-          opacity: 0.45, 
-          filter: "blur(6px)", 
-          ease: "power1.out", 
-          duration: bounceDuration 
+        masterTl.to(el, { y: -12, ease: "power1.out", duration: bounceDuration }, landTime);
+        masterTl.to(shadowsRef.current[i], {
+          scale: 1.25,
+          opacity: 0.45,
+          filter: "blur(6px)",
+          ease: "power1.out",
+          duration: bounceDuration
         }, landTime);
 
-        tl.to(el, { y: 0, ease: "power1.in", duration: bounceDuration }, landTime + bounceDuration);
-        tl.to(shadowsRef.current[i], { 
-          scale: 1, 
-          opacity: 0.85, 
-          filter: "blur(2px)", 
-          ease: "power1.in", 
-          duration: bounceDuration 
+        masterTl.to(el, { y: 0, ease: "power1.in", duration: bounceDuration }, landTime + bounceDuration);
+        masterTl.to(shadowsRef.current[i], {
+          scale: 1,
+          opacity: 0.85,
+          filter: "blur(2px)",
+          ease: "power1.in",
+          duration: bounceDuration
         }, landTime + bounceDuration);
 
-        tl.to(labelsRef.current[i], {
+        masterTl.to(labelsRef.current[i], {
           y: 0,
           opacity: 1,
           duration: 0.3,
           ease: "power2.out"
         }, landTime + 0.1);
 
-        currentTime = landTime + (bounceDuration * 2) + 0.3;
+        currentTime = landTime + (bounceDuration * 2) + gapBetweenDrops;
       });
 
-      const sweepStartTime = currentTime + 1.0;
-      
-      tl.to(sweepRef.current, { opacity: 1, duration: 0.1 }, sweepStartTime);
-      tl.to(sweepRef.current, { xPercent: 250, duration: 1.8, ease: "power2.inOut" }, sweepStartTime);
-      tl.to(sweepRef.current, { opacity: 0, duration: 0.4 }, sweepStartTime + 1.4);
+      // Shimmer sweep once every product is sitting on the shelf together
+      const sweepStartTime = currentTime + 0.3;
+      masterTl.to(sweepRef.current, { opacity: 1, duration: 0.1 }, sweepStartTime);
+      masterTl.to(sweepRef.current, { xPercent: 250, duration: 1.8, ease: "power2.inOut" }, sweepStartTime);
+      masterTl.to(sweepRef.current, { opacity: 0, duration: 0.4 }, sweepStartTime + 1.4);
+
+      // Hold the fully-assembled row on screen for a beat
+      const allVisibleAt = sweepStartTime + 1.8;
+      masterTl.to({}, { duration: holdAllVisible }, allVisibleAt);
+
+      // Everything disappears together (not one at a time)
+      const exitStart = allVisibleAt + holdAllVisible;
+      masterTl.to(productsRef.current, {
+        y: -40,
+        opacity: 0,
+        duration: exitDuration,
+        ease: "power2.in"
+      }, exitStart);
+      masterTl.to(shadowsRef.current, {
+        opacity: 0,
+        scale: 1.6,
+        filter: "blur(15px)",
+        duration: exitDuration,
+        ease: "power2.in"
+      }, exitStart);
+      masterTl.to(labelsRef.current, {
+        y: -15,
+        opacity: 0,
+        duration: exitDuration * 0.8,
+        ease: "power2.in"
+      }, exitStart);
+
+      // Brief empty beat before the whole sequence loops and starts falling one by one again
+      masterTl.to({}, { duration: cycleGap }, exitStart + exitDuration);
 
     }, containerRef);
 
     return () => {
-      clearTimeout(timeoutId);
-      loopTl?.kill();
       ctx.revert();
     };
   }, []);
@@ -330,9 +336,12 @@ export default function HomeSection() {
                     style={{ transformOrigin: "center center" }}
                   />
 
-                  <div className="relative flex items-end justify-center w-full h-[240px] sm:h-[320px] md:h-[420px] lg:h-[500px]">
+                  <div
+                    ref={el => productsRef.current[i] = el}
+                    className="relative flex items-end justify-center w-full h-[240px] sm:h-[320px] md:h-[420px] lg:h-[500px] will-change-transform"
+                  >
                     <img
-                      ref={el => productsRef.current[i] = el}
+                      ref={el => productInnerRef.current[i] = el}
                       src={img}
                       alt={`Premium FMCG Product ${i+1}`}
                       onError={() => markImageError(i, img)}
