@@ -8,18 +8,6 @@ const PRODUCT_SLUGS = ["shampoo", "rice", "dishwash", "oils", "tea"];
 
 const SHOWCASE_COUNT = PRODUCT_IMAGES.length;
 
-// Was: a fixed setInterval(AUTO_ADVANCE_MS) that retriggered the drop-in
-// timeline. Problem: the full 5-item stagger + sweep sequence takes ~8.5s
-// to finish, longer than the old 7.5s interval — so each replay could start
-// before the previous one had finished landing every product, resetting
-// mid-air items (like #3, sitting in the middle of the stagger) back to
-// invisible. That's the intermittent "3rd item missing" bug.
-// Fix: the timeline now schedules its own next cycle via onComplete, so a
-// new cycle can only ever start once the current one has fully finished —
-// no possible overlap, regardless of exact durations. This is just the
-// pause *after* everything has landed, before it resets and falls again.
-const CYCLE_HOLD_MS = 1500;
-
 const NAV_LOGO_SELECTOR = 'header a[aria-label="Nothing Else — Home"]';
 
 const INTRO_START_DELAY = 0.1;
@@ -92,25 +80,54 @@ export default function HomeSection() {
     gsap.to(el, { rotation: 0, y: 0, scale: 1, duration: 0.45, ease: "elastic.out(1, 0.55)" });
   };
 
-  // ---- Drop-in animation, self-scheduling repeat ------------------------
-  // The animation sequence below (drop, land-bounce, pulse ring, label
-  // reveal, sweep) is UNCHANGED from before. What changed is only how the
-  // *next* cycle gets triggered: instead of an external setInterval racing
-  // against this timeline's actual duration, the timeline schedules its own
-  // continuation in onComplete. That guarantees the reset-and-refall for
-  // the next round never starts until every product (including #3) has
-  // fully landed in this round.
+  // ---- Drop-in animation ------------------------------------------------
+  // Initial entrance drops every product once. The loop after that re-drops
+  // one product at a time so the full row is never reset to invisible.
   useEffect(() => {
     let timeoutId;
+    let loopTl;
+    let loopIndex = 0;
 
     let ctx = gsap.context(() => {
       if (!productsRef.current.length || !platformRef.current) return;
 
+      const dropOne = (i) => {
+        const el = productsRef.current[i];
+        const shadow = shadowsRef.current[i];
+        const pulse = pulsesRef.current[i];
+        if (!el || !shadow || !pulse) return;
+
+        setActiveIndex(i);
+        gsap.killTweensOf([el, shadow, pulse, platformRef.current]);
+
+        loopTl = gsap.timeline({
+          onComplete: () => {
+            loopIndex = (i + 1) % SHOWCASE_COUNT;
+            timeoutId = setTimeout(() => dropOne(loopIndex), 900);
+          },
+        });
+
+        loopTl.set(el, { y: -360, opacity: 0, rotation: 0, scale: 1 });
+        loopTl.set(shadow, { scale: 2.2, opacity: 0, filter: "blur(15px)" }, 0);
+        loopTl.fromTo(
+          el,
+          { y: -360, opacity: 0 },
+          { y: 0, opacity: 1, ease: "power2.out", duration: 0.55 },
+          0
+        );
+        loopTl.to(shadow, { scale: 1, opacity: 0.85, filter: "blur(2px)", ease: "power2.out", duration: 0.55 }, 0);
+        loopTl.to(platformRef.current, { y: 4, duration: 0.06, ease: "power1.out" }, 0.55);
+        loopTl.to(platformRef.current, { y: 0, duration: 0.18, ease: "power2.out" }, 0.61);
+        loopTl.fromTo(pulse, { scale: 0.3, opacity: 0.95 }, { scale: 2.4, opacity: 0, duration: 0.55, ease: "power1.out" }, 0.55);
+        loopTl.to(el, { y: -12, ease: "power1.out", duration: 0.15 }, 0.55);
+        loopTl.to(shadow, { scale: 1.25, opacity: 0.45, filter: "blur(6px)", ease: "power1.out", duration: 0.15 }, 0.55);
+        loopTl.to(el, { y: 0, ease: "power1.in", duration: 0.15 }, 0.7);
+        loopTl.to(shadow, { scale: 1, opacity: 0.85, filter: "blur(2px)", ease: "power1.in", duration: 0.15 }, 0.7);
+      };
+
       const tl = gsap.timeline({
         onComplete: () => {
-          timeoutId = setTimeout(() => {
-            setActiveIndex((prev) => (prev + 1) % SHOWCASE_COUNT);
-          }, CYCLE_HOLD_MS);
+          timeoutId = setTimeout(() => dropOne(loopIndex), 1200);
         },
       });
 
@@ -191,9 +208,10 @@ export default function HomeSection() {
 
     return () => {
       clearTimeout(timeoutId);
+      loopTl?.kill();
       ctx.revert();
     };
-  }, [activeIndex]);
+  }, []);
 
   return (
     <section id="home" ref={sectionRef} className="relative bg-[#0A3DAE]">
@@ -353,7 +371,7 @@ export default function HomeSection() {
               ))}
             </div>
 
-            <div className="absolute inset-x-0 bottom-[12px] top-[-350px] overflow-hidden pointer-events-none z-30">
+            <div className="absolute inset-x-0 bottom-[12px] top-[-350px] overflow-hidden pointer-events-none z-[15]">
               <div 
                 ref={sweepRef} 
                 className="absolute top-0 bottom-0 w-[15%] bg-gradient-to-r from-transparent via-white/[0.15] to-transparent skew-x-[-22deg] blur-sm mix-blend-overlay" 
