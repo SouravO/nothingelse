@@ -203,7 +203,7 @@ export default function HomeSection() {
   }, []);
 
   return (
-    <section id="home" ref={sectionRef} className="relative bg-[#0A3DAE]">
+    <section id="products-showcase" ref={sectionRef} className="relative bg-[#0A3DAE]">
       <div
         ref={containerRef}
         className="relative h-[100vh] w-full overflow-hidden bg-[#0A3DAE]"

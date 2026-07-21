@@ -12,9 +12,9 @@ function scrollToSection(id) {
 }
 
 const NAV_LINKS = [
-  { id: "home", label: "Home" },
+  { id: "hero", label: "Home" },
   { id: "about", label: "About" },
-  { id: "products", label: "Products" },
+  { id: "products", label: "Products", observeIds: ["products", "products-showcase"] },
   { id: "system", label: "System" },
   { id: "contact", label: "Contact" },
 ];
@@ -22,7 +22,7 @@ const NAV_LINKS = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeId, setActiveId] = useState("home");
+  const [activeId, setActiveId] = useState("hero");
 
   // Navbar goes solid the moment the (pinned) hero has fully scrolled away —
   // until then it rides transparent over the hero's dark background.
@@ -39,12 +39,21 @@ export default function Navbar() {
 
   // Track which section is currently in view to highlight the matching nav item
   useEffect(() => {
-    const sections = NAV_LINKS.map((l) => document.getElementById(l.id)).filter(Boolean);
+    const sectionLinks = NAV_LINKS.flatMap((link) =>
+      (link.observeIds || [link.id]).map((sectionId) => ({
+        linkId: link.id,
+        el: document.getElementById(sectionId),
+      }))
+    ).filter((item) => item.el);
+
+    const sections = sectionLinks.map((item) => item.el);
     if (!sections.length) return;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveId(entry.target.id);
+          if (!entry.isIntersecting) return;
+          const match = sectionLinks.find((item) => item.el === entry.target);
+          if (match) setActiveId(match.linkId);
         });
       },
       { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
@@ -69,9 +78,9 @@ export default function Navbar() {
     >
       <div className="mx-auto max-w-[1280px] px-5 sm:px-8 h-[68px] sm:h-[76px] flex items-center justify-between">
         <a
-          href="#home"
+          href="#hero"
           aria-label="Nothing Else — Home"
-          onClick={(e) => onNavClick(e, "home")}
+          onClick={(e) => onNavClick(e, "hero")}
           className="font-logo font-extrabold text-[19px] tracking-[-0.02em] select-none"
         >
           <span className={scrolled ? "text-[#111111]" : "text-white"}>nothing</span>{" "}

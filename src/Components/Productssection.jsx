@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import HomeSection from "./Homesection";
+import HomeSection from "./Fallingproducts";
 
 /* ============================================================================
    SECTION 3: PRODUCTS  — carousel and product strip
