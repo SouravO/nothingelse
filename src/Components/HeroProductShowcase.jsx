@@ -2,20 +2,24 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const BRAND = {
-  deep: "#091540", base: "#0C4DD5", bright: "#7692FF",
-  ice: "#ABD2FA", gold: "#D9A84A", goldLight: "#F3CE7C", goldGlow: "#FFEFC7",
-  black: "#000000", white: "#FFFFFF"
+  deep: "#6B78B8", base: "#9AB0FB", bright: "#BBD0FF",
+  ice: "#DCEEFF", gold: "#E9C98A", goldLight: "#F6E0AC", goldGlow: "#FFF7E4",
+  black: "#000000", white: "#FFFFFF",
+  // Dark "ink" tones for text on pastel backgrounds — muted, coordinated
+  // with the palette rather than plain black, but dark enough to stay
+  // readable against pale pastel fills.
+  ink: "#333A63", inkSoft: "#4A5080", inkWarm: "#8A5A2E"
 };
 
 const EASE = [0.16, 1, 0.3, 1];
 
-// 5 solid colors based on the requested palette
+// 5 pastel colors — all soft, light, low-to-medium saturation.
 const THEME_COLORS = {
-  icy: "#ABD2FA",
-  cornflower: "#7692FF",
-  customPersian: "#0C4DD5", // Replaced Persian Blue per your instruction
-  dusk: "#3D518C",
-  navy: "#091540"
+  icy: "#DCEEFF",         // pastel sky blue
+  cornflower: "#C7D6FF",  // pastel periwinkle
+  customPersian: "#B9C9FA", // soft pastel blue
+  dusk: "#CFC6EA",        // pastel lavender-blue
+  navy: "#B7C0E0"         // soft pastel slate-indigo
 };
 
 const SLIDES = [
@@ -26,9 +30,9 @@ const SLIDES = [
     description: "A weightless lather that rinses clean and leaves hair soft and easy to manage — every single wash.",
     theme: {
       bg: THEME_COLORS.icy, 
-      text: THEME_COLORS.navy,
-      descText: "#1A1D24",
-      spotlight: "rgba(255,255,255,0.4)",
+      text: BRAND.ink,
+      descText: BRAND.inkSoft,
+      spotlight: "rgba(255,255,255,0.55)",
       isLight: true
     },
   },
@@ -39,10 +43,10 @@ const SLIDES = [
     description: "Slow-aged for a fluffier bite and a cleaner aroma — everyday rice that makes every meal feel special.",
     theme: {
       bg: THEME_COLORS.cornflower, 
-      text: BRAND.white,
-      descText: BRAND.deep,
-      spotlight: "rgba(255,255,255,0.2)",
-      isLight: false
+      text: BRAND.ink,
+      descText: BRAND.inkSoft,
+      spotlight: "rgba(255,255,255,0.45)",
+      isLight: true
     },
   },
   {
@@ -52,10 +56,10 @@ const SLIDES = [
     description: "Tough on stains, gentle on fabric — a wash that gets clothes properly clean without harsh trade-offs.",
     theme: {
       bg: THEME_COLORS.customPersian, 
-      text: BRAND.white,
-      descText: BRAND.ice,
-      spotlight: "rgba(171,210,250,0.15)",
-      isLight: false
+      text: BRAND.ink,
+      descText: BRAND.inkSoft,
+      spotlight: "rgba(255,255,255,0.4)",
+      isLight: true
     },
   },
   {
@@ -65,10 +69,10 @@ const SLIDES = [
     description: "A balanced blend ground the old way — real spice and real aroma, nothing added to cut corners.",
     theme: {
       bg: THEME_COLORS.dusk, 
-      text: BRAND.goldLight,
-      descText: BRAND.white,
-      spotlight: "rgba(243,206,124,0.12)",
-      isLight: false
+      text: BRAND.inkWarm,
+      descText: BRAND.inkWarm,
+      spotlight: "rgba(255,247,228,0.55)",
+      isLight: true
     },
   },
   {
@@ -78,10 +82,10 @@ const SLIDES = [
     description: "A soothing everyday wash that purifies and locks in moisture, leaving your skin soft and refreshed.",
     theme: {
       bg: THEME_COLORS.navy, 
-      text: THEME_COLORS.icy,
-      descText: BRAND.white,
-      spotlight: "rgba(118,146,255,0.15)",
-      isLight: false
+      text: BRAND.ink,
+      descText: BRAND.inkSoft,
+      spotlight: "rgba(255,255,255,0.4)",
+      isLight: true
     },
   }
 ];
@@ -229,12 +233,15 @@ function HeroCTA() {
       transition={{ duration: 0.7, delay: 0.32, ease: EASE }}
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.97 }}
-      className="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full font-body font-medium text-[15px] text-white shadow-[0_10px_36px_rgba(12,77,213,0.3)]"
-      style={{ background: `linear-gradient(135deg, ${THEME_COLORS.customPersian}, ${THEME_COLORS.navy})` }}
+      className="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full font-body font-medium text-[15px] shadow-[0_10px_30px_rgba(91,107,168,0.25)]"
+      style={{
+        background: `linear-gradient(135deg, ${THEME_COLORS.icy}, ${THEME_COLORS.cornflower})`,
+        color: BRAND.ink
+      }}
     >
       Explore the range
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="transition-transform duration-300 group-hover:translate-x-1">
-        <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke={BRAND.ink} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </motion.a>
   );
@@ -370,7 +377,7 @@ function ProductStage({ slide, interactive }) {
             className="relative w-auto object-contain"
             style={{
               height: "clamp(580px, 46cqh, 560px)",
-              filter: "drop-shadow(0 24px 26px rgba(0,0,0,0.35))",
+              filter: "drop-shadow(0 24px 26px rgba(91,107,168,0.28))",
             }}
           />
         </div>
@@ -391,8 +398,12 @@ function FloatingTag({ text, layout, index, visible }) {
     <motion.div className="absolute z-20" style={{ top: layout.top, left: layout.left, right: layout.right }} initial={false} animate={visible ? "shown" : "hidden"} variants={tagVariants}>
       <motion.div animate={{ y: [0, -6, 0] }} transition={{ duration: 3 + index * 0.4, repeat: Infinity, ease: "easeInOut" }}>
         <span
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-mono text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.14em] text-white whitespace-nowrap shadow-[0_8px_22px_rgba(0,0,0,0.25)]"
-          style={{ background: "linear-gradient(135deg, rgba(9,21,64,0.94), rgba(61,81,140,0.97))", border: "1px solid rgba(255,255,255,0.16)" }}
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-mono text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.14em] whitespace-nowrap shadow-[0_8px_18px_rgba(91,107,168,0.18)]"
+          style={{
+            background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(220,238,255,0.92))",
+            border: "1px solid rgba(91,107,168,0.18)",
+            color: BRAND.ink
+          }}
         >
           <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: dotColor }} />
           {text}
@@ -503,7 +514,7 @@ function ImageLayer({ slide }) {
             <ProductStage slide={slide} interactive={settled} />
             <div
               className="absolute left-1/2 -translate-x-1/2 rounded-full blur-2xl pointer-events-none"
-              style={{ bottom: "4%", width: "60%", height: "12%", background: "radial-gradient(ellipse at center, rgba(0,0,0,0.45), transparent 72%)" }}
+              style={{ bottom: "4%", width: "60%", height: "12%", background: "radial-gradient(ellipse at center, rgba(91,107,168,0.28), transparent 72%)" }}
             />
           </motion.div>
         </div>
