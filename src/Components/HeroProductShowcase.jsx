@@ -69,9 +69,9 @@ const SLIDES = [
     description: "A balanced blend ground the old way — real spice and real aroma, nothing added to cut corners.",
     theme: {
       bg: THEME_COLORS.dusk, 
-      text: BRAND.inkWarm,
-      descText: BRAND.inkWarm,
-      spotlight: "rgba(255,247,228,0.55)",
+      text: BRAND.ink,
+      descText: BRAND.inkSoft,
+      spotlight: "rgba(255,255,255,0.45)",
       isLight: true
     },
   },
