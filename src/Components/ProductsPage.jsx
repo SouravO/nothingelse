@@ -1,9 +1,11 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import HomeSection from "./Homesection";
 
 /* ============================================================================
-   SECTION 3: PRODUCTS  — carousel and product strip
+   STANDALONE /products PAGE
+   This is a full, independent copy of the Products carousel section — it does
+   NOT import anything from Productssection.jsx. You can delete either file
+   later without breaking the other.
    ============================================================================ */
 
 function Reveal({ children, delay = 0, className = "" }) {
@@ -83,11 +85,11 @@ function ProductCarousel() {
   const [instant, setInstant] = useState(false);
   const [hovered, setHovered] = useState(null);
 
-  // Autoplay now runs continuously regardless of hover — it used to pause
+  // Autoplay runs continuously regardless of hover — it used to pause
   // whenever `hovered !== null`, but since each slide's hover zone spans
   // most of the section's height/width, that made the carousel freeze any
-  // time the cursor was almost anywhere over the section. `hovered` is now
-  // only used for the per-slide visual highlight (scale/opacity/glow), not
+  // time the cursor was almost anywhere over the section. `hovered` is only
+  // used for the per-slide visual highlight (scale/opacity/glow) now, not
   // to gate this interval.
   useEffect(() => {
     const id = setInterval(() => setStep((s) => s + 1), STEP_MS);
@@ -137,7 +139,7 @@ function ProductCarousel() {
   );
 }
 
-export function ProductsSection() {
+function ProductsSection() {
   return (
     <section id="products" className="relative bg-white scroll-mt-[68px] sm:scroll-mt-[76px] pt-20 sm:pt-24 lg:pt-28">
       <div className="mx-auto max-w-[1280px] px-5 sm:px-8 flex flex-col items-center text-center">
@@ -159,14 +161,12 @@ export function ProductsSection() {
 }
 
 /* ============================================================================
-   DEFAULT EXPORT WRAPPER
+   DEFAULT EXPORT — the page rendered at the /products route
    ============================================================================ */
-
-export default function ProductPage() {
+export default function ProductsPage() {
   return (
-    <main>
+    <main className="min-h-screen">
       <ProductsSection />
-      <HomeSection />
     </main>
   );
 }

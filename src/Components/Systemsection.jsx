@@ -16,7 +16,7 @@ export default function SystemSection() {
   const circleText = "NOTHING ELSE • HIGH QUALITY • AFFORDABLE PRICES • DIRECT TO CONSUMER • ".repeat(2);
 
   return (
-    <section id="system" className="relative bg-[#111111] py-24 lg:py-32">
+    <section id="system" className="relative bg-[#F5F3EF] py-24 lg:py-32">
       <div className="mx-auto max-w-[1280px] px-6 lg:px-8 w-full relative z-10">
 
         {/* Using a custom grid ratio to give the larger circle ample breathing room */}
@@ -34,7 +34,7 @@ export default function SystemSection() {
           >
             {/* Soft Blue Glow behind the image */}
             <motion.div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#0C4DD5] blur-[130px] rounded-full opacity-25"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#0C4DD5] blur-[130px] rounded-full opacity-15"
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
             />
@@ -87,10 +87,10 @@ export default function SystemSection() {
                 <p className="text-[#0C4DD5] font-body text-[12px] sm:text-[13px] tracking-[0.25em] uppercase mb-4 font-semibold">
                   {STEP.num}
                 </p>
-                <h2 className="text-white text-3xl sm:text-4xl lg:text-5xl font-bold mb-5 font-head leading-[1.12] tracking-tight">
+                <h2 className="text-[#111111] text-3xl sm:text-4xl lg:text-5xl font-bold mb-5 font-head leading-[1.12] tracking-tight">
                   {STEP.title}
                 </h2>
-                <p className="text-white/70 text-[14px] sm:text-[15px] leading-relaxed font-body">
+                <p className="text-[#111111]/65 text-[14px] sm:text-[15px] leading-relaxed font-body">
                   {STEP.desc}
                 </p>
               </motion.div>

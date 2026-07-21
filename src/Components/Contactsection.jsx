@@ -26,7 +26,7 @@ function ContactForm() {
   };
 
   return (
-    <div className="relative rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-md p-6 sm:p-10">
+    <div className="relative rounded-3xl border border-black/10 bg-black/[0.02] backdrop-blur-md p-6 sm:p-10">
       <AnimatePresence mode="wait">
         {!submitted ? (
           <motion.div
@@ -38,7 +38,7 @@ function ContactForm() {
             <p className="font-body text-[12px] tracking-[0.25em] uppercase text-[#0C4DD5] font-semibold mb-3">
               Get in Touch
             </p>
-            <h3 className="font-head font-bold text-white text-2xl sm:text-3xl tracking-tight mb-8">
+            <h3 className="font-head font-bold text-[#111111] text-2xl sm:text-3xl tracking-tight mb-8">
               Start a conversation.
             </h3>
 
@@ -51,14 +51,14 @@ function ContactForm() {
                     type="text"
                     id="name"
                     placeholder=" "
-                    className="peer w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-4 text-white text-sm outline-none focus:border-[#0C4DD5] transition-all placeholder-transparent"
+                    className="peer w-full bg-black/[0.03] border border-black/10 rounded-2xl px-5 py-4 text-[#111111] text-sm outline-none focus:border-[#0C4DD5] transition-all placeholder-transparent"
                   />
                   <label
                     htmlFor="name"
-                    className="absolute left-5 top-4 text-white/40 text-sm pointer-events-none transition-all 
+                    className="absolute left-5 top-4 text-black/40 text-sm pointer-events-none transition-all 
                     peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 
-                    peer-focus:-top-2.5 peer-focus:text-[11px] peer-focus:text-[#0C4DD5] peer-focus:bg-[#111111] peer-focus:px-2
-                    not-placeholder-shown:-top-2.5 not-placeholder-shown:text-[11px] not-placeholder-shown:text-white/40 not-placeholder-shown:bg-[#111111] not-placeholder-shown:px-2"
+                    peer-focus:-top-2.5 peer-focus:text-[11px] peer-focus:text-[#0C4DD5] peer-focus:bg-[#F5F3EF] peer-focus:px-2
+                    not-placeholder-shown:-top-2.5 not-placeholder-shown:text-[11px] not-placeholder-shown:text-black/40 not-placeholder-shown:bg-[#F5F3EF] not-placeholder-shown:px-2"
                   >
                     Your Name
                   </label>
@@ -71,14 +71,14 @@ function ContactForm() {
                     type="email"
                     id="email"
                     placeholder=" "
-                    className="peer w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-4 text-white text-sm outline-none focus:border-[#0C4DD5] transition-all placeholder-transparent"
+                    className="peer w-full bg-black/[0.03] border border-black/10 rounded-2xl px-5 py-4 text-[#111111] text-sm outline-none focus:border-[#0C4DD5] transition-all placeholder-transparent"
                   />
                   <label
                     htmlFor="email"
-                    className="absolute left-5 top-4 text-white/40 text-sm pointer-events-none transition-all 
+                    className="absolute left-5 top-4 text-black/40 text-sm pointer-events-none transition-all 
                     peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 
-                    peer-focus:-top-2.5 peer-focus:text-[11px] peer-focus:text-[#0C4DD5] peer-focus:bg-[#111111] peer-focus:px-2
-                    not-placeholder-shown:-top-2.5 not-placeholder-shown:text-[11px] not-placeholder-shown:text-white/40 not-placeholder-shown:bg-[#111111] not-placeholder-shown:px-2"
+                    peer-focus:-top-2.5 peer-focus:text-[11px] peer-focus:text-[#0C4DD5] peer-focus:bg-[#F5F3EF] peer-focus:px-2
+                    not-placeholder-shown:-top-2.5 not-placeholder-shown:text-[11px] not-placeholder-shown:text-black/40 not-placeholder-shown:bg-[#F5F3EF] not-placeholder-shown:px-2"
                   >
                     Email Address
                   </label>
@@ -92,14 +92,14 @@ function ContactForm() {
                   id="message"
                   rows={4}
                   placeholder=" "
-                  className="peer w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-4 text-white text-sm outline-none focus:border-[#0C4DD5] transition-all placeholder-transparent resize-none"
+                  className="peer w-full bg-black/[0.03] border border-black/10 rounded-2xl px-5 py-4 text-[#111111] text-sm outline-none focus:border-[#0C4DD5] transition-all placeholder-transparent resize-none"
                 />
                 <label
                   htmlFor="message"
-                  className="absolute left-5 top-4 text-white/40 text-sm pointer-events-none transition-all 
+                  className="absolute left-5 top-4 text-black/40 text-sm pointer-events-none transition-all 
                   peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 
-                  peer-focus:-top-2.5 peer-focus:text-[11px] peer-focus:text-[#0C4DD5] peer-focus:bg-[#111111] peer-focus:px-2
-                  not-placeholder-shown:-top-2.5 not-placeholder-shown:text-[11px] not-placeholder-shown:text-white/40 not-placeholder-shown:bg-[#111111] not-placeholder-shown:px-2"
+                  peer-focus:-top-2.5 peer-focus:text-[11px] peer-focus:text-[#0C4DD5] peer-focus:bg-[#F5F3EF] peer-focus:px-2
+                  not-placeholder-shown:-top-2.5 not-placeholder-shown:text-[11px] not-placeholder-shown:text-black/40 not-placeholder-shown:bg-[#F5F3EF] not-placeholder-shown:px-2"
                 >
                   How can we help you?
                 </label>
@@ -127,10 +127,10 @@ function ContactForm() {
             <div className="w-16 h-16 bg-[#0C4DD5]/10 text-[#0C4DD5] rounded-full flex items-center justify-center mb-6">
               <CheckCircle2 size={32} />
             </div>
-            <h4 className="text-white text-2xl font-bold font-head mb-3">
+            <h4 className="text-[#111111] text-2xl font-bold font-head mb-3">
               Message Sent!
             </h4>
-            <p className="text-white/60 text-sm max-w-xs leading-relaxed">
+            <p className="text-black/60 text-sm max-w-xs leading-relaxed">
               Thank you for reaching out. A representative from Nothing Else will connect with you shortly.
             </p>
           </motion.div>
@@ -144,14 +144,14 @@ export default function ContactSection() {
   return (
     <section 
       id="contact" 
-      className="relative bg-[#111111] overflow-hidden pt-24 pb-12 scroll-mt-[68px] sm:scroll-mt-[76px] border-t border-white/5"
+      className="relative bg-[#F5F3EF] overflow-hidden pt-24 pb-12 scroll-mt-[68px] sm:scroll-mt-[76px] border-t border-black/5"
     >
       {/* Dynamic Background Glows */}
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#0C4DD5]/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#0C4DD5]/8 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#0C4DD5]/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="mx-auto max-w-[1280px] px-6 lg:px-8 relative z-10">
-        <div className="grid gap-16 lg:grid-cols-2 items-start lg:gap-20 pb-20 border-b border-white/10">
+        <div className="grid gap-16 lg:grid-cols-2 items-start lg:gap-20 pb-20 border-b border-black/10">
           
           {/* Left Side branding + cards */}
           <Reveal className="flex flex-col justify-between h-full">
@@ -159,7 +159,7 @@ export default function ContactSection() {
               <p className="font-body text-[12px] tracking-[0.25em] uppercase text-[#0C4DD5] font-semibold mb-4">
                 Connect
               </p>
-              <h2 className="font-head font-bold text-white text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.08] mb-8">
+              <h2 className="font-head font-bold text-[#111111] text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.08] mb-8">
                 Good product. <br />
                 Fair price. <br />
                 <span className="text-[#0C4DD5]">Nothing else.</span>
@@ -170,37 +170,37 @@ export default function ContactSection() {
             <div className="grid gap-4 sm:grid-cols-2">
               <a 
                 href="mailto:hello@nothingelse.co.in" 
-                className="group rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#0C4DD5]/40 hover:bg-white/[0.04] transition-all duration-300"
+                className="group rounded-2xl border border-black/10 bg-black/[0.02] p-5 hover:border-[#0C4DD5]/40 hover:bg-black/[0.04] transition-all duration-300"
               >
-                <div className="p-2.5 bg-white/5 rounded-xl text-[#0C4DD5] w-fit mb-4 group-hover:bg-[#0C4DD5] group-hover:text-white transition-all duration-300">
+                <div className="p-2.5 bg-black/5 rounded-xl text-[#0C4DD5] w-fit mb-4 group-hover:bg-[#0C4DD5] group-hover:text-white transition-all duration-300">
                   <Mail size={16} />
                 </div>
-                <p className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-1">Email</p>
-                <p className="font-semibold text-white text-sm">hello@nothingelse.co.in</p>
+                <p className="text-[11px] uppercase tracking-[0.18em] text-black/40 mb-1">Email</p>
+                <p className="font-semibold text-[#111111] text-sm">hello@nothingelse.co.in</p>
               </a>
 
               <a 
                 href="tel:+911800000000" 
-                className="group rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#0C4DD5]/40 hover:bg-white/[0.04] transition-all duration-300"
+                className="group rounded-2xl border border-black/10 bg-black/[0.02] p-5 hover:border-[#0C4DD5]/40 hover:bg-black/[0.04] transition-all duration-300"
               >
-                <div className="p-2.5 bg-white/5 rounded-xl text-[#0C4DD5] w-fit mb-4 group-hover:bg-[#0C4DD5] group-hover:text-white transition-all duration-300">
+                <div className="p-2.5 bg-black/5 rounded-xl text-[#0C4DD5] w-fit mb-4 group-hover:bg-[#0C4DD5] group-hover:text-white transition-all duration-300">
                   <Phone size={16} />
                 </div>
-                <p className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-1">Phone</p>
-                <p className="font-semibold text-white text-sm">1800-000-000</p>
+                <p className="text-[11px] uppercase tracking-[0.18em] text-black/40 mb-1">Phone</p>
+                <p className="font-semibold text-[#111111] text-sm">1800-000-000</p>
               </a>
 
               <a 
                 href="https://instagram.com/nothing_else" 
                 target="_blank" 
                 rel="noreferrer" 
-                className="group rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#0C4DD5]/40 hover:bg-white/[0.04] transition-all duration-300 sm:col-span-2"
+                className="group rounded-2xl border border-black/10 bg-black/[0.02] p-5 hover:border-[#0C4DD5]/40 hover:bg-black/[0.04] transition-all duration-300 sm:col-span-2"
               >
-                <div className="p-2.5 bg-white/5 rounded-xl text-[#0C4DD5] w-fit mb-4 group-hover:bg-[#0C4DD5] group-hover:text-white transition-all duration-300">
+                <div className="p-2.5 bg-black/5 rounded-xl text-[#0C4DD5] w-fit mb-4 group-hover:bg-[#0C4DD5] group-hover:text-white transition-all duration-300">
                   <MapPin size={16} />
                 </div>
-                <p className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-1">Visit Us</p>
-                <p className="font-semibold text-white text-sm leading-relaxed">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-black/40 mb-1">Visit Us</p>
+                <p className="font-semibold text-[#111111] text-sm leading-relaxed">
                   Nothing Else House, Andheri East, Mumbai 400069
                 </p>
               </a>
@@ -216,12 +216,12 @@ export default function ContactSection() {
         {/* =========================================
             STYLISH FOOTER BLOCK
             ========================================= */}
-        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-xs text-white/40 font-body">
+        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-xs text-black/40 font-body">
           <div className="text-center md:text-left">
-            <p className="font-head font-extrabold text-white text-xl tracking-tight mb-1">
+            <p className="font-head font-extrabold text-[#111111] text-xl tracking-tight mb-1">
               NOTHING ELSE<span className="text-[#0C4DD5]">.</span>
             </p>
-            <p className="text-white/40">
+            <p className="text-black/40">
               © {new Date().getFullYear()} Nothing Else Private Limited. All rights reserved.
             </p>
           </div>
@@ -234,7 +234,7 @@ export default function ContactSection() {
 
           <button 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-2 hover:text-white transition-colors group py-2"
+            className="flex items-center gap-2 hover:text-[#111111] transition-colors group py-2"
           >
             Back to top 
             <ArrowUpRight size={14} className="transform transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />

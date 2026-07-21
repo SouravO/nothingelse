@@ -16,7 +16,6 @@ const NAV_LINKS = [
   { id: "about", label: "About" },
   { id: "products", label: "Products" },
   { id: "system", label: "System" },
-  { id: "presence", label: "Presence" },
   { id: "contact", label: "Contact" },
 ];
 
