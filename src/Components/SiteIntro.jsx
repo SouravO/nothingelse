@@ -79,7 +79,6 @@ export default function SiteIntro() {
       tl?.kill();
       document.documentElement.style.overflow = prevOverflow;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [done]);
 
   if (done) return null;

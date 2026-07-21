@@ -16,7 +16,7 @@ export default function SystemSection() {
   const circleText = "NOTHING ELSE • HIGH QUALITY • AFFORDABLE PRICES • DIRECT TO CONSUMER • ".repeat(2);
 
   return (
-    <section id="system" className="relative bg-[#F5F3EF] py-24 lg:py-32">
+    <section id="system" className="section-paint-lazy relative bg-[#F5F3EF] py-24 lg:py-32">
       <div className="mx-auto max-w-[1280px] px-6 lg:px-8 w-full relative z-10">
 
         {/* Using a custom grid ratio to give the larger circle ample breathing room */}
@@ -43,6 +43,8 @@ export default function SystemSection() {
             <motion.img
               src="/about.png"
               alt="Nothing Else Products"
+              loading="lazy"
+              decoding="async"
               className="relative z-10 w-full max-w-[480px] lg:max-w-[580px] object-contain drop-shadow-2xl"
               animate={{ y: [0, -15, 0] }}
               transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}

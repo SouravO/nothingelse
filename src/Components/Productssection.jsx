@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import HomeSection from "./Homesection";
 
@@ -23,7 +23,7 @@ function Reveal({ children, delay = 0, className = "" }) {
 const PRODUCT_IMAGES = ["/pdt1.png", "/pdt2.png", "/pdt3.png", "/pdt4.png", "/pdt5.png"];
 
 const PERIOD = PRODUCT_IMAGES.length;
-const CYCLES = 12;
+const CYCLES = 7;
 const TOTAL = PERIOD * CYCLES;
 const RESET_AT = TOTAL - PERIOD * 2;
 const RESET_TO = PERIOD * 2;
@@ -62,6 +62,8 @@ function ProductSlide({ src, distance, instant, isHovered, onEnter, onLeave }) {
           <img
             src={src}
             alt=""
+            loading="lazy"
+            decoding="async"
             draggable={false}
             className="relative w-full h-[360px] sm:h-[460px] lg:h-[560px] object-contain"
             style={{
@@ -139,7 +141,7 @@ function ProductCarousel() {
 
 export function ProductsSection() {
   return (
-    <section id="products" className="relative bg-white scroll-mt-[68px] sm:scroll-mt-[76px] pt-20 sm:pt-24 lg:pt-28">
+    <section id="products" className="section-paint-lazy relative bg-white scroll-mt-[68px] sm:scroll-mt-[76px] pt-20 sm:pt-24 lg:pt-28">
       <div className="mx-auto max-w-[1280px] px-5 sm:px-8 flex flex-col items-center text-center">
         <Reveal>
           <p className="font-body text-[13px] tracking-[0.2em] uppercase text-[#5C8DFF] mb-3">Products</p>

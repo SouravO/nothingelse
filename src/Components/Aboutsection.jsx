@@ -17,13 +17,6 @@ const isProductShot = (src) => src.includes("pdt");
 function MarqueeStyles() {
   return (
     <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
-
-      #about .font-head {
-        font-family: 'Bricolage Grotesque', sans-serif;
-        font-optical-sizing: auto;
-      }
-
       @keyframes ne-marquee-up {
         from { transform: translateY(0); }
         to   { transform: translateY(-50%); }
@@ -62,6 +55,8 @@ function MarqueeColumn({ images, direction = "up", duration = 28, className = ""
             <img
               src={src}
               alt=""
+              loading="lazy"
+              decoding="async"
               className={isProductShot(src) ? "w-full h-auto max-h-28 xl:max-h-40 object-contain" : "w-full h-40 xl:h-56 object-cover"}
             />
           </div>
@@ -136,7 +131,7 @@ export default function AboutSection() {
   }, []);
 
   return (
-    <section id="about" ref={sectionRef} className="relative bg-[#FAFBFF] py-20 lg:py-28 overflow-hidden w-full">
+    <section id="about" ref={sectionRef} className="section-paint-lazy relative bg-[#FAFBFF] py-20 lg:py-28 overflow-hidden w-full">
       <MarqueeStyles />
 
       {/* Background Ambient Orbs */}

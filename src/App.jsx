@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar";
-import HomeSection from "./Components/Homesection";
 import ProductShowcase from "./Components/HeroProductShowcase";
 import SiteIntro from "./Components/SiteIntro";
 import AboutSection from "./Components/Aboutsection";

@@ -8,14 +8,7 @@ const PRODUCT_SLUGS = ["shampoo", "rice", "dishwash", "oils", "tea"];
 
 const SHOWCASE_COUNT = PRODUCT_IMAGES.length;
 
-const NAV_LOGO_SELECTOR = 'header a[aria-label="Nothing Else — Home"]';
-
 const INTRO_START_DELAY = 0.1;
-const INTRO_HOLD_DURATION = 0.4;
-const INTRO_TITLE_DURATION = 0.55;
-const INTRO_HANDOFF_DURATION = 0.2;
-const INTRO_REVEAL_DURATION = 0.45;
-const INTRO_CONTENT_STAGGER = 0.05;
 
 // How much of the section needs to be visible before the fall triggers.
 // 0.6 = "fully entered" in practice (100vh section, avoids edge-case
@@ -264,7 +257,7 @@ export default function HomeSection() {
 
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[110%] h-[55%] bg-[radial-gradient(ellipse_60%_100%_at_50%_100%,rgba(10,61,174,0.08)_0%,rgba(10,61,174,0.03)_35%,transparent_70%)]" />
 
-          <div className="absolute inset-0 opacity-[0.08] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+          <div className="absolute inset-0 opacity-[0.08] mix-blend-overlay bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.2)_0_1px,transparent_1px)] bg-[length:18px_18px]" />
 
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_85%_50%_at_50%_26%,transparent_50%,rgba(4,16,50,0.35)_100%)]" />
         </div>
@@ -334,6 +327,8 @@ export default function HomeSection() {
                       ref={el => productInnerRef.current[i] = el}
                       src={img}
                       alt={`Premium FMCG Product ${i+1}`}
+                      loading="lazy"
+                      decoding="async"
                       onError={() => markImageError(i, img)}
                       onMouseEnter={() => handleProductEnter(i)}
                       onMouseLeave={() => handleProductLeave(i)}

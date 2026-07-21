@@ -41,7 +41,7 @@ export default function DesignSection() {
     <section
       id="design"
       ref={containerRef}
-      className="relative bg-[#FAFBFF] h-[200vh]"
+      className="section-paint-lazy relative bg-[#FAFBFF] h-[200vh]"
     >
       <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden">
         {/* Ambient center glow */}

@@ -144,7 +144,7 @@ export default function ContactSection() {
   return (
     <section 
       id="contact" 
-      className="relative bg-[#F5F3EF] overflow-hidden pt-24 pb-12 scroll-mt-[68px] sm:scroll-mt-[76px] border-t border-black/5"
+      className="section-paint-lazy relative bg-[#F5F3EF] overflow-hidden pt-24 pb-12 scroll-mt-[68px] sm:scroll-mt-[76px] border-t border-black/5"
     >
       {/* Dynamic Background Glows */}
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#0C4DD5]/8 rounded-full blur-[140px] pointer-events-none" />
