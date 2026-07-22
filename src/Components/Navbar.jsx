@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
 /* ============================================================================
    NAVBAR
@@ -14,9 +15,8 @@ function scrollToSection(id) {
 const NAV_LINKS = [
   { id: "hero", label: "Home" },
   { id: "about", label: "About" },
-  { id: "products", label: "Products", observeIds: ["products", "products-showcase"] },
+  { id: "products", label: "Products", path: "/products", observeIds: ["products", "products-showcase"] },
   { id: "system", label: "System" },
-  { id: "contact", label: "Contact" },
 ];
 
 export default function Navbar() {
@@ -90,10 +90,16 @@ export default function Navbar() {
 
         <nav className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((link) => (
-            <a
+            <Link
               key={link.id}
-              href={`#${link.id}`}
-              onClick={(e) => onNavClick(e, link.id)}
+              to={link.path || `/#${link.id}`}
+              onClick={(e) => {
+                if (link.path) {
+                  setMobileOpen(false);
+                  return;
+                }
+                onNavClick(e, link.id);
+              }}
               className={`relative px-3.5 py-2 rounded-full font-body text-[13.5px] font-medium transition-colors duration-300 ${
                 activeId === link.id
                   ? scrolled ? "text-[#0C4DD5]" : "text-white"
@@ -104,7 +110,7 @@ export default function Navbar() {
               {activeId === link.id && (
                 <span className={`absolute left-3.5 right-3.5 -bottom-0.5 h-[2px] rounded-full ${scrolled ? "bg-[#0C4DD5]" : "bg-white"}`} />
               )}
-            </a>
+            </Link>
           ))}
           <a
             href="#contact"
@@ -137,16 +143,22 @@ export default function Navbar() {
           >
             <div className="px-5 py-3 flex flex-col gap-1">
               {NAV_LINKS.map((link) => (
-                <a
+                <Link
                   key={link.id}
-                  href={`#${link.id}`}
-                  onClick={(e) => onNavClick(e, link.id)}
+                  to={link.path || `/#${link.id}`}
+                  onClick={(e) => {
+                    if (link.path) {
+                      setMobileOpen(false);
+                      return;
+                    }
+                    onNavClick(e, link.id);
+                  }}
                   className={`px-3 py-2.5 rounded-xl font-body text-[15px] font-medium transition-colors duration-300 ${
                     activeId === link.id ? "text-[#0C4DD5] bg-[#EAF0FE]" : "text-[#111111]/75"
                   }`}
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
           </motion.div>

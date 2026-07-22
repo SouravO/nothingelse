@@ -16,11 +16,11 @@ export default function SystemSection() {
   const circleText = "NOTHING ELSE • HIGH QUALITY • AFFORDABLE PRICES • DIRECT TO CONSUMER • ".repeat(2);
 
   return (
-    <section id="system" className="section-paint-lazy relative bg-[#F5F3EF] py-24 lg:py-32">
+    <section id="system" className="section-paint-lazy relative bg-[#F5F3EF] py-16 sm:py-20 lg:py-32">
       <div className="mx-auto max-w-[1280px] px-6 lg:px-8 w-full relative z-10">
 
         {/* Using a custom grid ratio to give the larger circle ample breathing room */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-14 lg:gap-12 items-center">
 
           {/* =========================================
               LEFT SIDE: STATIC FLOATING IMAGE
@@ -30,7 +30,7 @@ export default function SystemSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:col-span-5 relative flex justify-center lg:justify-start"
+            className="lg:col-span-5 relative flex justify-center lg:justify-start w-full"
           >
             {/* Soft Blue Glow behind the image */}
             <motion.div
@@ -39,13 +39,13 @@ export default function SystemSection() {
               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
             />
 
-            {/* Floating Product Basket Image (Scaled Up) */}
+            {/* Floating Product Basket Image (scales gradually instead of jumping straight to lg) */}
             <motion.img
               src="/about.png"
               alt="Nothing Else Products"
               loading="lazy"
               decoding="async"
-              className="relative z-10 w-full max-w-[480px] lg:max-w-[580px] object-contain drop-shadow-2xl"
+              className="relative z-10 w-full max-w-[320px] sm:max-w-[420px] md:max-w-[480px] lg:max-w-[580px] object-contain drop-shadow-2xl"
               animate={{ y: [0, -15, 0] }}
               transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
             />
@@ -70,6 +70,8 @@ export default function SystemSection() {
                   d="M 300, 300 m -240, 0 a 240,240 0 1,1 480,0 a 240,240 0 1,1 -480,0"
                 />
               </defs>
+              {/* Font-size stays in the SVG's own coordinate space, so it scales
+                  in lockstep with the ring itself on every screen width */}
               <text className="text-[17px] sm:text-[18px] font-head font-bold uppercase tracking-[0.22em]" fill="currentColor">
                 <textPath href="#circlePath" startOffset="0%">
                   {circleText}
@@ -84,15 +86,15 @@ export default function SystemSection() {
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true, amount: 0.4 }}
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 text-center max-w-[320px] sm:max-w-[340px] px-6 pointer-events-auto"
+                className="relative z-10 text-center max-w-[clamp(200px,72vw,340px)] px-[clamp(0.75rem,3vw,1.5rem)] pointer-events-auto"
               >
-                <p className="text-[#0C4DD5] font-body text-[12px] sm:text-[13px] tracking-[0.25em] uppercase mb-4 font-semibold">
+                <p className="text-[#0C4DD5] font-body text-[clamp(10px,2.6vw,13px)] tracking-[0.25em] uppercase mb-[clamp(0.5rem,1.5vw,1rem)] font-semibold">
                   {STEP.num}
                 </p>
-                <h2 className="text-[#111111] text-3xl sm:text-4xl lg:text-5xl font-bold mb-5 font-head leading-[1.12] tracking-tight">
+                <h2 className="text-[#111111] text-[clamp(1.35rem,6vw,3rem)] font-bold mb-[clamp(0.75rem,2vw,1.25rem)] font-head leading-[1.12] tracking-tight">
                   {STEP.title}
                 </h2>
-                <p className="text-[#111111]/65 text-[14px] sm:text-[15px] leading-relaxed font-body">
+                <p className="text-[#111111]/65 text-[clamp(11px,2.8vw,15px)] leading-[1.45] font-body">
                   {STEP.desc}
                 </p>
               </motion.div>

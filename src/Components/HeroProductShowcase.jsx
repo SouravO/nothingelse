@@ -5,21 +5,17 @@ const BRAND = {
   deep: "#6B78B8", base: "#9AB0FB", bright: "#BBD0FF",
   ice: "#DCEEFF", gold: "#E9C98A", goldLight: "#F6E0AC", goldGlow: "#FFF7E4",
   black: "#000000", white: "#FFFFFF",
-  // Dark "ink" tones for text on pastel backgrounds — muted, coordinated
-  // with the palette rather than plain black, but dark enough to stay
-  // readable against pale pastel fills.
   ink: "#333A63", inkSoft: "#4A5080", inkWarm: "#8A5A2E"
 };
 
 const EASE = [0.16, 1, 0.3, 1];
 
-// 5 pastel colors — all soft, light, low-to-medium saturation.
 const THEME_COLORS = {
-  icy: "#DCEEFF",         // pastel sky blue
-  cornflower: "#C7D6FF",  // pastel periwinkle
-  customPersian: "#B9C9FA", // soft pastel blue
-  dusk: "#CFC6EA",        // pastel lavender-blue
-  navy: "#B7C0E0"         // soft pastel slate-indigo
+  icy: "#DCEEFF",         
+  cornflower: "#C7D6FF",  
+  customPersian: "#B9C9FA", 
+  dusk: "#CFC6EA",        
+  navy: "#B7C0E0"         
 };
 
 const SLIDES = [
@@ -76,7 +72,7 @@ const SLIDES = [
     },
   },
   {
-    image: "/pdt2.png", // Placeholder image for slide 5
+    image: "/pdt2.png", 
     label: ["GENTLE CARE", "BODY WASH"],
     tags: ["Hydrating", "Vegan", "Rich Lather", "Skin Safe", "Fresh Scent"],
     description: "A soothing everyday wash that purifies and locks in moisture, leaving your skin soft and refreshed.",
@@ -90,34 +86,17 @@ const SLIDES = [
   }
 ];
 
-const TAG_LAYOUT = [
-  { top: "5%", left: "1%", travelX: "30cqw", travelY: "26cqw" },
-  { top: "30%", left: "-3%", travelX: "38cqw", travelY: "6cqw" },
-  { top: "58%", left: "3%", travelX: "26cqw", travelY: "-12cqw" },
-  { top: "14%", right: "0%", travelX: "-30cqw", travelY: "20cqw" },
-  { top: "44%", right: "-3%", travelX: "-38cqw", travelY: "-4cqw" },
-];
-
 const HOLD_MS = 3600;
 const TAGS_IN_DELAY = 620;
 const TAGS_OUT_BEFORE_END = 950;
 
 const BG_SLIDE_TRANSITION = { duration: 0.72, ease: EASE };
-// Layer 2 — title text: follows the background in with a short delay.
 const TITLE_SLIDE_TRANSITION = { duration: 0.6, delay: 0.1, ease: EASE };
-// Layer 3 — product image: arrives last and slowest, and tilts the whole
-// way across (rotate animates alongside x on the same transition), so it
-// visibly rolls/tilts as it travels instead of sliding in flat.
 const IMAGE_SLIDE_TRANSITION = { duration: 1.5, delay: 0.25, ease: EASE };
-const DESC_TRANSITION = { duration: 0.5, ease: EASE };
 
 const NOISE_BG =
   "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")";
 
-// Font size is derived per-slide from the longest line's character count so
-// long titles ("HARVEST RICE", "GENTLE CARE") never overflow the stage width
-// while short ones ("GOLDEN") still get to be big. Constants bumped up ~25%
-// from the previous pass for a much bigger, still-safely-fitting result.
 const FONT_FIT_CONSTANT = 181;
 const FONT_MIN_CQW = 12;
 const FONT_MAX_CQW = 20;
@@ -127,9 +106,6 @@ function getTitleFontSizeCqw(labelLines) {
   return Math.min(FONT_MAX_CQW, Math.max(FONT_MIN_CQW, raw));
 }
 
-// Each background node is now owned by ONE slide for its whole life (keyed by
-// activeIndex). It never gets repainted with another slide's color, so there's
-// nothing to desync from its position animation — this is what kills the flicker.
 function SlideBackgrounds({ activeIndex }) {
   return (
     <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
@@ -224,29 +200,6 @@ function AmbientDust({ isLight }) {
   );
 }
 
-function HeroCTA() {
-  return (
-    <motion.a
-      href="#products"
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, delay: 0.32, ease: EASE }}
-      whileHover={{ y: -2 }}
-      whileTap={{ scale: 0.97 }}
-      className="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full font-body font-medium text-[15px] shadow-[0_10px_30px_rgba(91,107,168,0.25)]"
-      style={{
-        background: `linear-gradient(135deg, ${THEME_COLORS.icy}, ${THEME_COLORS.cornflower})`,
-        color: BRAND.ink
-      }}
-    >
-      Explore the range
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="transition-transform duration-300 group-hover:translate-x-1">
-        <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke={BRAND.ink} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </motion.a>
-  );
-}
-
 function HeroHeadline({ isLight }) {
   return (
     <div className="relative flex flex-col items-center text-center">
@@ -255,30 +208,32 @@ function HeroHeadline({ isLight }) {
         .hero-title-font { font-family: 'Bricolage Grotesque', sans-serif; font-optical-sizing: auto; }
         .hero-wordmark-font { font-family: 'Baloo 2', sans-serif; }
         .hero-line-1 { font-size: clamp(1.6rem, 5.4vw, 2.3rem); letter-spacing: -0.01em; }
+
+        .product-hero-img {
+          height: clamp(220px, 60cqw, 320px);
+          max-width: 80cqw;
+        }
+        @media (min-width: 640px) {
+          .product-hero-img { height: clamp(280px, 50cqw, 380px); max-width: 80cqw; }
+        }
+        @media (min-width: 768px) {
+          .product-hero-img { height: clamp(335px, 44cqw, 455px); max-width: 80cqw; }
+        }
+        @media (min-width: 1024px) {
+          .product-hero-img { height: 580px; max-width: none; }
+        }
+
+        .product-position-wrap {
+          top: 65%;
+        }
+        @media (min-width: 1024px) {
+          .product-position-wrap { top: 50%; }
+        }
       `}</style>
-      
-    
     </div>
   );
 }
 
-// ProductStage owns two independent transform layers so their animations
-// never fight over the same CSS `transform` property:
-//   1. an OUTER motion.div that tilts the product in on mount — tying the
-//      tilt to the same beat as the slide's horizontal move, so the product
-//      visibly rights itself as it arrives — then sits still until touched.
-//   2. an INNER plain div that keeps the existing cursor-tracked 3D tilt
-//      (rotateX/rotateY), now also wired up to touch so it works on mobile.
-// The float direction follows the pointer: touch/hover the left side and
-// the product drifts left, the top and it drifts up, a corner and it drifts
-// diagonally — driven by the same normalized (px, py) vector used for the
-// tilt. It only floats while the cursor/touch is on it, and eases back to
-// rest the moment you leave.
-//
-// `interactive` is passed in by ImageLayer and only flips true once the
-// product has finished sliding in and sits flat (rotate 0) at center — so
-// touching it mid-flight, while it's still tilted and traveling, does
-// nothing. Only once it's settled does touch start the self-moving float.
 function ProductStage({ slide, interactive }) {
   const wrapRef = useRef(null);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
@@ -289,12 +244,9 @@ function ProductStage({ slide, interactive }) {
     const el = wrapRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    // px/py range roughly -0.5 (left/top edge) to 0.5 (right/bottom edge)
     const px = (clientX - rect.left) / rect.width - 0.5;
     const py = (clientY - rect.top) / rect.height - 0.5;
     setTilt({ rx: py * -5, ry: px * 7 });
-    // Same vector drives the float direction: touch the left side and it
-    // drifts left, touch the top and it drifts up, a corner drifts diagonally.
     setFloatDir({ x: px, y: py });
   };
 
@@ -374,9 +326,8 @@ function ProductStage({ slide, interactive }) {
           <img
             src={slide.image}
             alt="Product"
-            className="relative w-auto object-contain"
+            className="product-hero-img relative w-auto object-contain"
             style={{
-              height: "clamp(580px, 46cqh, 560px)",
               filter: "drop-shadow(0 24px 26px rgba(91,107,168,0.28))",
             }}
           />
@@ -386,56 +337,13 @@ function ProductStage({ slide, interactive }) {
   );
 }
 
-function FloatingTag({ text, layout, index, visible }) {
-  const tagVariants = {
-    shown: { opacity: 1, scale: 1, x: 0, y: 0, transition: { duration: 0.55, delay: 0.1 + index * 0.09, ease: EASE } },
-    hidden: { opacity: 0, scale: 0.25, x: layout.travelX, y: layout.travelY, transition: { duration: 0.4, delay: index * 0.05, ease: "easeIn" } },
-  };
-  
-  const dotColor = index % 2 === 0 ? THEME_COLORS.customPersian : THEME_COLORS.icy;
-
-  return (
-    <motion.div className="absolute z-20" style={{ top: layout.top, left: layout.left, right: layout.right }} initial={false} animate={visible ? "shown" : "hidden"} variants={tagVariants}>
-      <motion.div animate={{ y: [0, -6, 0] }} transition={{ duration: 3 + index * 0.4, repeat: Infinity, ease: "easeInOut" }}>
-        <span
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-mono text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.14em] whitespace-nowrap shadow-[0_8px_18px_rgba(91,107,168,0.18)]"
-          style={{
-            background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(220,238,255,0.92))",
-            border: "1px solid rgba(91,107,168,0.18)",
-            color: BRAND.ink
-          }}
-        >
-          <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: dotColor }} />
-          {text}
-        </span>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-// Three independent visual layers now make up each slide, stacked on top of
-// SlideBackgrounds (layer 1):
-//   Layer 2 — TitleLayer: the big wordmark, slides on TITLE_SLIDE_TRANSITION.
-//   Layer 3 — ImageLayer: the product, slides on IMAGE_SLIDE_TRANSITION (a
-//             touch later/slower than the title). It doesn't just slide
-//             horizontally — x, y, rotate, and scale all animate together
-//             on the same transition, so it arcs in diagonally, tilted and
-//             slightly undersized, then untilts and grows to full size as
-//             it settles at center (and does the reverse on the way out).
-//             That's what sells the "tilting while it moves" look.
-// Each layer is keyed by activeIndex independently in AnimatedStage, so they
-// don't all arrive in lockstep — the stagger between them IS the layering.
-
-// Font size is computed per-slide via getTitleFontSizeCqw so the longest
-// line always fits inside the stage. Clamp bounds raised (3.6rem–15.5rem)
-// alongside the cqw constants for a substantially bigger title overall.
 function TitleLayer({ slide }) {
   const isLight = slide.theme.isLight;
   const fontSizeCqw = getTitleFontSizeCqw(slide.label);
 
   return (
     <motion.div
-      className="absolute inset-0 flex flex-col items-center justify-start text-center z-0 px-4 pt-[11%] select-none pointer-events-none"
+      className="absolute inset-0 flex flex-col items-center justify-start text-center z-0 px-4 pt-[12vh] lg:pt-[11%] select-none pointer-events-none"
       initial={{ x: "-100%", y: 26, rotate: -5, opacity: 0 }}
       animate={{ x: "0%", y: 0, rotate: 0, opacity: 1 }}
       exit={{ x: "100%", y: -26, rotate: 5, opacity: 0 }}
@@ -447,7 +355,7 @@ function TitleLayer({ slide }) {
             key={i}
             className="hero-wordmark-font font-extrabold uppercase leading-[0.98] tracking-tight whitespace-nowrap"
             style={{
-              fontSize: `clamp(3.6rem, ${fontSizeCqw}cqw, 15.5rem)`,
+              fontSize: `clamp(min(3.6rem, 10vw), ${fontSizeCqw}cqw, 15.5rem)`,
               color: slide.theme.text,
               textShadow: isLight ? "none" : `0 0 60px ${slide.theme.text}40`,
             }}
@@ -460,44 +368,33 @@ function TitleLayer({ slide }) {
   );
 }
 
-// A hidden, identically-sized copy of the title block is rendered here too
-// (visibility: hidden, not display: none, so it still takes up space) purely
-// so the product image can center on top-1/2 of the *same* box the real
-// title occupies in TitleLayer — keeping the two layers visually aligned
-// even though they now animate independently.
 function ImageLayer({ slide }) {
   const fontSizeCqw = getTitleFontSizeCqw(slide.label);
   const [settled, setSettled] = useState(false);
 
   return (
     <motion.div
-      className="absolute inset-0 flex flex-col items-center justify-start text-center z-10 px-4 pt-[11%] select-none"
+      className="absolute inset-0 flex flex-col items-center justify-start text-center z-10 px-4 pt-[12vh] lg:pt-[11%] select-none"
       initial={{ x: "-90%", y: 70, rotate: -34, scale: 0.88, opacity: 0 }}
       animate={{ x: "0%", y: 0, rotate: 0, scale: 1, opacity: 1 }}
       exit={{ x: "90%", y: -70, rotate: 34, scale: 0.88, opacity: 0 }}
       transition={IMAGE_SLIDE_TRANSITION}
       onAnimationComplete={() => setSettled(true)}
     >
-      <div className="relative flex flex-col items-center" aria-hidden="true">
-        {slide.label.map((line, i) => (
-          <span
-            key={i}
-            className="hero-wordmark-font font-extrabold uppercase leading-[0.98] tracking-tight whitespace-nowrap invisible"
-            style={{ fontSize: `clamp(3.6rem, ${fontSizeCqw}cqw, 15.5rem)` }}
-          >
-            {line}
-          </span>
-        ))}
+      <div className="relative flex flex-col items-center w-full h-full lg:h-auto" aria-hidden="true">
+        <div className="hidden lg:flex flex-col items-center w-full">
+          {slide.label.map((line, i) => (
+            <span
+              key={i}
+              className="hero-wordmark-font font-extrabold uppercase leading-[0.98] tracking-tight whitespace-nowrap invisible"
+              style={{ fontSize: `clamp(min(3.6rem, 10vw), ${fontSizeCqw}cqw, 15.5rem)` }}
+            >
+              {line}
+            </span>
+          ))}
+        </div>
 
-        {/* Product image + contact shadow, centered on the (invisible) title
-            block above, layered IN FRONT of the real title (z-10 beats the
-            title layer's z-0) so the product still reads as sitting on top
-            of the wordmark. This wrapper carries a small, slow shake
-            (rotate + x wobble) that plays out across the same travel window
-            as the outer tilt — a handful of gentle wobbles over ~1.5s, not a
-            fast jitter — so it reads as being carried/tossed rather than
-            gliding on rails. */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
+        <div className="absolute product-position-wrap left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
           <motion.div
             className="relative flex flex-col items-center"
             animate={{
@@ -528,14 +425,10 @@ function AnimatedStage({ activeIndex, tagsVisible }) {
   const isLight = slide.theme.isLight;
 
   return (
-    <div className="relative w-full max-w-10920px] aspect-[3/4] sm:aspect-[16/10] md:aspect-[16/9]" style={{ containerType: "inline-size" }}>
+    <div className="relative w-full h-[460px] sm:h-[520px] lg:h-auto lg:aspect-[16/9] max-w-[1920px]" style={{ containerType: "inline-size" }}>
       <SpotlightGlow activeIndex={activeIndex} isLight={isLight} />
       <AmbientDust isLight={isLight} />
 
-      {/* Clipped: text + product image slide within the box bounds only,
-          so an in-flight slide can never bleed across the full page.
-          Title and image are separate AnimatePresence trees (layers 2 & 3)
-          so each can run its own transition instead of moving as one block. */}
       <div className="absolute inset-0 overflow-hidden">
         <AnimatePresence initial={false}>
           <TitleLayer key={activeIndex} slide={slide} />
@@ -544,15 +437,6 @@ function AnimatedStage({ activeIndex, tagsVisible }) {
           <ImageLayer key={activeIndex} slide={slide} />
         </AnimatePresence>
       </div>
-
-      {/* TEMPORARILY HIDDEN — floating badges (left/right tags) for each slide.
-          Uncomment the block below to bring them back.
-      <div className="absolute inset-0 pointer-events-none">
-        {slide.tags.map((tag, i) => (
-          <FloatingTag key={i} text={tag} layout={TAG_LAYOUT[i]} index={i} visible={tagsVisible} />
-        ))}
-      </div>
-      */}
     </div>
   );
 }
@@ -598,11 +482,10 @@ export default function ProductShowcase() {
         </div>
       </div>
 
-      <div className="relative z-10 flex-1 min-h-0 w-full flex items-center justify-center px-4 pt-10 pb-4 sm:pt-12">
+      <div className="relative z-10 flex-1 min-h-0 w-full flex items-center justify-center px-4 pt-4 pb-12 sm:pt-12 sm:pb-16 lg:pt-10 lg:pb-4">
         <AnimatedStage activeIndex={activeIndex} tagsVisible={tagsVisible} />
       </div>
 
-      {/* Bottom description, CTA and pagination removed as requested */}
     </section>
   );
 }

@@ -8,6 +8,7 @@ import ProductsSection from "./Components/Productssection";
 import SystemSection from "./Components/Systemsection";
 import ContactSection from "./Components/Contactsection";
 import ProductsPage from "./Components/ProductsPage";
+import Footer from "./Components/Footer";
 import "./index.css";
 
 function HomePage() {
@@ -21,6 +22,7 @@ function HomePage() {
       <ProductsSection />
       <SystemSection />
       <ContactSection />
+      <Footer />
     </>
   );
 }

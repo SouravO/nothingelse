@@ -24,13 +24,13 @@ export default function DesignSection() {
   // Cards animate in until 0.5, then lock perfectly at 0vw/0vh until the user leaves the section
   const tlX = useTransform(scrollYProgress, [0, 0.5, 1], [`-${distanceX}`, "0vw", "0vw"]);
   const tlY = useTransform(scrollYProgress, [0, 0.5, 1], [`-${distanceY}`, "0vh", "0vh"]);
-  
+
   const trX = useTransform(scrollYProgress, [0, 0.5, 1], [distanceX, "0vw", "0vw"]);
   const trY = useTransform(scrollYProgress, [0, 0.5, 1], [`-${distanceY}`, "0vh", "0vh"]);
-  
+
   const blX = useTransform(scrollYProgress, [0, 0.5, 1], [`-${distanceX}`, "0vw", "0vw"]);
   const blY = useTransform(scrollYProgress, [0, 0.5, 1], [distanceY, "0vh", "0vh"]);
-  
+
   const brX = useTransform(scrollYProgress, [0, 0.5, 1], [distanceX, "0vw", "0vw"]);
   const brY = useTransform(scrollYProgress, [0, 0.5, 1], [distanceY, "0vh", "0vh"]);
 
@@ -95,85 +95,69 @@ export default function DesignSection() {
 
         {/* 
             CARD LAYER 
-            Anchored perfectly to the center of the viewport
+            Anchored perfectly to the center of the viewport.
+            Card width / resting-offset are the only things that change per
+            breakpoint — the motion values above (tlX/tlY/... and cardOpacity)
+            are untouched, so the scroll animation behaves identically on
+            every screen size.
         */}
         <div className="absolute top-1/2 left-1/2 w-0 h-0 z-30 pointer-events-none">
-          
+
           {/* Top Left Card */}
-          <motion.div 
-            style={{ x: tlX, y: tlY, opacity: cardOpacity }} 
-            className="absolute right-[12vw] md:right-[15vw] bottom-[15vh] md:bottom-[18vh] w-[260px] md:w-[320px] pointer-events-auto"
+          <motion.div
+            style={{ x: tlX, y: tlY, opacity: cardOpacity }}
+            className="absolute right-[7vw] sm:right-[12vw] md:right-[15vw] bottom-[12vh] sm:bottom-[15vh] md:bottom-[18vh] w-[42vw] max-w-[160px] sm:w-[260px] sm:max-w-none md:w-[320px] pointer-events-auto"
           >
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-blue-50 flex flex-col gap-2">
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                  <div className="w-2 h-2 bg-[#0C4DD5] rounded-full" />
-                </div>
-                <h3 className="font-bold text-[#0C4DD5] text-lg md:text-xl tracking-tight m-0">
-                  Pure Ingredients
-                </h3>
-              </div>
-              <p className="text-sm md:text-base text-gray-700 leading-snug m-0">
+            <div className="bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-2xl border border-blue-50 flex flex-col gap-1 sm:gap-2">
+              <h3 className="font-bold text-[#0C4DD5] text-xs sm:text-lg md:text-xl tracking-tight m-0 leading-tight">
+                Pure Ingredients
+              </h3>
+              <p className="text-[10px] sm:text-sm md:text-base text-gray-700 leading-snug m-0">
                 Zero fillers, zero compromises. Just the absolute essentials that get the job done.
               </p>
             </div>
           </motion.div>
 
           {/* Top Right Card */}
-          <motion.div 
-            style={{ x: trX, y: trY, opacity: cardOpacity }} 
-            className="absolute left-[12vw] md:left-[15vw] bottom-[15vh] md:bottom-[18vh] w-[260px] md:w-[320px] pointer-events-auto"
+          <motion.div
+            style={{ x: trX, y: trY, opacity: cardOpacity }}
+            className="absolute left-[7vw] sm:left-[12vw] md:left-[15vw] bottom-[12vh] sm:bottom-[15vh] md:bottom-[18vh] w-[42vw] max-w-[160px] sm:w-[260px] sm:max-w-none md:w-[320px] pointer-events-auto"
           >
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-blue-50 flex flex-col gap-2">
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                  <div className="w-2 h-2 bg-[#0C4DD5] rounded-full" />
-                </div>
-                <h3 className="font-bold text-[#0C4DD5] text-lg md:text-xl tracking-tight m-0">
-                  Honest Pricing
-                </h3>
-              </div>
-              <p className="text-sm md:text-base text-gray-700 leading-snug m-0">
+            <div className="bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-2xl border border-blue-50 flex flex-col gap-1 sm:gap-2">
+              <h3 className="font-bold text-[#0C4DD5] text-xs sm:text-lg md:text-xl tracking-tight m-0 leading-tight">
+                Honest Pricing
+              </h3>
+              <p className="text-[10px] sm:text-sm md:text-base text-gray-700 leading-snug m-0">
                 Direct from us to you. No middleman markups or artificial retail inflation.
               </p>
             </div>
           </motion.div>
 
           {/* Bottom Left Card */}
-          <motion.div 
-            style={{ x: blX, y: blY, opacity: cardOpacity }} 
-            className="absolute right-[12vw] md:right-[15vw] top-[15vh] md:top-[18vh] w-[260px] md:w-[320px] pointer-events-auto"
+          <motion.div
+            style={{ x: blX, y: blY, opacity: cardOpacity }}
+            className="absolute right-[7vw] sm:right-[12vw] md:right-[15vw] top-[12vh] sm:top-[15vh] md:top-[18vh] w-[42vw] max-w-[160px] sm:w-[260px] sm:max-w-none md:w-[320px] pointer-events-auto"
           >
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-blue-50 flex flex-col gap-2">
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                  <div className="w-2 h-2 bg-[#0C4DD5] rounded-full" />
-                </div>
-                <h3 className="font-bold text-[#0C4DD5] text-lg md:text-xl tracking-tight m-0">
-                  Sustainable Focus
-                </h3>
-              </div>
-              <p className="text-sm md:text-base text-gray-700 leading-snug m-0">
+            <div className="bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-2xl border border-blue-50 flex flex-col gap-1 sm:gap-2">
+              <h3 className="font-bold text-[#0C4DD5] text-xs sm:text-lg md:text-xl tracking-tight m-0 leading-tight">
+                Sustainable Focus
+              </h3>
+              <p className="text-[10px] sm:text-sm md:text-base text-gray-700 leading-snug m-0">
                 Thoughtfully sourced and responsibly packaged for a much lighter footprint.
               </p>
             </div>
           </motion.div>
 
           {/* Bottom Right Card */}
-          <motion.div 
-            style={{ x: brX, y: brY, opacity: cardOpacity }} 
-            className="absolute left-[12vw] md:left-[15vw] top-[15vh] md:top-[18vh] w-[260px] md:w-[320px] pointer-events-auto"
+          <motion.div
+            style={{ x: brX, y: brY, opacity: cardOpacity }}
+            className="absolute left-[7vw] sm:left-[12vw] md:left-[15vw] top-[12vh] sm:top-[15vh] md:top-[18vh] w-[42vw] max-w-[160px] sm:w-[260px] sm:max-w-none md:w-[320px] pointer-events-auto"
           >
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-blue-50 flex flex-col gap-2">
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                  <div className="w-2 h-2 bg-[#0C4DD5] rounded-full" />
-                </div>
-                <h3 className="font-bold text-[#0C4DD5] text-lg md:text-xl tracking-tight m-0">
-                  Everyday Staples
-                </h3>
-              </div>
-              <p className="text-sm md:text-base text-gray-700 leading-snug m-0">
+            <div className="bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-2xl border border-blue-50 flex flex-col gap-1 sm:gap-2">
+              <h3 className="font-bold text-[#0C4DD5] text-xs sm:text-lg md:text-xl tracking-tight m-0 leading-tight">
+                Everyday Staples
+              </h3>
+              <p className="text-[10px] sm:text-sm md:text-base text-gray-700 leading-snug m-0">
                 Built for India first, carefully formulated for modern living spaces worldwide.
               </p>
             </div>
@@ -186,7 +170,7 @@ export default function DesignSection() {
           style={{ scale: textScale }}
           className="relative z-20 flex flex-col items-center transform-gpu pointer-events-none"
         >
-          <h2 className="font-head font-black text-[#111111] text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tighter leading-[0.85] select-none text-center drop-shadow-md">
+          <h2 className="font-head font-black text-[#111111] text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tighter leading-[0.85] select-none text-center drop-shadow-md">
             <span className="block">nothing</span>
             <span className="block">else.</span>
           </h2>

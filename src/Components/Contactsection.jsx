@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, CheckCircle2, Mail, Phone, MapPin, Send } from "lucide-react";
+import { CheckCircle2, Mail, Phone, MapPin, Send, ChevronDown } from "lucide-react";
 
 /* Shared reveal-on-scroll wrapper */
 function Reveal({ children, delay = 0, className = "" }) {
@@ -17,8 +17,98 @@ function Reveal({ children, delay = 0, className = "" }) {
   );
 }
 
+const SERVICES = [
+  "Beauty & Personal Care",
+  "Home & Kitchen Essentials",
+  "Food & Beverages",
+  "Health & Wellness",
+  "Bulk / Wholesale Orders",
+  "Distributor Partnership",
+  "General Inquiry",
+];
+
+/* Custom dropdown, matches the floating-label input style */
+function ServiceDropdown({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const labelUp = Boolean(value) || open;
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className={`peer w-full flex items-center justify-between gap-3 bg-black/[0.03] border rounded-2xl px-5 py-4 text-sm text-left outline-none transition-all ${
+          open ? "border-[#0C4DD5]" : "border-black/10"
+        } ${value ? "text-[#111111]" : "text-black/40"}`}
+      >
+        <span className="truncate">{value || " "}</span>
+        <ChevronDown
+          size={16}
+          className={`shrink-0 text-black/40 transition-transform duration-300 ${
+            open ? "rotate-180 text-[#0C4DD5]" : ""
+          }`}
+        />
+      </button>
+
+      <label
+        className={`absolute left-5 pointer-events-none transition-all px-2 bg-[#F5F3EF] ${
+          labelUp
+            ? "-top-2.5 text-[11px] text-[#0C4DD5]"
+            : "top-4 text-sm text-black/40"
+        }`}
+      >
+        I&apos;m Interested In
+      </label>
+
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute z-20 mt-2 w-full rounded-2xl border border-black/10 bg-[#F5F3EF] shadow-lg shadow-black/5 overflow-hidden py-2"
+          >
+            {SERVICES.map((service) => (
+              <li key={service}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange(service);
+                    setOpen(false);
+                  }}
+                  className={`w-full text-left px-5 py-3 text-sm transition-colors ${
+                    value === service
+                      ? "text-[#0C4DD5] bg-[#0C4DD5]/5 font-semibold"
+                      : "text-[#111111] hover:bg-black/[0.03]"
+                  }`}
+                >
+                  {service}
+                </button>
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [service, setService] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -84,6 +174,9 @@ function ContactForm() {
                   </label>
                 </div>
               </div>
+
+              {/* Service Dropdown */}
+              <ServiceDropdown value={service} onChange={setService} />
 
               {/* Message Input */}
               <div className="relative">
@@ -211,34 +304,6 @@ export default function ContactSection() {
           <Reveal delay={0.15}>
             <ContactForm />
           </Reveal>
-        </div>
-
-        {/* =========================================
-            STYLISH FOOTER BLOCK
-            ========================================= */}
-        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-xs text-black/40 font-body">
-          <div className="text-center md:text-left">
-            <p className="font-head font-extrabold text-[#111111] text-xl tracking-tight mb-1">
-              NOTHING ELSE<span className="text-[#0C4DD5]">.</span>
-            </p>
-            <p className="text-black/40">
-              © {new Date().getFullYear()} Nothing Else Private Limited. All rights reserved.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-x-8 gap-y-2">
-            <a href="#about" className="hover:text-[#0C4DD5] transition-colors">Privacy Policy</a>
-            <a href="#system" className="hover:text-[#0C4DD5] transition-colors">Terms of Service</a>
-            <a href="#presence" className="hover:text-[#0C4DD5] transition-colors">Sitemap</a>
-          </div>
-
-          <button 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-2 hover:text-[#111111] transition-colors group py-2"
-          >
-            Back to top 
-            <ArrowUpRight size={14} className="transform transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </button>
         </div>
 
       </div>
