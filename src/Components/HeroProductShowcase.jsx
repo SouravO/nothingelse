@@ -210,21 +210,21 @@ function HeroHeadline({ isLight }) {
         .hero-line-1 { font-size: clamp(1.6rem, 5.4vw, 2.3rem); letter-spacing: -0.01em; }
 
         .product-hero-img {
-          height: clamp(220px, 60cqw, 320px);
-          max-width: 80cqw;
+          height: clamp(300px, 82cqw, 430px);
+          max-width: 92cqw;
         }
         @media (min-width: 640px) {
-          .product-hero-img { height: clamp(280px, 50cqw, 380px); max-width: 80cqw; }
+          .product-hero-img { height: clamp(360px, 68cqw, 480px); max-width: 88cqw; }
         }
         @media (min-width: 768px) {
-          .product-hero-img { height: clamp(335px, 44cqw, 455px); max-width: 80cqw; }
+          .product-hero-img { height: clamp(400px, 58cqw, 520px); max-width: 84cqw; }
         }
         @media (min-width: 1024px) {
           .product-hero-img { height: 580px; max-width: none; }
         }
 
         .product-position-wrap {
-          top: 65%;
+          top: 46%;
         }
         @media (min-width: 1024px) {
           .product-position-wrap { top: 50%; }
@@ -343,7 +343,7 @@ function TitleLayer({ slide }) {
 
   return (
     <motion.div
-      className="absolute inset-0 flex flex-col items-center justify-start text-center z-0 px-4 pt-[12vh] lg:pt-[11%] select-none pointer-events-none"
+      className="absolute inset-0 flex flex-col items-center justify-start text-center z-0 px-4 pt-[6vh] lg:pt-[11%] select-none pointer-events-none"
       initial={{ x: "-100%", y: 26, rotate: -5, opacity: 0 }}
       animate={{ x: "0%", y: 0, rotate: 0, opacity: 1 }}
       exit={{ x: "100%", y: -26, rotate: 5, opacity: 0 }}
@@ -353,7 +353,7 @@ function TitleLayer({ slide }) {
         {slide.label.map((line, i) => (
           <span
             key={i}
-            className="hero-wordmark-font font-extrabold uppercase leading-[0.98] tracking-tight whitespace-nowrap"
+            className="hero-wordmark-font font-extrabold uppercase leading-[1.1] lg:leading-[0.98] tracking-tight whitespace-nowrap"
             style={{
               fontSize: `clamp(min(3.6rem, 10vw), ${fontSizeCqw}cqw, 15.5rem)`,
               color: slide.theme.text,
@@ -374,7 +374,7 @@ function ImageLayer({ slide }) {
 
   return (
     <motion.div
-      className="absolute inset-0 flex flex-col items-center justify-start text-center z-10 px-4 pt-[12vh] lg:pt-[11%] select-none"
+      className="absolute inset-0 flex flex-col items-center justify-start text-center z-10 px-4 pt-[6vh] lg:pt-[11%] select-none"
       initial={{ x: "-90%", y: 70, rotate: -34, scale: 0.88, opacity: 0 }}
       animate={{ x: "0%", y: 0, rotate: 0, scale: 1, opacity: 1 }}
       exit={{ x: "90%", y: -70, rotate: 34, scale: 0.88, opacity: 0 }}
