@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar";
 import ProductShowcase from "./Components/HeroProductShowcase";
+import FallingProducts from "./Components/Fallingproducts";
 import SiteIntro from "./Components/SiteIntro";
 import AboutSection from "./Components/Aboutsection";
 import DesignSection from "./Components/designsection";
-import ProductsSection from "./Components/Productssection";
 import SystemSection from "./Components/Systemsection";
 import ContactSection from "./Components/Contactsection";
 import ProductsPage from "./Components/ProductsPage";
@@ -19,7 +19,7 @@ function HomePage() {
       <ProductShowcase />
       <AboutSection />
       <DesignSection />
-      <ProductsSection />
+      <FallingProducts />
       <SystemSection />
       <ContactSection />
       <Footer />

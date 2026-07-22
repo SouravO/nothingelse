@@ -101,28 +101,31 @@ export default function AboutSection() {
       });
 
       // 1. Animate words flying in from the right (Mimics the Matisse Reference)
+      // Sped up: tighter stagger + shorter per-word duration so the whole
+      // cascade reads much quicker with this many words in play.
       tl.fromTo(
         ".animate-word",
         { x: "50vw", opacity: 0 },
         {
           x: 0,
           opacity: 1,
-          stagger: 0.02, // Adjust this to make the word-by-word flow faster/slower
-          duration: 0.8,
+          stagger: 0.012, // was 0.02 — faster cascade across words
+          duration: 0.5,  // was 0.8 — quicker settle per word
           ease: "power3.out"
         }
       )
       // 2. Animate the full Gallery block from the right after the text finishes
+      // Sped up: shorter duration + larger overlap so it kicks in sooner.
       .fromTo(
         galleryRef.current,
         { x: "30vw", opacity: 0 },
         {
           x: 0,
           opacity: 1,
-          duration: 1.2,
+          duration: 0.7, // was 1.2
           ease: "power3.out"
         },
-        "-=0.2" // Starts just slightly before the last words settle for a smooth transition
+        "-=0.3" // was -=0.2 — starts a bit earlier relative to the shorter text cascade
       );
 
     }, sectionRef);
@@ -139,7 +142,7 @@ export default function AboutSection() {
       <div className="absolute bottom-[-10%] right-[-5%] w-[700px] h-[700px] rounded-full bg-indigo-100/30 blur-[160px] pointer-events-none" />
 
       {/* 100% Width Grid Container */}
-      <div className="relative z-10 w-full px-6 md:px-16 xl:px-24 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      <div className="relative z-10 w-full px-6 md:px-16 xl:px-24 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch">
 
         {/* LEFT COLUMN — Text Content (Occupies 7/12th of screen width) */}
         {/* Framed as its own panel — rounded + overflow-hidden so the shelf
@@ -182,9 +185,9 @@ export default function AboutSection() {
             {/* Clean, unboxed Title Frame — same white-to-gold treatment as
                 the hero headline, so the two sections read as one brand. */}
             <div className="relative mb-10 md:mb-12">
-              <h2 className="font-head font-black text-6xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tighter">
+              <h2 className="font-head font-extrabold text-6xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tighter">
                 <span className="animate-word opacity-0 block text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-[#AFC7FF]">
-                  Honest Food.
+                  Good Everyday Products.
                 </span>
                 <span className="animate-word opacity-0 block text-transparent bg-clip-text bg-gradient-to-br from-[#F3CE7C] via-[#FFEFC7] to-[#D9A84A] mt-1">
                   Nothing Else.
@@ -194,26 +197,26 @@ export default function AboutSection() {
 
             {/* Primary Statement */}
             <p className="relative font-body text-blue-50/85 text-lg md:text-xl leading-relaxed mb-6">
-              <SplitText text="We exist because we believe that cooking for family and friends is one of life's simple pleasures — and that the products you use to make it should be simple too." />
+              <SplitText text="We started Nothing Else because everyday FMCG had gotten too noisy — heavy packaging, celebrity campaigns, confusing claims, and prices padded to cover all of it. We wanted daily-use products that were simple, honest, and fairly priced, and nothing more than that." />
             </p>
 
             <p className="relative font-body text-blue-50/70 text-base md:text-lg leading-relaxed mb-10">
-              <SplitText text="From our own kitchens to yours, every product starts with one question: would we serve this to our own family? If the answer isn't yes, it doesn't make the cut. That's the standard behind every batch — no exceptions, no fine print, no shortcuts." />
+              <SplitText text="We sit between the cheap, unorganised basics and the expensive, overdesigned legacy brands — not cheap, not luxury, just smart value for everyday India. From salt and atta to dishwash liquid and shampoo, one rule runs across every category: say what it is, sell what it does, and leave the rest out." />
             </p>
 
             {/* Replacement Editorial Paragraphs */}
             <div className="relative border-t border-white/15 pt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Treating these smaller blocks as entire pieces rather than splitting every single word keeps the DOM light */}
               <div className="animate-word opacity-0">
-                <h3 className="font-head font-bold text-lg text-white mb-2">Our Absolute Standard</h3>
+                <h3 className="font-head font-bold text-lg text-white mb-2">One Rule, Every Shelf</h3>
                 <p className="font-body text-sm text-blue-50/70 leading-relaxed">
-                  By maintaining complete control over sourcing, packing, and design, we preserve our commitment to transparency. What you read on our labels is exactly what enters your kitchen.
+                  We're not launching a single product, we're launching a shelf — grocery, spices, snacks, tea and coffee, home care, and more, all built to the same honest standard from day one.
                 </p>
               </div>
               <div className="animate-word opacity-0">
-                <h3 className="font-head font-bold text-lg text-white mb-2">Everyday Integrity</h3>
+                <h3 className="font-head font-bold text-lg text-white mb-2">Trust, Not Drama</h3>
                 <p className="font-body text-sm text-blue-50/70 leading-relaxed">
-                  We work alongside responsible producers to eliminate unnecessary hand-offs, assuring premium grade ingredients make it to your pantry shelf at direct, fair pricing.
+                  People don't dislike brands — they dislike paying extra for the drama around them. We put that money back into the product and the price instead.
                 </p>
               </div>
             </div>
@@ -231,13 +234,13 @@ export default function AboutSection() {
            
             {/* Gallery frame with top/bottom fade mask */}
             <div
-              className="relative rounded-3xl bg-gradient-to-b from-blue-50/60 to-white border border-gray-200/70 shadow-[0_30px_60px_-15px_rgba(30,63,224,0.15)] p-3 sm:p-4 lg:p-3 xl:p-5 overflow-hidden"
+              className="relative lg:absolute lg:inset-0 rounded-3xl bg-gradient-to-b from-blue-50/60 to-white border border-gray-200/70 shadow-[0_30px_60px_-15px_rgba(30,63,224,0.15)] p-3 sm:p-4 lg:p-3 xl:p-5 overflow-hidden"
               style={{
                 maskImage: "linear-gradient(to bottom, transparent, black 8%, black 92%, transparent)",
                 WebkitMaskImage: "linear-gradient(to bottom, transparent, black 8%, black 92%, transparent)",
               }}
             >
-              <div className="grid grid-cols-2 gap-3 lg:gap-3 xl:gap-5 h-[420px] sm:h-[480px] md:h-[520px] xl:h-[580px]">
+              <div className="grid grid-cols-2 gap-3 lg:gap-3 xl:gap-5 h-[420px] sm:h-[480px] md:h-[520px] lg:h-full">
                 <MarqueeColumn images={COLUMN_A} direction="up" duration={30} />
                 <MarqueeColumn images={COLUMN_B} direction="down" duration={24} className="mt-8 xl:mt-10" />
               </div>

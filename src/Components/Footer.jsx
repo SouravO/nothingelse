@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ArrowUpRight, Mail, Phone, MapPin } from "lucide-react";
 
 /* lucide-react v1.0 removed all brand/logo icons (GitHub, Instagram,
@@ -81,26 +82,32 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Links */}
+          {/* Explore — site navigation, mirrors the sections/routes in App.jsx */}
           <div>
             <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-white/40">
-              Company
+              Explore
             </p>
             <ul className="space-y-3 text-sm text-white/70">
               <li>
                 <a href="#about" className="transition-colors hover:text-white">
-                  Privacy Policy
+                  About
                 </a>
               </li>
+              
               <li>
                 <a href="#system" className="transition-colors hover:text-white">
-                  Terms of Service
+                  System
                 </a>
               </li>
               <li>
-                <a href="#presence" className="transition-colors hover:text-white">
-                  Sitemap
+                <a href="#contact" className="transition-colors hover:text-white">
+                  Contact
                 </a>
+              </li>
+              <li>
+                <Link to="/products" className="transition-colors hover:text-white">
+                  Products
+                </Link>
               </li>
             </ul>
           </div>

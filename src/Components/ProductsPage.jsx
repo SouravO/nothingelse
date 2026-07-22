@@ -3,9 +3,7 @@ import { motion } from "framer-motion";
 
 /* ============================================================================
    STANDALONE /products PAGE
-   This is a full, independent copy of the Products carousel section — it does
-   NOT import anything from Productssection.jsx. You can delete either file
-   later without breaking the other.
+   This is a full, independent copy of the Products carousel section
    ============================================================================ */
 
 function Reveal({ children, delay = 0, className = "" }) {
@@ -36,6 +34,7 @@ const ITEM_WIDTH = 270;
 const GAP = -20;
 const SLOT = ITEM_WIDTH + GAP;
 
+// --- CAROUSEL LOGIC UNTOUCHED ---
 function ProductSlide({ src, distance, instant, isHovered, onEnter, onLeave }) {
   const d = Math.min(distance, 3);
   const baseScale = d === 0 ? 1.15 : d === 1 ? 1.02 : d === 2 ? 0.92 : 0.84;
@@ -82,17 +81,12 @@ function ProductSlide({ src, distance, instant, isHovered, onEnter, onLeave }) {
   );
 }
 
+// --- CAROUSEL LOGIC UNTOUCHED ---
 function ProductCarousel() {
   const [step, setStep] = useState(RESET_TO);
   const [instant, setInstant] = useState(false);
   const [hovered, setHovered] = useState(null);
 
-  // Autoplay runs continuously regardless of hover — it used to pause
-  // whenever `hovered !== null`, but since each slide's hover zone spans
-  // most of the section's height/width, that made the carousel freeze any
-  // time the cursor was almost anywhere over the section. `hovered` is only
-  // used for the per-slide visual highlight (scale/opacity/glow) now, not
-  // to gate this interval.
   useEffect(() => {
     const id = setInterval(() => setStep((s) => s + 1), STEP_MS);
     return () => clearInterval(id);
@@ -143,18 +137,74 @@ function ProductCarousel() {
 
 function ProductsSection() {
   return (
-    <section id="products" className="section-paint-lazy relative bg-white scroll-mt-[68px] sm:scroll-mt-[76px] pt-20 sm:pt-24 lg:pt-28">
-      <div className="mx-auto max-w-[1280px] px-5 sm:px-8 flex flex-col items-center text-center">
+    <section id="products" className="section-paint-lazy relative overflow-hidden scroll-mt-[68px] sm:scroll-mt-[76px] pt-20 sm:pt-28 lg:pt-36 pb-16 sm:pb-24">
+      
+      {/* =========================================
+          NEW BACKGROUND: AURORA & DOT GRID
+          ========================================= */}
+      <div className="absolute inset-0 pointer-events-none z-0 bg-gradient-to-b from-white via-[#F5F8FF] to-[#E8F0FF]">
+        {/* Subtle Technical Dot Grid */}
+        <div 
+          className="absolute inset-0 opacity-[0.04]" 
+          style={{ 
+            backgroundImage: `radial-gradient(#0C4DD5 1.5px, transparent 1.5px)`, 
+            backgroundSize: '32px 32px' 
+          }}
+        />
+        
+        {/* Animated Aurora Orbs */}
+        <motion.div
+          animate={{ x: [0, 80, 0], y: [0, -60, 0], scale: [1, 1.2, 1] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[-10%] left-[-5%] w-[60vw] max-w-[700px] aspect-square rounded-full bg-[#0C4DD5] mix-blend-multiply filter blur-[120px] sm:blur-[160px] opacity-15"
+        />
+        <motion.div
+          animate={{ x: [0, -60, 0], y: [0, 80, 0], scale: [1, 1.3, 1] }}
+          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[10%] right-[-10%] w-[50vw] max-w-[600px] aspect-square rounded-full bg-[#5C8DFF] mix-blend-multiply filter blur-[100px] sm:blur-[140px] opacity-25"
+        />
+        <motion.div
+          animate={{ x: [0, 40, 0], y: [0, 40, 0], scale: [1, 1.1, 1] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-[-15%] left-[20%] w-[55vw] max-w-[800px] aspect-square rounded-full bg-[#A0C4FF] mix-blend-multiply filter blur-[130px] sm:blur-[180px] opacity-30"
+        />
+      </div>
+
+      {/* =========================================
+          CONTENT & TYPOGRAPHY
+          ========================================= */}
+      <div className="mx-auto max-w-[1280px] px-5 sm:px-8 flex flex-col items-center text-center relative z-10">
         <Reveal>
-          <p className="font-body text-[13px] tracking-[0.2em] uppercase text-[#5C8DFF] mb-3">Products</p>
-          <h2 className="font-head font-bold text-black text-[8vw] sm:text-[3.8vw] lg:text-[2.6vw] leading-[1.06] tracking-[-0.02em] uppercase mb-0 max-w-xl">
-            Blue first. Product second. Nothing else.
+          {/* Refined Kicker */}
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <span className="h-[1px] w-8 sm:w-16 bg-[#0C4DD5]/30"></span>
+            <p className="font-body text-[11px] sm:text-[13px] font-bold tracking-[0.3em] uppercase text-[#0C4DD5]">
+              The Collection
+            </p>
+            <span className="h-[1px] w-8 sm:w-16 bg-[#0C4DD5]/30"></span>
+          </div>
+          
+          {/* New Stylish Typography */}
+          <h2 className="font-head text-[#111111] text-[9vw] sm:text-[5vw] lg:text-[4vw] leading-[1.1] tracking-[-0.03em] max-w-4xl mx-auto drop-shadow-sm">
+            <span className="font-black uppercase tracking-tighter">Blue First.</span>{" "}
+            <span className="font-medium text-[#111111]/40 tracking-tight">Product Second.</span>
+            <br />
+            <div className="mt-1 sm:mt-2">
+              <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0C4DD5] to-[#4580FF] uppercase tracking-tighter drop-shadow-md">
+                Nothing Else.
+              </span>
+            </div>
           </h2>
         </Reveal>
       </div>
 
       <Reveal delay={0.1}>
-        <div className="relative left-1/2 -translate-x-1/2 w-screen">
+        {/* 
+          Using negative top margins (-mt-6, -mt-12, -mt-24) to pull the carousel up.
+          This drastically reduces the large empty white space between the title 
+          and the product images, visually tightening the section.
+        */}
+        <div className="relative z-10 left-1/2 -translate-x-1/2 w-screen mt-2 sm:-mt-12 lg:-mt-24">
           <ProductCarousel />
         </div>
       </Reveal>
@@ -163,11 +213,11 @@ function ProductsSection() {
 }
 
 /* ============================================================================
-   DEFAULT EXPORT — the page rendered at the /products route
+   DEFAULT EXPORT
    ============================================================================ */
 export default function ProductsPage() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white">
       <ProductsSection />
     </main>
   );
