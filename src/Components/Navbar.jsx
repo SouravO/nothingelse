@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 /* ============================================================================
    NAVBAR
@@ -20,9 +20,12 @@ const NAV_LINKS = [
 ];
 
 export default function Navbar() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeId, setActiveId] = useState("hero");
+  const isSolid = location.pathname !== "/" || scrolled;
 
   // Navbar goes solid the moment the (pinned) hero has fully scrolled away —
   // until then it rides transparent over the hero's dark background.
@@ -35,7 +38,14 @@ export default function Navbar() {
     );
     observer.observe(heroEl);
     return () => observer.disconnect();
-  }, []);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname !== "/" || !location.hash) return;
+    const id = location.hash.slice(1);
+    const t = setTimeout(() => scrollToSection(id), 80);
+    return () => clearTimeout(t);
+  }, [location.pathname, location.hash]);
 
   // Track which section is currently in view to highlight the matching nav item
   useEffect(() => {
@@ -60,18 +70,25 @@ export default function Navbar() {
     );
     sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
-  }, []);
+  }, [location.pathname]);
 
   const onNavClick = (e, id) => {
     e.preventDefault();
     setMobileOpen(false);
+    if (location.pathname !== "/") {
+      navigate(`/#${id}`);
+      return;
+    }
+    if (location.hash !== `#${id}`) {
+      navigate(`/#${id}`, { replace: true });
+    }
     scrollToSection(id);
   };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-[110] transition-colors duration-500 ${
-        scrolled
+      className={`fixed top-0 left-0 right-0 z-[140] transition-colors duration-500 ${
+        isSolid
           ? "bg-white/95 backdrop-blur-md border-b border-[#111111]/8"
           : "bg-transparent border-b border-transparent"
       }`}
@@ -83,8 +100,8 @@ export default function Navbar() {
           onClick={(e) => onNavClick(e, "hero")}
           className="font-logo font-extrabold text-[19px] tracking-[-0.02em] select-none"
         >
-          <span className={scrolled ? "text-[#111111]" : "text-white"}>nothing</span>{" "}
-          <span className={scrolled ? "text-[#111111]/95" : "text-white/95"}>else</span>
+          <span className={isSolid ? "text-[#111111]" : "text-white"}>nothing</span>{" "}
+          <span className={isSolid ? "text-[#111111]/95" : "text-white/95"}>else</span>
           <span className="text-[#0C4DD5]">.</span>
         </a>
 
@@ -102,13 +119,13 @@ export default function Navbar() {
               }}
               className={`relative px-3.5 py-2 rounded-full font-body text-[13.5px] font-medium transition-colors duration-300 ${
                 activeId === link.id
-                  ? scrolled ? "text-[#0C4DD5]" : "text-white"
-                  : scrolled ? "text-[#111111]/55 hover:text-[#111111]" : "text-white/65 hover:text-white"
+                  ? isSolid ? "text-[#0C4DD5]" : "text-white"
+                  : isSolid ? "text-[#111111]/55 hover:text-[#111111]" : "text-white/65 hover:text-white"
               }`}
             >
               {link.label}
               {activeId === link.id && (
-                <span className={`absolute left-3.5 right-3.5 -bottom-0.5 h-[2px] rounded-full ${scrolled ? "bg-[#0C4DD5]" : "bg-white"}`} />
+                <span className={`absolute left-3.5 right-3.5 -bottom-0.5 h-[2px] rounded-full ${isSolid ? "bg-[#0C4DD5]" : "bg-white"}`} />
               )}
             </Link>
           ))}
@@ -116,7 +133,7 @@ export default function Navbar() {
             href="#contact"
             onClick={(e) => onNavClick(e, "contact")}
             className={`ml-2 inline-flex items-center gap-1.5 rounded-full px-4 py-2 font-body font-semibold text-[13.5px] transition-colors duration-300 ${
-              scrolled ? "bg-[#0C4DD5] text-white hover:bg-[#111111]" : "bg-white text-[#0A3FB0] hover:bg-[#111111] hover:text-white"
+              isSolid ? "bg-[#0C4DD5] text-white hover:bg-[#111111]" : "bg-white text-[#0A3FB0] hover:bg-[#111111] hover:text-white"
             }`}
           >
             Get in touch
@@ -124,9 +141,10 @@ export default function Navbar() {
         </nav>
 
         <button
+          type="button"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu"
-          className={`md:hidden p-2 -mr-2 transition-colors duration-300 ${scrolled ? "text-[#111111]" : "text-white"}`}
+          className={`md:hidden relative z-[10] p-2 -mr-2 touch-manipulation pointer-events-auto transition-colors duration-300 ${isSolid ? "text-[#111111]" : "text-white"}`}
         >
           {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
@@ -162,11 +180,7 @@ export default function Navbar() {
               ))}
               <button
                 type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setMobileOpen(false);
-                  scrollToSection("contact");
-                }}
+                onClick={(e) => onNavClick(e, "contact")}
                 className="mt-1 inline-flex items-center justify-center rounded-full bg-[#0C4DD5] px-4 py-2.5 font-body text-[14px] font-semibold text-white shadow-sm"
               >
                 Get in touch

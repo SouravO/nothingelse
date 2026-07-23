@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
 
 /* ============================================================================
    STANDALONE /products PAGE
@@ -136,8 +138,23 @@ function ProductCarousel() {
 }
 
 function ProductsSection() {
+  const navigate = useNavigate();
+  const handleBack = () => navigate("/#products-showcase");
+
   return (
     <section id="products" className="section-paint-lazy relative overflow-hidden scroll-mt-[68px] sm:scroll-mt-[76px] pt-20 sm:pt-28 lg:pt-36 pb-16 sm:pb-24">
+      
+      {/* Back to category showcase */}
+      {/* <div className="relative z-20 mx-auto max-w-[1280px] px-5 sm:px-8">
+        <button
+          type="button"
+          onClick={handleBack}
+          className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 font-body text-xs sm:text-sm font-semibold uppercase tracking-widest text-[#0A3DAE] shadow-[0_4px_14px_rgba(0,0,0,0.06)] transition-all duration-300 hover:bg-[#0A3DAE] hover:text-white hover:-translate-y-0.5"
+        >
+          <ArrowLeft size={16} />
+          Back
+        </button>
+      </div> */}
       
       {/* =========================================
           NEW BACKGROUND: AURORA & DOT GRID
@@ -213,12 +230,122 @@ function ProductsSection() {
 }
 
 /* ============================================================================
+   CATEGORY CATALOG BLOCKS
+   One block per category button in the Home section. Every card currently
+   reuses the same 5 placeholder images (PRODUCT_IMAGES) — swap in real
+   per-product photos later; the layout and slugs are already wired up.
+   ============================================================================ */
+
+const CATEGORIES = [
+  {
+    slug: "shampoo",
+    name: "Shampoo",
+    tagline: "Everyday hair care, without the markup.",
+    items: ["Everyday Care", "Anti-Dandruff", "Herbal Strength", "Smooth & Shine"],
+  },
+  {
+    slug: "rice",
+    name: "Rice",
+    tagline: "Grain quality you can see, priced like it should be.",
+    items: ["Basmati", "Sona Masoori", "Brown Rice", "Steam Rice"],
+  },
+  {
+    slug: "dishwash",
+    name: "Dishwash",
+    tagline: "Cuts grease, not corners.",
+    items: ["Lemon", "Lime & Mint", "Regular", "Concentrate"],
+  },
+  {
+    slug: "oils",
+    name: "Oils",
+    tagline: "Cold-pressed honesty, bottle after bottle.",
+    items: ["Sunflower Oil", "Mustard Oil", "Groundnut Oil", "Cold-Pressed Olive Oil"],
+  },
+  {
+    slug: "tea",
+    name: "Tea",
+    tagline: "Leaves first. Everything else, nothing else.",
+    items: ["Black Tea", "Green Tea", "Masala Chai", "Herbal Infusion"],
+  },
+];
+
+function CategoryBlock({ slug, name, tagline, items, tinted }) {
+  return (
+    <section
+      id={slug}
+      className={`relative scroll-mt-[68px] sm:scroll-mt-[76px] py-16 sm:py-20 lg:py-24 ${
+        tinted ? "bg-[#F5F8FF]" : "bg-white"
+      }`}
+    >
+      <div className="mx-auto max-w-[1280px] px-5 sm:px-8">
+        <Reveal>
+          <div className="flex flex-wrap items-end justify-between gap-6 mb-10 sm:mb-14">
+            <div>
+              <p className="font-body text-[11px] sm:text-[12px] font-bold tracking-[0.3em] uppercase text-[#0C4DD5]/70 mb-2">
+                Category
+              </p>
+              <h3 className="font-head text-[#111111] text-4xl sm:text-5xl font-black tracking-tight">
+                {name}
+              </h3>
+            </div>
+            <p className="font-body text-[#111111]/50 text-sm sm:text-base max-w-xs text-left sm:text-right">
+              {tagline}
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {items.map((item, i) => (
+            <Reveal delay={i * 0.06} key={item}>
+              <div className="group relative flex flex-col items-center rounded-3xl bg-white border border-black/[0.05] shadow-[0_10px_30px_rgba(12,77,213,0.06)] p-5 sm:p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(12,77,213,0.12)]">
+                <div className="relative w-full h-[140px] sm:h-[200px] flex items-end justify-center mb-4 sm:mb-5">
+                  <div className="absolute bottom-2 h-8 w-24 rounded-full bg-[#0C4DD5]/10 blur-lg" />
+                  <img
+                    src={PRODUCT_IMAGES[i % PRODUCT_IMAGES.length]}
+                    alt={item}
+                    loading="lazy"
+                    decoding="async"
+                    className="relative w-full h-full object-contain drop-shadow-[0_12px_20px_rgba(0,0,0,0.12)] transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <p className="font-body font-semibold text-xs sm:text-base text-[#111111] text-center leading-snug">
+                  {item}
+                </p>
+                <span className="mt-1 font-body text-[10px] sm:text-[11px] uppercase tracking-widest text-[#0C4DD5]/60">
+                  {name}
+                </span>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================================
    DEFAULT EXPORT
    ============================================================================ */
 export default function ProductsPage() {
+  const { hash } = useLocation();
+
+  // When arriving via a category button (e.g. /products#oils), jump to that block.
+  useEffect(() => {
+    if (!hash) return;
+    const id = hash.replace("#", "");
+    const t = setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 150);
+    return () => clearTimeout(t);
+  }, [hash]);
+
   return (
     <main className="min-h-screen bg-white">
       <ProductsSection />
+      {CATEGORIES.map((category, i) => (
+        <CategoryBlock key={category.slug} tinted={i % 2 === 1} {...category} />
+      ))}
     </main>
   );
 }

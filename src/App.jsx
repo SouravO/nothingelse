@@ -14,7 +14,6 @@ import "./index.css";
 function HomePage() {
   return (
     <>
-      <Navbar />
       <SiteIntro />
       <ProductShowcase />
       <AboutSection />
@@ -30,6 +29,7 @@ function HomePage() {
 export default function App() {
   return (
     <div className="bg-white font-body overflow-x-clip">
+      <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductsPage />} />

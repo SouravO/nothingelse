@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Square } from "lucide-react";
 import gsap from "gsap";
 
@@ -12,7 +13,9 @@ const SECTION_VISIBLE_THRESHOLD = 0.6;
 
 export default function HomeSection() {
   const sectionRef = useRef(null);
-  
+  const navigate = useNavigate();
+  const { hash } = useLocation();
+
   // ---- Desktop Refs ----
   const containerRef = useRef(null);
   const contentRefs = useRef([]);
@@ -54,9 +57,20 @@ export default function HomeSection() {
     });
   }, []);
 
+  // Navigate to the products page, straight to that category's block.
   const handleCategoryClick = (slug) => {
-    console.log(`Navigate to "${slug}" category page`);
+    navigate(`/products#${slug}`);
   };
+
+  // When returning via the Products page's Back button (/#products-showcase),
+  // scroll straight back to this section.
+  useEffect(() => {
+    if (hash !== "#products-showcase" || !sectionRef.current) return;
+    const t = setTimeout(() => {
+      sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 150);
+    return () => clearTimeout(t);
+  }, [hash]);
 
   // ---- Desktop Hover Shake ----
   const handleProductEnter = (i) => {

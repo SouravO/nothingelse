@@ -86,7 +86,7 @@ export default function SiteIntro() {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[200] flex items-center justify-center"
+      className="fixed inset-0 z-[90] flex items-center justify-center pointer-events-none"
       style={{ backgroundColor: BRAND_DEEP }}
     >
       <h1
