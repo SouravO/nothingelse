@@ -19,6 +19,27 @@ const NAV_LINKS = [
   { id: "system", label: "System" },
 ];
 
+// Framer Motion variants for mobile menu staggering
+const mobileMenuVars = {
+  initial: { opacity: 0, height: 0 },
+  animate: { 
+    opacity: 1, 
+    height: "auto", 
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1], staggerChildren: 0.05, delayChildren: 0.1 } 
+  },
+  exit: { 
+    opacity: 0, 
+    height: 0, 
+    transition: { duration: 0.3, ease: "easeInOut", staggerChildren: 0.03, staggerDirection: -1 } 
+  },
+};
+
+const mobileLinkVars = {
+  initial: { opacity: 0, x: -15 },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.3, ease: "easeOut" } },
+  exit: { opacity: 0, x: -10, transition: { duration: 0.2 } },
+};
+
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -27,8 +48,7 @@ export default function Navbar() {
   const [activeId, setActiveId] = useState("hero");
   const isSolid = location.pathname !== "/" || scrolled;
 
-  // Navbar goes solid the moment the (pinned) hero has fully scrolled away —
-  // until then it rides transparent over the hero's dark background.
+  // Navbar goes solid the moment the (pinned) hero has fully scrolled away
   useEffect(() => {
     const heroEl = document.getElementById("hero");
     if (!heroEl) return;
@@ -85,110 +105,157 @@ export default function Navbar() {
     scrollToSection(id);
   };
 
+  const onProductsClick = (e) => {
+    e.preventDefault();
+    setMobileOpen(false);
+    if (location.pathname !== "/products" || location.hash) {
+      navigate("/products");
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-[140] transition-colors duration-500 ${
+    <motion.header
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className={`fixed top-0 left-0 right-0 z-[140] transition-all duration-500 ease-in-out ${
         isSolid
-          ? "bg-white/95 backdrop-blur-md border-b border-[#111111]/8"
+          ? "bg-white/85 backdrop-blur-xl border-b border-[#111111]/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
           : "bg-transparent border-b border-transparent"
       }`}
     >
       <div className="mx-auto max-w-[1280px] px-5 sm:px-8 h-[68px] sm:h-[76px] flex items-center justify-between">
+        
+        {/* Logo */}
         <a
           href="#hero"
           aria-label="Nothing Else — Home"
           onClick={(e) => onNavClick(e, "hero")}
-          className="font-logo font-extrabold text-[19px] tracking-[-0.02em] select-none"
+          className="group font-logo font-extrabold text-[19px] tracking-[-0.02em] select-none transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]"
         >
-          <span className={isSolid ? "text-[#111111]" : "text-white"}>nothing</span>{" "}
-          <span className={isSolid ? "text-[#111111]/95" : "text-white/95"}>else</span>
+          <span className={`transition-colors duration-500 ${isSolid ? "text-[#111111]" : "text-white"}`}>nothing</span>{" "}
+          <span className={`transition-colors duration-500 ${isSolid ? "text-[#111111]/70 group-hover:text-[#111111]" : "text-white/80 group-hover:text-white"}`}>else</span>
           <span className="text-[#0C4DD5]">.</span>
         </a>
 
-        <nav className="hidden md:flex items-center gap-1">
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-1.5">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.id}
               to={link.path || `/#${link.id}`}
               onClick={(e) => {
                 if (link.path) {
-                  setMobileOpen(false);
+                  onProductsClick(e);
                   return;
                 }
                 onNavClick(e, link.id);
               }}
-              className={`relative px-3.5 py-2 rounded-full font-body text-[13.5px] font-medium transition-colors duration-300 ${
+              className="relative px-4 py-2 font-body text-[13.5px] font-medium transition-colors duration-300 z-10 group"
+            >
+              <span className={`relative z-10 transition-colors duration-300 ${
                 activeId === link.id
                   ? isSolid ? "text-[#0C4DD5]" : "text-white"
-                  : isSolid ? "text-[#111111]/55 hover:text-[#111111]" : "text-white/65 hover:text-white"
-              }`}
-            >
-              {link.label}
+                  : isSolid ? "text-[#111111]/60 group-hover:text-[#111111]" : "text-white/70 group-hover:text-white"
+              }`}>
+                {link.label}
+              </span>
+              
+              {/* Sliding Active Pill */}
               {activeId === link.id && (
-                <span className={`absolute left-3.5 right-3.5 -bottom-0.5 h-[2px] rounded-full ${isSolid ? "bg-[#0C4DD5]" : "bg-white"}`} />
+                <motion.div
+                  layoutId="desktop-nav-active"
+                  className={`absolute inset-0 rounded-full -z-10 ${isSolid ? "bg-[#0C4DD5]/10" : "bg-white/15"}`}
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                />
               )}
             </Link>
           ))}
-          <a
+
+          {/* CTA Button */}
+          <motion.a
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             href="#contact"
             onClick={(e) => onNavClick(e, "contact")}
-            className={`ml-2 inline-flex items-center gap-1.5 rounded-full px-4 py-2 font-body font-semibold text-[13.5px] transition-colors duration-300 ${
-              isSolid ? "bg-[#0C4DD5] text-white hover:bg-[#111111]" : "bg-white text-[#0A3FB0] hover:bg-[#111111] hover:text-white"
+            className={`ml-4 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 font-body font-semibold text-[13.5px] transition-all duration-300 shadow-sm ${
+              isSolid 
+                ? "bg-[#0C4DD5] text-white hover:bg-[#0A3FB0] hover:shadow-md" 
+                : "bg-white text-[#0A3FB0] hover:bg-white/90 hover:shadow-md"
             }`}
           >
             Get in touch
-          </a>
+          </motion.a>
         </nav>
 
+        {/* Mobile Toggle Button */}
         <button
           type="button"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu"
           className={`md:hidden relative z-[10] p-2 -mr-2 touch-manipulation pointer-events-auto transition-colors duration-300 ${isSolid ? "text-[#111111]" : "text-white"}`}
         >
-          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={mobileOpen ? "close" : "open"}
+              initial={{ opacity: 0, rotate: mobileOpen ? -90 : 90 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: mobileOpen ? 90 : -90 }}
+              transition={{ duration: 0.2 }}
+            >
+              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            </motion.div>
+          </AnimatePresence>
         </button>
       </div>
 
+      {/* Mobile Navigation Dropdown */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="md:hidden bg-white border-t border-[#111111]/8 overflow-hidden"
+            variants={mobileMenuVars}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="md:hidden bg-white/95 backdrop-blur-xl border-t border-[#111111]/5 overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.08)] absolute w-full"
           >
-            <div className="px-5 py-3 flex flex-col gap-2">
+            <div className="px-5 py-5 flex flex-col gap-1">
               {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.id}
-                  to={link.path || `/#${link.id}`}
-                  onClick={(e) => {
-                    if (link.path) {
-                      setMobileOpen(false);
-                      return;
-                    }
-                    onNavClick(e, link.id);
-                  }}
-                  className={`px-3 py-2.5 rounded-xl font-body text-[15px] font-medium transition-colors duration-300 ${
-                    activeId === link.id ? "text-[#0C4DD5] bg-[#EAF0FE]" : "text-[#111111]/75"
-                  }`}
-                >
-                  {link.label}
-                </Link>
+                <motion.div key={link.id} variants={mobileLinkVars}>
+                  <Link
+                    to={link.path || `/#${link.id}`}
+                    onClick={(e) => {
+                      if (link.path) {
+                         onProductsClick(e);
+                         return;
+                      }
+                      onNavClick(e, link.id);
+                    }}
+                    className={`block px-4 py-3 rounded-xl font-body text-[15px] font-medium transition-all duration-300 ${
+                      activeId === link.id 
+                        ? "text-[#0C4DD5] bg-[#0C4DD5]/5 shadow-sm" 
+                        : "text-[#111111]/70 hover:text-[#111111] hover:bg-black/5"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </motion.div>
               ))}
-              <button
-                type="button"
-                onClick={(e) => onNavClick(e, "contact")}
-                className="mt-1 inline-flex items-center justify-center rounded-full bg-[#0C4DD5] px-4 py-2.5 font-body text-[14px] font-semibold text-white shadow-sm"
-              >
-                Get in touch
-              </button>
+              
+              <motion.div variants={mobileLinkVars} className="pt-3 pb-1">
+                <button
+                  type="button"
+                  onClick={(e) => onNavClick(e, "contact")}
+                  className="w-full inline-flex items-center justify-center rounded-xl bg-[#0C4DD5] px-4 py-3.5 font-body text-[15px] font-semibold text-white shadow-md transition-all active:scale-[0.98] hover:bg-[#0A3FB0]"
+                >
+                  Get in touch
+                </button>
+              </motion.div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }

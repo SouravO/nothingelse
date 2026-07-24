@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
 
 /* ============================================================================
    STANDALONE /products PAGE
@@ -138,9 +137,6 @@ function ProductCarousel() {
 }
 
 function ProductsSection() {
-  const navigate = useNavigate();
-  const handleBack = () => navigate("/#products-showcase");
-
   return (
     <section id="products" className="section-paint-lazy relative overflow-hidden scroll-mt-[68px] sm:scroll-mt-[76px] pt-20 sm:pt-28 lg:pt-36 pb-16 sm:pb-24">
       
@@ -331,7 +327,10 @@ export default function ProductsPage() {
 
   // When arriving via a category button (e.g. /products#oils), jump to that block.
   useEffect(() => {
-    if (!hash) return;
+    if (!hash) {
+      window.scrollTo({ top: 0, behavior: "auto" });
+      return;
+    }
     const id = hash.replace("#", "");
     const t = setTimeout(() => {
       const el = document.getElementById(id);
