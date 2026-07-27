@@ -185,38 +185,38 @@ export default function AboutSection() {
             {/* Clean, unboxed Title Frame — same white-to-gold treatment as
                 the hero headline, so the two sections read as one brand. */}
             <div className="relative mb-10 md:mb-12">
-              <h2 className="font-head font-extrabold text-6xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tighter">
+              <h2 className="font-head font-extrabold text-4xl md:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
                 <span className="animate-word opacity-0 block text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-[#AFC7FF]">
                   Good Everyday Products.
                 </span>
-                <span className="animate-word opacity-0 block text-transparent bg-clip-text bg-gradient-to-br from-[#F3CE7C] via-[#FFEFC7] to-[#D9A84A] mt-1">
-                  Nothing Else.
-                </span>
               </h2>
+              <p className="animate-word opacity-0 mt-3 font-head font-semibold text-base md:text-lg lg:text-xl tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-[#F3CE7C] via-[#FFEFC7] to-[#D9A84A]">
+                Honest Pricing. Nothing Else.
+              </p>
             </div>
 
             {/* Primary Statement */}
             <p className="relative font-body text-blue-50/85 text-lg md:text-xl leading-relaxed mb-6">
-              <SplitText text="We started Nothing Else because everyday FMCG had gotten too noisy — heavy packaging, celebrity campaigns, confusing claims, and prices padded to cover all of it. We wanted daily-use products that were simple, honest, and fairly priced, and nothing more than that." />
+              <SplitText text="FMCG has become too noisy. Salt has a story. Water has a personality. Chips have a lifestyle. But consumers mostly want one thing: a good product at a fair price. People don't hate brands — they hate paying extra for brand drama. Nothing Else removes the noise." />
             </p>
 
             <p className="relative font-body text-blue-50/70 text-base md:text-lg leading-relaxed mb-10">
-              <SplitText text="We sit between the cheap, unorganised basics and the expensive, overdesigned legacy brands — not cheap, not luxury, just smart value for everyday India. From salt and atta to dishwash liquid and shampoo, one rule runs across every category: say what it is, sell what it does, and leave the rest out." />
+              <SplitText text="Nothing Else is a modern FMCG brand that makes daily-use products simple, honest, recognisable, and fairly priced. No fake premium. No unnecessary claims. No confusing packaging. No overbranding. Just the product. Nothing else. Positioned between cheap, unorganised products and expensive branded FMCG — not cheap, not luxury, not overdesigned. Smart value for everyday India." />
             </p>
 
             {/* Replacement Editorial Paragraphs */}
             <div className="relative border-t border-white/15 pt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Treating these smaller blocks as entire pieces rather than splitting every single word keeps the DOM light */}
               <div className="animate-word opacity-0">
-                <h3 className="font-head font-bold text-lg text-white mb-2">One Rule, Every Shelf</h3>
+                <h3 className="font-head font-bold text-lg text-white mb-2">We Are Launching A Shelf</h3>
                 <p className="font-body text-sm text-blue-50/70 leading-relaxed">
-                  We're not launching a single product, we're launching a shelf — grocery, spices, snacks, tea and coffee, home care, and more, all built to the same honest standard from day one.
+                  Nothing Else launches as a complete FMCG system across 10 categories at once — grocery essentials, spices &amp; tea &amp; coffee, snacks &amp; biscuits, home care &amp; personal care, instant mixes, flours &amp; pulses. A single product creates trial. A full shelf creates a movement.
                 </p>
               </div>
               <div className="animate-word opacity-0">
-                <h3 className="font-head font-bold text-lg text-white mb-2">Trust, Not Drama</h3>
+                <h3 className="font-head font-bold text-lg text-white mb-2">India First. GCC Next.</h3>
                 <p className="font-body text-sm text-blue-50/70 leading-relaxed">
-                  People don't dislike brands — they dislike paying extra for the drama around them. We put that money back into the product and the price instead.
+                  GCC markets have strong existing demand for Indian grocery, snacks, spices, tea, and household products, with UAE as the first GCC gateway.
                 </p>
               </div>
             </div>

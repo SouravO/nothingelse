@@ -110,10 +110,10 @@ export default function DesignSection() {
           >
             <div className="bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-2xl border border-blue-50 flex flex-col gap-1 sm:gap-2">
               <h3 className="font-bold text-[#0C4DD5] text-xs sm:text-lg md:text-xl tracking-tight m-0 leading-tight">
-                Pure Ingredients
+                Say What It Is
               </h3>
               <p className="text-[10px] sm:text-sm md:text-base text-gray-700 leading-snug m-0">
-                Zero fillers, zero compromises. Just the absolute essentials that get the job done.
+                No invented stories, no lifestyle spin. Just the product name, what it does, and nothing dressed up around it.
               </p>
             </div>
           </motion.div>
@@ -128,7 +128,7 @@ export default function DesignSection() {
                 Honest Pricing
               </h3>
               <p className="text-[10px] sm:text-sm md:text-base text-gray-700 leading-snug m-0">
-                Direct from us to you. No middleman markups or artificial retail inflation.
+                Positioned between cheap basics and overpriced legacy brands. Smart value, not inflated retail markups.
               </p>
             </div>
           </motion.div>
@@ -140,10 +140,10 @@ export default function DesignSection() {
           >
             <div className="bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-2xl border border-blue-50 flex flex-col gap-1 sm:gap-2">
               <h3 className="font-bold text-[#0C4DD5] text-xs sm:text-lg md:text-xl tracking-tight m-0 leading-tight">
-                Sustainable Focus
+                No Fake Premium
               </h3>
               <p className="text-[10px] sm:text-sm md:text-base text-gray-700 leading-snug m-0">
-                Thoughtfully sourced and responsibly packaged for a much lighter footprint.
+                No heavy packaging, no celebrity campaigns, no artificial premium positioning. Just clean design that does its job.
               </p>
             </div>
           </motion.div>
@@ -155,10 +155,10 @@ export default function DesignSection() {
           >
             <div className="bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-2xl border border-blue-50 flex flex-col gap-1 sm:gap-2">
               <h3 className="font-bold text-[#0C4DD5] text-xs sm:text-lg md:text-xl tracking-tight m-0 leading-tight">
-                Everyday Staples
+                One Shelf, One Rule
               </h3>
               <p className="text-[10px] sm:text-sm md:text-base text-gray-700 leading-snug m-0">
-                Built for India first, carefully formulated for modern living spaces worldwide.
+                60+ SKUs across 10 categories from day one, grocery to home care, all held to the same honest standard.
               </p>
             </div>
           </motion.div>

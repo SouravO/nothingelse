@@ -21,9 +21,9 @@ const THEME_COLORS = {
 const SLIDES = [
   {
     image: "/pdt2.png",
-    label: ["DAILY GLOW", "SHAMPOO"],
-    tags: ["Sulfate-Free", "Deep Nourish", "Salon Shine", "pH Balanced", "Frizz Control"],
-    description: "A weightless lather that rinses clean and leaves hair soft and easy to manage — every single wash.",
+    label: ["HONEST", "EVERYDAY"],
+    tags: ["No Fake Premium", "No Overclaims", "Fair Pricing", "Simple Products", "Trusted Quality"],
+    description: "Good everyday products. Honest pricing. Nothing else.",
     theme: {
       bg: THEME_COLORS.icy, 
       text: BRAND.ink,
@@ -34,9 +34,9 @@ const SLIDES = [
   },
   {
     image: "/pdt3.png",
-    label: ["GOLDEN", "HARVEST RICE"],
-    tags: ["Long Grain", "Naturally Aged", "Non-Sticky", "Farm Sourced", "Fluffy Texture"],
-    description: "Slow-aged for a fluffier bite and a cleaner aroma — everyday rice that makes every meal feel special.",
+    label: ["NOT CHEAP", "NOT LUXURY"],
+    tags: ["Smart Value", "No Overdesign", "Everyday India", "Fair Price", "Honest Quality"],
+    description: "Positioned between cheap unorganised products and expensive branded FMCG — smart value for everyday India.",
     theme: {
       bg: THEME_COLORS.cornflower, 
       text: BRAND.ink,
@@ -47,9 +47,9 @@ const SLIDES = [
   },
   {
     image: "/pdt4.png",
-    label: ["POWER CLEAN", "DETERGENT"],
-    tags: ["Stain Lift", "Fresh Rinse", "Fabric Safe", "Low Suds", "Skin Gentle"],
-    description: "Tough on stains, gentle on fabric — a wash that gets clothes properly clean without harsh trade-offs.",
+    label: ["ONE SHELF", "TEN CATEGORIES"],
+    tags: ["60+ SKUs", "10 Categories", "Grocery To Personal Care", "Stronger Shelf Presence", "One Rule"],
+    description: "We are not launching a product. We are launching a shelf — a complete FMCG system across 10 categories at once.",
     theme: {
       bg: THEME_COLORS.customPersian, 
       text: BRAND.ink,
@@ -60,9 +60,9 @@ const SLIDES = [
   },
   {
     image: "/pdt5.png",
-    label: ["EVERYDAY", "MASALA MIX"],
-    tags: ["Stone Ground", "No Fillers", "Bold Aroma", "Small Batch", "Vibrant Color"],
-    description: "A balanced blend ground the old way — real spice and real aroma, nothing added to cut corners.",
+    label: ["OFFLINE TRUST", "ONLINE DEMAND"],
+    tags: ["Retail Shelf Visibility", "Reels & Storytelling", "No-Drama Campaigns", "Distributor Network", "Demand Follows Trust"],
+    description: "A visible brand block on real shelves creates trust. Online storytelling turns that trust into demand.",
     theme: {
       bg: THEME_COLORS.dusk, 
       text: BRAND.ink,
@@ -73,9 +73,9 @@ const SLIDES = [
   },
   {
     image: "/pdt2.png", 
-    label: ["GENTLE CARE", "BODY WASH"],
-    tags: ["Hydrating", "Vegan", "Rich Lather", "Skin Safe", "Fresh Scent"],
-    description: "A soothing everyday wash that purifies and locks in moisture, leaving your skin soft and refreshed.",
+    label: ["INDIA FIRST", "GCC NEXT"],
+    tags: ["National Distribution", "GCC Export Ready", "Diaspora First", "UAE Gateway", "$2B Ambition"],
+    description: "Built for India first, then GCC and global markets — from pilot stores to national distribution.",
     theme: {
       bg: THEME_COLORS.navy, 
       text: BRAND.ink,

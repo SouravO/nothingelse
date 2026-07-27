@@ -188,23 +188,16 @@ function ProductsSection() {
           ========================================= */}
       <div className="mx-auto max-w-[1280px] px-5 sm:px-8 flex flex-col items-center text-center relative z-10">
         <Reveal>
-          {/* Refined Kicker */}
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <span className="h-[1px] w-8 sm:w-16 bg-[#0C4DD5]/30"></span>
-            <p className="font-body text-[11px] sm:text-[13px] font-bold tracking-[0.3em] uppercase text-[#0C4DD5]">
-              The Collection
-            </p>
-            <span className="h-[1px] w-8 sm:w-16 bg-[#0C4DD5]/30"></span>
-          </div>
+         
           
           {/* New Stylish Typography */}
           <h2 className="font-head text-[#111111] text-[9vw] sm:text-[5vw] lg:text-[4vw] leading-[1.1] tracking-[-0.03em] max-w-4xl mx-auto drop-shadow-sm">
-            <span className="font-black uppercase tracking-tighter">Blue First.</span>{" "}
-            <span className="font-medium text-[#111111]/40 tracking-tight">Product Second.</span>
+            <span className="font-black uppercase tracking-tighter">Start Wide.</span>{" "}
+            <span className="font-medium text-[#111111]/40 tracking-tight">Scale Deeper.</span>
             <br />
             <div className="mt-1 sm:mt-2">
-              <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0C4DD5] to-[#4580FF] uppercase tracking-tighter drop-shadow-md">
-                Nothing Else.
+              <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0C4DD5] to-[#4580FF] tracking-tight drop-shadow-md">
+                60+ SKUs.
               </span>
             </div>
           </h2>

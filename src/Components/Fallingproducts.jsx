@@ -284,10 +284,10 @@ export default function HomeSection() {
             <span className="absolute left-0 sm:left-6 lg:left-11 xl:left-13 top-1 bottom-8 w-[3px] rounded-full bg-gradient-to-b from-[#3B5BDB] via-[#3B5BDB]/40 to-transparent shadow-[0_0_16px_#3B5BDB]" />
             <h2 className="font-head text-white leading-[1.04] text-left">
               <span className="block sm:whitespace-nowrap font-medium italic tracking-normal text-lg sm:text-3xl md:text-4xl lg:text-[2.65rem] text-blue-50/75">
-                Good everyday products.
+                One brand. Ten categories.
               </span>
               <span className="block sm:whitespace-nowrap font-black tracking-[-0.03em] text-3xl sm:text-5xl md:text-6xl lg:text-7xl mt-2">
-                Honest pricing.{" "}
+                One rule.{" "}
                 <span className="whitespace-nowrap">
                   <span className="bg-gradient-to-r from-white via-white to-[#AFC4FF] bg-clip-text text-transparent drop-shadow-[0_4px_26px_rgba(59,91,219,0.5)]">
                     Nothing else
@@ -363,10 +363,10 @@ export default function HomeSection() {
             <div className="pl-6">
               <h2 className="font-head text-white leading-[1.1]">
                 <span className="block font-medium italic text-blue-50/75 text-xl sm:text-2xl mb-1">
-                  Good everyday products.
+                  One brand. Ten categories.
                 </span>
                 <span className="block font-black tracking-[-0.03em] text-4xl sm:text-5xl">
-                  Honest pricing.<br/>
+                  One rule.<br/>
                   <span className="bg-gradient-to-r from-white via-white to-[#AFC4FF] bg-clip-text text-transparent drop-shadow-[0_4px_26px_rgba(59,91,219,0.5)]">
                     Nothing else
                   </span>
@@ -434,8 +434,8 @@ export default function HomeSection() {
         <div className="flex whitespace-nowrap animate-[homeMarquee_20s_linear_infinite]">
           {Array.from({ length: 8 }).map((_, i) => (
             <span key={i} className="font-body font-bold text-[11px] sm:text-[12px] tracking-[0.3em] uppercase mx-8 flex items-center gap-8 text-white/30">
-              Blue first <Square size={5} className="fill-white/20 text-transparent" />
-              Product second <Square size={5} className="fill-white/20 text-transparent" />
+              Offline creates trust <Square size={5} className="fill-white/20 text-transparent" />
+              Online creates demand <Square size={5} className="fill-white/20 text-transparent" />
               Nothing else <Square size={5} className="fill-white/20 text-transparent" />
             </span>
           ))}

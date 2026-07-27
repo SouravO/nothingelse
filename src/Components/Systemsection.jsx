@@ -4,16 +4,16 @@ const STEP = {
   num: "Step 01",
   title: (
     <>
-      Groceries, <br />
-      <span className="text-[#0C4DD5]">Redefined.</span>
+      Asset-Light. <br />
+      <span className="text-[#0C4DD5]">Fast-Moving. Scalable.</span>
     </>
   ),
-  desc: "We believe premium quality shouldn't come with a premium price tag. Our transparent system cuts the noise, delivering everyday essentials straight to you.",
+  desc: "No manufacturing investment initially. Focus on sourcing, branding, and distribution. High SKU count, daily repeat products, distributor-led expansion, quick commerce discovery, retail shelf blocks, and GCC export revenue — all on low manufacturing capex. Nothing Else is not dependent on one hero product. It is a repeat-purchase FMCG engine.",
 };
 
 export default function SystemSection() {
   // Expanded typography text to wrap around the larger circle flawlessly
-  const circleText = "NOTHING ELSE • HIGH QUALITY • AFFORDABLE PRICES • DIRECT TO CONSUMER • ".repeat(2);
+  const circleText = "WHITE-LABEL SOURCING • BRANDED PACKAGING • QUALITY CONTROL • RETAIL DISTRIBUTION & DISTRIBUTOR NETWORK • SOCIAL MEDIA DEMAND CREATION • GCC EXPORT EXPANSION • ".repeat(2);
 
   return (
     <section id="system" className="section-paint-lazy relative bg-white py-16 sm:py-20 lg:py-32 overflow-hidden">
@@ -152,15 +152,12 @@ export default function SystemSection() {
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true, amount: 0.4 }}
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 text-center max-w-[clamp(200px,72vw,340px)] px-[clamp(0.75rem,3vw,1.5rem)] pointer-events-auto"
+                className="relative z-10 text-center max-w-[clamp(210px,74vw,400px)] px-[clamp(0.75rem,3vw,1.5rem)] pointer-events-auto"
               >
-                <p className="text-[#0C4DD5] font-body text-[clamp(10px,2.6vw,13px)] tracking-[0.25em] uppercase mb-[clamp(0.5rem,1.5vw,1rem)] font-semibold">
-                  {STEP.num}
-                </p>
                 <h2 className="text-[#111111] text-[clamp(1.35rem,6vw,3rem)] font-bold mb-[clamp(0.75rem,2vw,1.25rem)] font-head leading-[1.12] tracking-tight">
                   {STEP.title}
                 </h2>
-                <p className="text-[#111111]/65 text-[clamp(11px,2.8vw,15px)] leading-[1.45] font-body">
+                <p className="text-[#111111]/65 text-[clamp(10px,2.3vw,13.5px)] leading-[1.55] font-body">
                   {STEP.desc}
                 </p>
               </motion.div>
