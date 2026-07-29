@@ -126,7 +126,7 @@ export default function Navbar() {
       }`}
     >
       <div className="mx-auto max-w-[1280px] px-5 sm:px-8 h-[68px] sm:h-[76px] flex items-center justify-between">
-        
+
         {/* Logo */}
         <a
           href="#hero"
@@ -134,8 +134,8 @@ export default function Navbar() {
           onClick={(e) => onNavClick(e, "hero")}
           className="group font-logo font-extrabold text-[19px] tracking-[-0.02em] select-none transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]"
         >
-          <span className={`transition-colors duration-500 ${isSolid ? "text-[#111111]" : "text-white"}`}>nothing</span>{" "}
-          <span className={`transition-colors duration-500 ${isSolid ? "text-[#111111]/70 group-hover:text-[#111111]" : "text-white/80 group-hover:text-white"}`}>else</span>
+          <span className="transition-colors duration-500 text-[#111111]">nothing</span>{" "}
+          <span className="transition-colors duration-500 text-[#111111]/70 group-hover:text-[#111111]">else</span>
           <span className="text-[#0C4DD5]">.</span>
         </a>
 
@@ -154,19 +154,21 @@ export default function Navbar() {
               }}
               className="relative px-4 py-2 font-body text-[13.5px] font-medium transition-colors duration-300 z-10 group"
             >
-              <span className={`relative z-10 transition-colors duration-300 ${
-                activeId === link.id
-                  ? isSolid ? "text-[#0C4DD5]" : "text-white"
-                  : isSolid ? "text-[#111111]/60 group-hover:text-[#111111]" : "text-white/70 group-hover:text-white"
-              }`}>
+              <span
+                className={`relative z-10 transition-colors duration-300 ${
+                  activeId === link.id
+                    ? "text-[#0C4DD5]"
+                    : "text-[#111111]/60 group-hover:text-[#111111]"
+                }`}
+              >
                 {link.label}
               </span>
-              
+
               {/* Sliding Active Pill */}
               {activeId === link.id && (
                 <motion.div
                   layoutId="desktop-nav-active"
-                  className={`absolute inset-0 rounded-full -z-10 ${isSolid ? "bg-[#0C4DD5]/10" : "bg-white/15"}`}
+                  className="absolute inset-0 rounded-full -z-10 bg-[#0C4DD5]/10"
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
                 />
               )}
@@ -180,8 +182,8 @@ export default function Navbar() {
             href="#contact"
             onClick={(e) => onNavClick(e, "contact")}
             className={`ml-4 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 font-body font-semibold text-[13.5px] transition-all duration-300 shadow-sm ${
-              isSolid 
-                ? "bg-[#0C4DD5] text-white hover:bg-[#0A3FB0] hover:shadow-md" 
+              isSolid
+                ? "bg-[#0C4DD5] text-white hover:bg-[#0A3FB0] hover:shadow-md"
                 : "bg-white text-[#0A3FB0] hover:bg-white/90 hover:shadow-md"
             }`}
           >
@@ -194,7 +196,7 @@ export default function Navbar() {
           type="button"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu"
-          className={`md:hidden relative z-[10] p-2 -mr-2 touch-manipulation pointer-events-auto transition-colors duration-300 ${isSolid ? "text-[#111111]" : "text-white"}`}
+          className="md:hidden relative z-[10] p-2 -mr-2 touch-manipulation pointer-events-auto transition-colors duration-300 text-[#111111]"
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -227,14 +229,14 @@ export default function Navbar() {
                     to={link.path || `/#${link.id}`}
                     onClick={(e) => {
                       if (link.path) {
-                         onProductsClick(e);
-                         return;
+                        onProductsClick(e);
+                        return;
                       }
                       onNavClick(e, link.id);
                     }}
                     className={`block px-4 py-3 rounded-xl font-body text-[15px] font-medium transition-all duration-300 ${
-                      activeId === link.id 
-                        ? "text-[#0C4DD5] bg-[#0C4DD5]/5 shadow-sm" 
+                      activeId === link.id
+                        ? "text-[#0C4DD5] bg-[#0C4DD5]/5 shadow-sm"
                         : "text-[#111111]/70 hover:text-[#111111] hover:bg-black/5"
                     }`}
                   >
@@ -242,7 +244,7 @@ export default function Navbar() {
                   </Link>
                 </motion.div>
               ))}
-              
+
               <motion.div variants={mobileLinkVars} className="pt-3 pb-1">
                 <button
                   type="button"
