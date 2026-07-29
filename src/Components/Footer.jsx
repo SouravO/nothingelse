@@ -36,38 +36,10 @@ function GithubIcon(props) {
 
 export default function Footer() {
   const socials = [
-    {
-      icon: InstagramIcon,
-      href: "https://instagram.com/nothingelse",
-      label: "Instagram",
-      // Official Instagram gradient (matches the app icon)
-      style: {
-        background:
-          "radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%)",
-      },
-      shadowClass: "hover:shadow-[0_0_20px_rgba(214,36,159,0.55)]",
-    },
-    {
-      icon: FacebookIcon,
-      href: "https://facebook.com/nothingelse",
-      label: "Facebook",
-      style: { backgroundColor: "#1877F2" },
-      shadowClass: "hover:shadow-[0_0_20px_rgba(24,119,242,0.55)]",
-    },
-    {
-      icon: LinkedinIcon,
-      href: "https://linkedin.com/company/nothingelse",
-      label: "LinkedIn",
-      style: { backgroundColor: "#0A66C2" },
-      shadowClass: "hover:shadow-[0_0_20px_rgba(10,102,194,0.55)]",
-    },
-    {
-      icon: GithubIcon,
-      href: "https://github.com/nothingelse",
-      label: "GitHub",
-      style: { backgroundColor: "#181717" },
-      shadowClass: "hover:shadow-[0_0_20px_rgba(0,0,0,0.45)]",
-    },
+    { icon: InstagramIcon, href: "https://instagram.com/nothingelse", label: "Instagram" },
+    { icon: FacebookIcon, href: "https://facebook.com/nothingelse", label: "Facebook" },
+    { icon: LinkedinIcon, href: "https://linkedin.com/company/nothingelse", label: "LinkedIn" },
+    { icon: GithubIcon, href: "https://github.com/nothingelse", label: "GitHub" },
   ];
 
   return (
@@ -150,17 +122,20 @@ export default function Footer() {
               Follow
             </p>
             <div className="flex gap-3">
-              {socials.map(({ icon: Icon, href, label, style, shadowClass }) => (
+              {socials.map(({ icon: Icon, href, label }) => (
                 <a
                   key={label}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  style={style}
-                  className={`flex h-9 w-9 items-center justify-center rounded-full text-white shadow-sm transition-all duration-300 hover:scale-110 ${shadowClass}`}
+                  className="group flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-1 ring-inset ring-white/25 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-white hover:ring-white hover:shadow-[0_0_20px_rgba(255,255,255,0.35)]"
                 >
-                  <Icon width={16} height={16} />
+                  <Icon
+                    width={16}
+                    height={16}
+                    className="text-white transition-colors duration-300 group-hover:text-[#0C4DD5]"
+                  />
                 </a>
               ))}
             </div>

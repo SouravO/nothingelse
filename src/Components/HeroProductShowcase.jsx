@@ -86,13 +86,15 @@ const SLIDES = [
   }
 ];
 
-const HOLD_MS = 3600;
+const HOLD_MS = 4200;
 const TAGS_IN_DELAY = 620;
 const TAGS_OUT_BEFORE_END = 950;
 
 const BG_SLIDE_TRANSITION = { duration: 0.72, ease: EASE };
-const TITLE_SLIDE_TRANSITION = { duration: 0.6, delay: 0.1, ease: EASE };
-const IMAGE_SLIDE_TRANSITION = { duration: 1.5, delay: 0.25, ease: EASE };
+const TITLE_ENTER_TRANSITION = { duration: 0.3, delay: 0.1, ease: EASE }; 
+const TITLE_EXIT_TRANSITION = { duration: 0.3, ease: EASE }; 
+const IMAGE_ENTER_TRANSITION = { duration: 2.5, ease: EASE };
+const IMAGE_EXIT_TRANSITION = { duration: 2.5, ease: EASE };
 
 const NOISE_BG =
   "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")";
@@ -100,6 +102,7 @@ const NOISE_BG =
 const FONT_FIT_CONSTANT = 181;
 const FONT_MIN_CQW = 12;
 const FONT_MAX_CQW = 20;
+
 function getTitleFontSizeCqw(labelLines) {
   const longest = Math.max(...labelLines.map((l) => l.length));
   const raw = FONT_FIT_CONSTANT / longest;
@@ -344,12 +347,23 @@ function TitleLayer({ slide }) {
   return (
     <motion.div
       className="absolute inset-0 flex flex-col items-center justify-start text-center z-0 px-4 pt-[6vh] lg:pt-[11%] select-none pointer-events-none"
-      initial={{ x: "-100%", y: 26, rotate: -5, opacity: 0 }}
-      animate={{ x: "0%", y: 0, rotate: 0, opacity: 1 }}
-      exit={{ x: "100%", y: -26, rotate: 5, opacity: 0 }}
-      transition={TITLE_SLIDE_TRANSITION}
+      initial={{ x: "-100%", y: 26, rotate: -12, opacity: 0 }}
+      animate={{ x: "0%", y: 0, rotate: 0, opacity: 1, transition: TITLE_ENTER_TRANSITION }}
+      exit={{ x: "100%", y: -26, rotate: 12, opacity: 0, transition: TITLE_EXIT_TRANSITION }}
     >
-      <div className="relative flex flex-col items-center">
+      <motion.div
+        className="relative flex flex-col items-center"
+        animate={{
+          rotate: [0, -1.5, 1, -1, 0.6, -0.3, 0],
+          x: [0, -2, 1.5, -1, 0.6, -0.3, 0],
+        }}
+        transition={{
+          duration: TITLE_ENTER_TRANSITION.duration,
+          delay: TITLE_ENTER_TRANSITION.delay,
+          ease: "easeInOut",
+          times: [0, 0.15, 0.32, 0.5, 0.68, 0.85, 1],
+        }}
+      >
         {slide.label.map((line, i) => (
           <span
             key={i}
@@ -363,7 +377,7 @@ function TitleLayer({ slide }) {
             {line}
           </span>
         ))}
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -376,9 +390,8 @@ function ImageLayer({ slide }) {
     <motion.div
       className="absolute inset-0 flex flex-col items-center justify-start text-center z-10 px-4 pt-[6vh] lg:pt-[11%] select-none"
       initial={{ x: "-90%", y: 70, rotate: -34, scale: 0.88, opacity: 0 }}
-      animate={{ x: "0%", y: 0, rotate: 0, scale: 1, opacity: 1 }}
-      exit={{ x: "90%", y: -70, rotate: 34, scale: 0.88, opacity: 0 }}
-      transition={IMAGE_SLIDE_TRANSITION}
+      animate={{ x: "0%", y: 0, rotate: 0, scale: 1, opacity: 1, transition: IMAGE_ENTER_TRANSITION }}
+      exit={{ x: "90%", y: -70, rotate: 34, scale: 0.88, opacity: 0, transition: IMAGE_EXIT_TRANSITION }}
       onAnimationComplete={() => setSettled(true)}
     >
       <div className="relative flex flex-col items-center w-full h-full lg:h-auto" aria-hidden="true">
@@ -398,14 +411,13 @@ function ImageLayer({ slide }) {
           <motion.div
             className="relative flex flex-col items-center"
             animate={{
-              rotate: [0, -4, 3, -3, 2, -1, 0],
-              x: [0, -5, 4, -3, 2, -1, 0],
+              rotate: [0, -5, 3, -2, 1, -0.5, 0],
+              x: [0, -4, 3, -1.5, 1, -0.5, 0],
             }}
             transition={{
-              duration: IMAGE_SLIDE_TRANSITION.duration,
-              delay: IMAGE_SLIDE_TRANSITION.delay,
+              duration: 1.8, 
               ease: "easeInOut",
-              times: [0, 0.15, 0.32, 0.5, 0.68, 0.85, 1],
+              times: [0, 0.2, 0.4, 0.6, 0.75, 0.9, 1],
             }}
           >
             <ProductStage slide={slide} interactive={settled} />
@@ -420,7 +432,7 @@ function ImageLayer({ slide }) {
   );
 }
 
-function AnimatedStage({ activeIndex, tagsVisible }) {
+function AnimatedStage({ activeIndex, tagsVisible, imageVisible }) {
   const slide = SLIDES[activeIndex];
   const isLight = slide.theme.isLight;
 
@@ -433,8 +445,9 @@ function AnimatedStage({ activeIndex, tagsVisible }) {
         <AnimatePresence initial={false}>
           <TitleLayer key={activeIndex} slide={slide} />
         </AnimatePresence>
-        <AnimatePresence initial={false}>
-          <ImageLayer key={activeIndex} slide={slide} />
+        
+        <AnimatePresence>
+          {imageVisible && <ImageLayer key={`img-${activeIndex}`} slide={slide} />}
         </AnimatePresence>
       </div>
     </div>
@@ -444,6 +457,7 @@ function AnimatedStage({ activeIndex, tagsVisible }) {
 export default function ProductShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [tagsVisible, setTagsVisible] = useState(false);
+  const [imageVisible, setImageVisible] = useState(false);
 
   useEffect(() => {
     SLIDES.forEach((s) => {
@@ -454,8 +468,17 @@ export default function ProductShowcase() {
 
   useEffect(() => {
     setTagsVisible(false);
+    setImageVisible(false);
+
     const showTags = setTimeout(() => setTagsVisible(true), TAGS_IN_DELAY);
     const hideTags = setTimeout(() => setTagsVisible(false), Math.max(TAGS_IN_DELAY + 400, HOLD_MS - TAGS_OUT_BEFORE_END));
+
+    const showImg = setTimeout(() => setImageVisible(true), 700);
+    
+    // hideImg at 2600ms + the now-matched 1.6s exit duration lands exactly on
+    // HOLD_MS (4200ms), so the exit still finishes right as the slide advances
+    const hideImg = setTimeout(() => setImageVisible(false), 2600);
+
     const advanceSlide = setTimeout(() => {
       setActiveIndex((current) => (current + 1) % SLIDES.length);
     }, HOLD_MS);
@@ -463,6 +486,8 @@ export default function ProductShowcase() {
     return () => {
       clearTimeout(showTags);
       clearTimeout(hideTags);
+      clearTimeout(showImg);
+      clearTimeout(hideImg);
       clearTimeout(advanceSlide);
     };
   }, [activeIndex]);
@@ -483,7 +508,7 @@ export default function ProductShowcase() {
       </div>
 
       <div className="relative z-10 flex-1 min-h-0 w-full flex items-center justify-center px-4 pt-4 pb-12 sm:pt-12 sm:pb-16 lg:pt-10 lg:pb-4">
-        <AnimatedStage activeIndex={activeIndex} tagsVisible={tagsVisible} />
+        <AnimatedStage activeIndex={activeIndex} tagsVisible={tagsVisible} imageVisible={imageVisible} />
       </div>
 
     </section>

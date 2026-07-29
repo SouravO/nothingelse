@@ -185,7 +185,7 @@ export default function AboutSection() {
             {/* Clean, unboxed Title Frame — same white-to-gold treatment as
                 the hero headline, so the two sections read as one brand. */}
             <div className="relative mb-10 md:mb-12">
-              <h2 className="font-head font-extrabold text-4xl md:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
+              <h2 className="font-head font-extrabold text-3xl md:text-4xl lg:text-5xl leading-[1.1] tracking-tight">
                 <span className="animate-word opacity-0 block text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-[#AFC7FF]">
                   Good Everyday Products.
                 </span>
@@ -196,30 +196,16 @@ export default function AboutSection() {
             </div>
 
             {/* Primary Statement */}
-            <p className="relative font-body text-blue-50/85 text-lg md:text-xl leading-relaxed mb-6">
+            <p className="relative font-body text-blue-50/85 text-lg md:text-lg leading-relaxed mb-6">
               <SplitText text="FMCG has become too noisy. Salt has a story. Water has a personality. Chips have a lifestyle. But consumers mostly want one thing: a good product at a fair price. People don't hate brands — they hate paying extra for brand drama. Nothing Else removes the noise." />
             </p>
 
-            <p className="relative font-body text-blue-50/70 text-base md:text-lg leading-relaxed mb-10">
+            <p className="relative font-body text-blue-50/70 text-base md:text-md leading-relaxed mb-10">
               <SplitText text="Nothing Else is a modern FMCG brand that makes daily-use products simple, honest, recognisable, and fairly priced. No fake premium. No unnecessary claims. No confusing packaging. No overbranding. Just the product. Nothing else. Positioned between cheap, unorganised products and expensive branded FMCG — not cheap, not luxury, not overdesigned. Smart value for everyday India." />
             </p>
 
             {/* Replacement Editorial Paragraphs */}
-            <div className="relative border-t border-white/15 pt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Treating these smaller blocks as entire pieces rather than splitting every single word keeps the DOM light */}
-              <div className="animate-word opacity-0">
-                <h3 className="font-head font-bold text-lg text-white mb-2">We Are Launching A Shelf</h3>
-                <p className="font-body text-sm text-blue-50/70 leading-relaxed">
-                  Nothing Else launches as a complete FMCG system across 10 categories at once — grocery essentials, spices &amp; tea &amp; coffee, snacks &amp; biscuits, home care &amp; personal care, instant mixes, flours &amp; pulses. A single product creates trial. A full shelf creates a movement.
-                </p>
-              </div>
-              <div className="animate-word opacity-0">
-                <h3 className="font-head font-bold text-lg text-white mb-2">India First. GCC Next.</h3>
-                <p className="font-body text-sm text-blue-50/70 leading-relaxed">
-                  GCC markets have strong existing demand for Indian grocery, snacks, spices, tea, and household products, with UAE as the first GCC gateway.
-                </p>
-              </div>
-            </div>
+            
           </div>
         </div>
 
