@@ -20,25 +20,29 @@ const THEME_COLORS = {
 
 const SLIDES = [
   {
-    image: "/tea.png",
-    label: ["HONEST", "EVERYDAY"],
-    tags: ["No Fake Premium", "No Overclaims", "Fair Pricing", "Simple Products", "Trusted Quality"],
-    description: "Good everyday products. Honest pricing. Nothing else.",
-    theme: { bg: THEME_COLORS.icy, text: BRAND.ink, descText: BRAND.inkSoft, spotlight: "rgba(255,255,255,0.55)", isLight: true },
-  },
-  {
-    image: "/dishwash.png",
-    label: ["NOT CHEAP", "NOT LUXURY"],
-    tags: ["Smart Value", "No Overdesign", "Everyday India", "Fair Price", "Honest Quality"],
-    description: "Positioned between cheap unorganised products and expensive branded FMCG — smart value for everyday India.",
-    theme: { bg: THEME_COLORS.cornflower, text: BRAND.ink, descText: BRAND.inkSoft, spotlight: "rgba(255,255,255,0.45)", isLight: true },
-  },
-  {
     image: "/wheat.png",
     label: ["ONE SHELF", "TEN CATEGORIES"],
     tags: ["60+ SKUs", "10 Categories", "Grocery To Personal Care", "Stronger Shelf Presence", "One Rule"],
     description: "We are not launching a product. We are launching a shelf — a complete FMCG system across 10 categories at once.",
     theme: { bg: THEME_COLORS.customPersian, text: BRAND.ink, descText: BRAND.inkSoft, spotlight: "rgba(255,255,255,0.4)", isLight: true },
+    ingredients: [
+      // 6 LEFT SIDE BADGES
+      { id: "w-l1", image: "/wheatbadge.png", x: -280, y: -220, scale: 0.95, rotate: -15, delay: 0.05 },
+      { id: "w-l2", image: "/wheatbadge1.png", x: -380, y: -100, scale: 0.75, rotate: 20, delay: 0.12 },
+      { id: "w-l3", image: "/wheatbadge.png", x: -220, y: -30, scale: 1.1, rotate: -8, delay: 0.02 },
+      { id: "w-l4", image: "/wheatbadge1.png", x: -420, y: 80, scale: 0.65, rotate: -25, delay: 0.18 },
+      { id: "w-l5", image: "/wheatbadge.png", x: -290, y: 170, scale: 0.85, rotate: 12, delay: 0.08 },
+      { id: "w-l6", image: "/wheatbadge1.png", x: -190, y: 250, scale: 1.0, rotate: -10, delay: 0.15 },
+
+      // 7 RIGHT SIDE BADGES
+      { id: "w-r1", image: "/wheatbadge1.png", x: 260, y: -240, scale: 1.0, rotate: 18, delay: 0.04 },
+      { id: "w-r2", image: "/wheatbadge.png", x: 420, y: -140, scale: 0.7, rotate: -12, delay: 0.16 },
+      { id: "w-r3", image: "/wheatbadge1.png", x: 220, y: -50, scale: 1.15, rotate: 8, delay: 0.01 },
+      { id: "w-r4", image: "/wheatbadge.png", x: 390, y: 40, scale: 0.8, rotate: -18, delay: 0.11 },
+      { id: "w-r5", image: "/wheatbadge1.png", x: 210, y: 150, scale: 0.9, rotate: 15, delay: 0.07 },
+      { id: "w-r6", image: "/wheatbadge.png", x: 350, y: 230, scale: 0.75, rotate: -8, delay: 0.20 },
+      { id: "w-r7", image: "/wheatbadge1.png", x: 470, y: 170, scale: 0.6, rotate: 22, delay: 0.22 },
+    ]
   },
   {
     image: "/jam.png",
@@ -46,23 +50,29 @@ const SLIDES = [
     tags: ["Retail Shelf Visibility", "Reels & Storytelling", "No-Drama Campaigns", "Distributor Network", "Demand Follows Trust"],
     description: "A visible brand block on real shelves creates trust. Online storytelling turns that trust into demand.",
     theme: { bg: THEME_COLORS.dusk, text: BRAND.ink, descText: BRAND.inkSoft, spotlight: "rgba(255,255,255,0.45)", isLight: true },
+    ingredients: [
+      // 6 LEFT SIDE BADGES
+      { id: "s-l1", image: "/straw1.png", x: -270, y: -230, scale: 1.0, rotate: -12, delay: 0.06 },
+      { id: "s-l2", image: "/straw.png", x: -400, y: -110, scale: 0.7, rotate: 25, delay: 0.14 },
+      { id: "s-l3", image: "/straw1.png", x: -210, y: -20, scale: 1.2, rotate: -8, delay: 0.02 },
+      { id: "s-l4", image: "/straw.png", x: -430, y: 90, scale: 0.65, rotate: -22, delay: 0.19 },
+      { id: "s-l5", image: "/straw1.png", x: -300, y: 180, scale: 0.85, rotate: 14, delay: 0.09 },
+      { id: "s-l6", image: "/straw.png", x: -180, y: 250, scale: 0.95, rotate: -15, delay: 0.16 },
+
+      // 7 RIGHT SIDE BADGES
+      { id: "s-r1", image: "/straw.png", x: 250, y: -250, scale: 0.9, rotate: 15, delay: 0.05 },
+      { id: "s-r2", image: "/straw1.png", x: 410, y: -130, scale: 0.75, rotate: -10, delay: 0.17 },
+      { id: "s-r3", image: "/straw.png", x: 220, y: -40, scale: 1.1, rotate: 10, delay: 0.03 },
+      { id: "s-r4", image: "/straw1.png", x: 380, y: 50, scale: 0.8, rotate: -20, delay: 0.10 },
+      { id: "s-r5", image: "/straw.png", x: 220, y: 160, scale: 1.0, rotate: 18, delay: 0.08 },
+      { id: "s-r6", image: "/straw1.png", x: 360, y: 240, scale: 0.7, rotate: -5, delay: 0.21 },
+      { id: "s-r7", image: "/straw.png", x: 470, y: 160, scale: 0.6, rotate: 30, delay: 0.24 },
+    ]
   },
-  // {
-  //   image: "/pdt2.png",
-  //   label: ["INDIA FIRST", "GCC NEXT"],
-  //   tags: ["National Distribution", "GCC Export Ready", "Diaspora First", "UAE Gateway", "$2B Ambition"],
-  //   description: "Built for India first, then GCC and global markets — from pilot stores to national distribution.",
-  //   theme: { bg: THEME_COLORS.navy, text: BRAND.ink, descText: BRAND.inkSoft, spotlight: "rgba(255,255,255,0.4)", isLight: true },
-  // },
 ];
 
 // ---------------------------------------------------------------------------
-// Timeline (per slide, resets every HOLD_MS):
-//   0.0 – 0.4s   background crossfade
-//   0.15 – 0.8s  title masked reveal
-//   0.45 – 1.7s  portal + product entrance
-//   1.7 – 3.4s   stable hero / product micro-motion
-//   3.4 – 4.2s   product depth exit
+// Timeline
 // ---------------------------------------------------------------------------
 const HOLD_MS = 4200;
 const TAGS_IN_DELAY = 620;
@@ -92,8 +102,6 @@ function getTitleFontSizeCqw(labelLines) {
   return Math.min(FONT_MAX_CQW, Math.max(FONT_MIN_CQW, raw));
 }
 
-// Background: cross-faded color + a very subtle radial gradient centered on
-// the product portal, instead of the old horizontal slide.
 function SlideBackgrounds({ activeIndex }) {
   const slide = SLIDES[activeIndex];
   return (
@@ -223,8 +231,6 @@ function HeroHeadline() {
   );
 }
 
-// Diffused studio-light portal behind the package. Expands from ~20% scale
-// to 100% while fading in; contracts back on exit.
 function PortalGlow() {
   return (
     <motion.div
@@ -243,8 +249,6 @@ function PortalGlow() {
   );
 }
 
-// 2–3 extremely subtle concentric elliptical light rings, expanding and
-// fading behind the product to suggest depth without reading as sci-fi.
 function ConcentricRings() {
   const rings = [
     { delay: 0.15, startScale: 0.5, endScale: 0.85, duration: 2.6 },
@@ -275,8 +279,6 @@ function ConcentricRings() {
   );
 }
 
-// Soft elliptical contact shadow. Starts wide + faint, tightens to
-// slightly narrower + stronger as the product settles forward.
 function ProductShadow() {
   return (
     <motion.div
@@ -294,8 +296,6 @@ function ProductShadow() {
   );
 }
 
-// The package itself: gentle idle bob/sway once settled, plus a lightweight,
-// heavily-damped mouse tilt so the product reads as physical, not floaty.
 function ProductStage({ slide, interactive }) {
   const wrapRef = useRef(null);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
@@ -352,8 +352,6 @@ function ProductStage({ slide, interactive }) {
   );
 }
 
-// Masked vertical title reveal — each line slides up out of an
-// overflow-hidden mask with a short stagger, and softly lifts + fades on exit.
 function TitleLayer({ slide }) {
   const fontSizeCqw = getTitleFontSizeCqw(slide.label);
 
@@ -384,18 +382,70 @@ function TitleLayer({ slide }) {
   );
 }
 
-// The product layer: portal glow + rings + shadow + package, entering from
-// depth (blurred, scaled down, tipped back) and settling forward into place.
+// DYNAMIC INGREDIENT BADGE WITH FLYING ENTRY & VECTOR EXIT
+function IngredientBadge({ ing, index }) {
+  // Vector flying exit calculation (bursts outward away from screen center)
+  const exitX = ing.x * 1.8;
+  const exitY = ing.y * 1.8;
+
+  return (
+    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28">
+      <motion.div
+        className="w-full h-full flex items-center justify-center"
+        initial={{ x: 0, y: 0, scale: 0, rotate: ing.rotate - 60, opacity: 0 }}
+        animate={{
+          x: ing.x,
+          y: ing.y,
+          scale: ing.scale,
+          rotate: ing.rotate,
+          opacity: 1,
+          transition: {
+            type: "spring",
+            stiffness: 140,
+            damping: 14,
+            delay: 0.25 + (ing.delay || index * 0.03),
+          }
+        }}
+        exit={{
+          x: exitX,
+          y: exitY,
+          scale: 0,
+          rotate: ing.rotate + 90,
+          opacity: 0,
+          transition: {
+            duration: 0.55,
+            ease: [0.32, 0, 0.67, 0],
+            delay: index * 0.015
+          }
+        }}
+      >
+        <motion.img
+          src={ing.image}
+          alt="Ingredient"
+          className="w-full h-full object-contain"
+          style={{ filter: "drop-shadow(0 14px 22px rgba(0,0,0,0.18))" }}
+          animate={{
+            y: [0, -14, 0],
+            rotate: [0, 5, -5, 0],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 3.2 + (index % 4) * 0.4,
+            ease: "easeInOut",
+            delay: 0.8 + index * 0.04
+          }}
+        />
+      </motion.div>
+    </div>
+  );
+}
+
 function ImageLayer({ slide }) {
   const fontSizeCqw = getTitleFontSizeCqw(slide.label);
   const [settled, setSettled] = useState(false);
 
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4 select-none">
-      {/* Relative block sized to match the title's actual rendered height
-          (same font-size formula + line-height as TitleLayer) so the
-          product below can be centered on the real midpoint of the text,
-          across any number of lines, instead of a guessed top offset. */}
       <div className="relative flex flex-col items-center w-full">
         <div className="flex flex-col items-center w-full" aria-hidden="true">
           {slide.label.map((line, i) => (
@@ -412,8 +462,15 @@ function ImageLayer({ slide }) {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
           <PortalGlow />
           <ConcentricRings />
+
+          {/* Render 13 Ingredients Badges (6 Left, 7 Right) */}
+          {slide.ingredients && slide.ingredients.map((ing, i) => (
+            <IngredientBadge key={ing.id} ing={ing} index={i} />
+          ))}
+
+          {/* Product main wrapper (z-20 ensures it stays in front of ingredients) */}
           <motion.div
-            className="relative flex flex-col items-center"
+            className="relative flex flex-col items-center z-20"
             style={{ transformStyle: "preserve-3d", transformPerspective: 1400 }}
             initial={{ opacity: 0, scale: 0.72, y: 40, rotateX: 8, filter: "blur(14px)" }}
             animate={{
@@ -480,9 +537,7 @@ export default function ProductShowcase() {
     const showTags = setTimeout(() => setTagsVisible(true), TAGS_IN_DELAY);
     const hideTags = setTimeout(() => setTagsVisible(false), Math.max(TAGS_IN_DELAY + 400, HOLD_MS - TAGS_OUT_BEFORE_END));
 
-    // Portal + product entrance: 0.45s – 1.7s
     const showImg = setTimeout(() => setImageVisible(true), IMAGE_SHOW_DELAY);
-    // Depth exit: 3.4s – 4.2s (0.8s exit lands exactly on HOLD_MS)
     const hideImg = setTimeout(() => setImageVisible(false), IMAGE_HIDE_DELAY);
 
     const advanceSlide = setTimeout(() => {
