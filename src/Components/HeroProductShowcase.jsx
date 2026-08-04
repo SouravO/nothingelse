@@ -10,39 +10,40 @@ const BRAND = {
 
 const EASE = [0.16, 1, 0.3, 1];
 
-const THEME_COLORS = {
-  icy: "#DCEEFF",
-  cornflower: "#C7D6FF",
-  customPersian: "#B9C9FA",
-  dusk: "#CFC6EA",
-  navy: "#B7C0E0",
-};
+const THEME_COLORS = { icy: "#DCEEFF", cornflower: "#C7D6FF", customPersian: "#B9C9FA", dusk: "#CFC6EA", navy: "#B7C0E0" };
 
+// Badge orbit layout — deliberately NOT mirrored: each of the 6 slots has its
+// own distance, gap, scale and rotation, and the two ingredient images are
+// mixed across slots instead of alternating, so it reads as naturally scattered.
+const BADGE_SLOTS = [
+  { id: "l1", x: -300, y: -215, scale: 0.88, rotate: -20, delay: 0.05, imgKey: "A" },
+  { id: "l2", x: -410, y: 15, scale: 1.08, rotate: 24, delay: 0.19, imgKey: "B" },
+  { id: "l3", x: -245, y: 250, scale: 0.8, rotate: -9, delay: 0.11, imgKey: "B" },
+  { id: "r1", x: 265, y: -175, scale: 1.02, rotate: 19, delay: 0.07, imgKey: "B" },
+  { id: "r2", x: 415, y: 65, scale: 0.76, rotate: -16, delay: 0.15, imgKey: "A" },
+  { id: "r3", x: 305, y: 255, scale: 0.98, rotate: 11, delay: 0.09, imgKey: "A" },
+];
+
+function buildIngredientPair(prefix, imageA, imageB) {
+  return BADGE_SLOTS.map((slot) => ({
+    id: `${prefix}-${slot.id}`,
+    image: slot.imgKey === "A" ? imageA : imageB,
+    x: slot.x, y: slot.y, scale: slot.scale, rotate: slot.rotate, delay: slot.delay,
+  }));
+}
+
+// SLIDES — 3 ingredient badges per side (6 total) orbiting each product.
+// imageScale lets a single slide's product image be sized down/up relative
+// to the shared .product-hero-img box without touching the other slides.
 const SLIDES = [
   {
     image: "/wheat.png",
+    imageScale: 0.85,
     label: ["ONE SHELF", "TEN CATEGORIES"],
     tags: ["60+ SKUs", "10 Categories", "Grocery To Personal Care", "Stronger Shelf Presence", "One Rule"],
     description: "We are not launching a product. We are launching a shelf — a complete FMCG system across 10 categories at once.",
     theme: { bg: THEME_COLORS.customPersian, text: BRAND.ink, descText: BRAND.inkSoft, spotlight: "rgba(255,255,255,0.4)", isLight: true },
-    ingredients: [
-      // 6 LEFT SIDE BADGES
-      { id: "w-l1", image: "/wheatbadge.png", x: -280, y: -220, scale: 0.95, rotate: -15, delay: 0.05 },
-      { id: "w-l2", image: "/wheatbadge1.png", x: -380, y: -100, scale: 0.75, rotate: 20, delay: 0.12 },
-      { id: "w-l3", image: "/wheatbadge.png", x: -220, y: -30, scale: 1.1, rotate: -8, delay: 0.02 },
-      { id: "w-l4", image: "/wheatbadge1.png", x: -420, y: 80, scale: 0.65, rotate: -25, delay: 0.18 },
-      { id: "w-l5", image: "/wheatbadge.png", x: -290, y: 170, scale: 0.85, rotate: 12, delay: 0.08 },
-      { id: "w-l6", image: "/wheatbadge1.png", x: -190, y: 250, scale: 1.0, rotate: -10, delay: 0.15 },
-
-      // 7 RIGHT SIDE BADGES
-      { id: "w-r1", image: "/wheatbadge1.png", x: 260, y: -240, scale: 1.0, rotate: 18, delay: 0.04 },
-      { id: "w-r2", image: "/wheatbadge.png", x: 420, y: -140, scale: 0.7, rotate: -12, delay: 0.16 },
-      { id: "w-r3", image: "/wheatbadge1.png", x: 220, y: -50, scale: 1.15, rotate: 8, delay: 0.01 },
-      { id: "w-r4", image: "/wheatbadge.png", x: 390, y: 40, scale: 0.8, rotate: -18, delay: 0.11 },
-      { id: "w-r5", image: "/wheatbadge1.png", x: 210, y: 150, scale: 0.9, rotate: 15, delay: 0.07 },
-      { id: "w-r6", image: "/wheatbadge.png", x: 350, y: 230, scale: 0.75, rotate: -8, delay: 0.20 },
-      { id: "w-r7", image: "/wheatbadge1.png", x: 470, y: 170, scale: 0.6, rotate: 22, delay: 0.22 },
-    ]
+    ingredients: buildIngredientPair("w", "/wheatbadge.png", "/wheatbadge1.png"),
   },
   {
     image: "/jam.png",
@@ -50,56 +51,60 @@ const SLIDES = [
     tags: ["Retail Shelf Visibility", "Reels & Storytelling", "No-Drama Campaigns", "Distributor Network", "Demand Follows Trust"],
     description: "A visible brand block on real shelves creates trust. Online storytelling turns that trust into demand.",
     theme: { bg: THEME_COLORS.dusk, text: BRAND.ink, descText: BRAND.inkSoft, spotlight: "rgba(255,255,255,0.45)", isLight: true },
-    ingredients: [
-      // 6 LEFT SIDE BADGES
-      { id: "s-l1", image: "/straw1.png", x: -270, y: -230, scale: 1.0, rotate: -12, delay: 0.06 },
-      { id: "s-l2", image: "/straw.png", x: -400, y: -110, scale: 0.7, rotate: 25, delay: 0.14 },
-      { id: "s-l3", image: "/straw1.png", x: -210, y: -20, scale: 1.2, rotate: -8, delay: 0.02 },
-      { id: "s-l4", image: "/straw.png", x: -430, y: 90, scale: 0.65, rotate: -22, delay: 0.19 },
-      { id: "s-l5", image: "/straw1.png", x: -300, y: 180, scale: 0.85, rotate: 14, delay: 0.09 },
-      { id: "s-l6", image: "/straw.png", x: -180, y: 250, scale: 0.95, rotate: -15, delay: 0.16 },
-
-      // 7 RIGHT SIDE BADGES
-      { id: "s-r1", image: "/straw.png", x: 250, y: -250, scale: 0.9, rotate: 15, delay: 0.05 },
-      { id: "s-r2", image: "/straw1.png", x: 410, y: -130, scale: 0.75, rotate: -10, delay: 0.17 },
-      { id: "s-r3", image: "/straw.png", x: 220, y: -40, scale: 1.1, rotate: 10, delay: 0.03 },
-      { id: "s-r4", image: "/straw1.png", x: 380, y: 50, scale: 0.8, rotate: -20, delay: 0.10 },
-      { id: "s-r5", image: "/straw.png", x: 220, y: 160, scale: 1.0, rotate: 18, delay: 0.08 },
-      { id: "s-r6", image: "/straw1.png", x: 360, y: 240, scale: 0.7, rotate: -5, delay: 0.21 },
-      { id: "s-r7", image: "/straw.png", x: 470, y: 160, scale: 0.6, rotate: 30, delay: 0.24 },
-    ]
+    ingredients: buildIngredientPair("s", "/straw1.png", "/straw.png"),
+  },
+  {
+    image: "/chilli.png",
+    label: ["HONEST", "EVERYDAY"],
+    tags: ["No Fake Premium", "No Overclaims", "Fair Pricing", "Simple Products", "Trusted Quality"],
+    description: "Good everyday products. Honest pricing. Nothing else.",
+    theme: { bg: THEME_COLORS.icy, text: BRAND.ink, descText: BRAND.inkSoft, spotlight: "rgba(255,255,255,0.55)", isLight: true },
+    ingredients: buildIngredientPair("c", "/chillis.png", "/chillis1.png"),
   },
 ];
 
-// ---------------------------------------------------------------------------
 // Timeline
-// ---------------------------------------------------------------------------
-const HOLD_MS = 4200;
-const TAGS_IN_DELAY = 620;
-const TAGS_OUT_BEFORE_END = 950;
-
-const IMAGE_SHOW_DELAY = 450;
-const IMAGE_HIDE_DELAY = 3400;
-
+const HOLD_MS = 4200, TAGS_IN_DELAY = 620, TAGS_OUT_BEFORE_END = 950;
+const IMAGE_SHOW_DELAY = 450, IMAGE_HIDE_DELAY = 3400;
 const BG_CROSSFADE_TRANSITION = { duration: 0.4, ease: EASE };
-const PRODUCT_ENTER_TRANSITION = { duration: 1.25, ease: EASE, delay: 0.05 };
-const PRODUCT_EXIT_TRANSITION = { duration: 0.8, ease: EASE };
-const TITLE_LINE_DURATION = 0.65;
-const TITLE_LINE_STAGGER = 0.09;
-const TITLE_LINE_BASE_DELAY = 0.15;
+const PRODUCT_EXIT_TRANSITION = { duration: 0.6, ease: EASE };
+
+// Product loop: rises to center, holds with a mild float, retreats the same way.
+const PRODUCT_OUT_DURATION = 0.85, PRODUCT_HOLD_DURATION = 1.5, PRODUCT_BACK_DURATION = 0.85;
+const PRODUCT_LOOP_DURATION = PRODUCT_OUT_DURATION + PRODUCT_HOLD_DURATION + PRODUCT_BACK_DURATION;
+const PRODUCT_T1 = PRODUCT_OUT_DURATION / PRODUCT_LOOP_DURATION;
+const PRODUCT_T_MID = (PRODUCT_OUT_DURATION + PRODUCT_HOLD_DURATION / 2) / PRODUCT_LOOP_DURATION;
+const PRODUCT_T2 = (PRODUCT_OUT_DURATION + PRODUCT_HOLD_DURATION) / PRODUCT_LOOP_DURATION;
+const PRODUCT_LOOP_TIMES = [0, PRODUCT_T1, PRODUCT_T_MID, PRODUCT_T2, 1];
+const TITLE_LINE_DURATION = 0.65, TITLE_LINE_STAGGER = 0.09, TITLE_LINE_BASE_DELAY = 0.15;
 const TITLE_EXIT_TRANSITION = { duration: 0.4, ease: EASE };
 
 const NOISE_BG =
   "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")";
 
-const FONT_FIT_CONSTANT = 181;
-const FONT_MIN_CQW = 12;
-const FONT_MAX_CQW = 20;
+const FONT_FIT_CONSTANT = 181, FONT_MIN_CQW = 12, FONT_MAX_CQW = 20;
 
 function getTitleFontSizeCqw(labelLines) {
   const longest = Math.max(...labelLines.map((l) => l.length));
-  const raw = FONT_FIT_CONSTANT / longest;
-  return Math.min(FONT_MAX_CQW, Math.max(FONT_MIN_CQW, raw));
+  return Math.min(FONT_MAX_CQW, Math.max(FONT_MIN_CQW, FONT_FIT_CONSTANT / longest));
+}
+
+// Responsive travel-distance scale — shrinks badge orbit radius on small screens
+// without touching their visual size (handled by the badge wrapper classes).
+function getBadgeOrbitScale() {
+  if (typeof window === "undefined") return 1;
+  const w = window.innerWidth;
+  return w < 480 ? 0.42 : w < 640 ? 0.5 : w < 768 ? 0.64 : w < 1024 ? 0.8 : 1;
+}
+
+function useBadgeOrbitScale() {
+  const [orbitScale, setOrbitScale] = useState(getBadgeOrbitScale);
+  useEffect(() => {
+    const onResize = () => setOrbitScale(getBadgeOrbitScale());
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  return orbitScale;
 }
 
 function SlideBackgrounds({ activeIndex }) {
@@ -118,10 +123,7 @@ function SlideBackgrounds({ activeIndex }) {
           <div className="absolute inset-0" style={{ backgroundColor: slide.theme.bg }} />
           <div
             className="absolute inset-0"
-            style={{
-              background: `radial-gradient(42% 38% at 50% 55%, ${slide.theme.spotlight}, transparent 74%)`,
-              mixBlendMode: "overlay",
-            }}
+            style={{ background: `radial-gradient(42% 38% at 50% 55%, ${slide.theme.spotlight}, transparent 74%)`, mixBlendMode: "overlay" }}
           />
         </motion.div>
       </AnimatePresence>
@@ -150,10 +152,7 @@ function FloorGlow({ isLight }) {
       />
       <div
         className="absolute left-1/2 -translate-x-1/2 pointer-events-none z-[2]"
-        style={{
-          bottom: "-30%", width: "150%", aspectRatio: "3 / 1", borderRadius: "9999px",
-          filter: "blur(90px)", background: "radial-gradient(ellipse at center, rgba(171,210,250,0.12), transparent 70%)",
-        }}
+        style={{ bottom: "-30%", width: "150%", aspectRatio: "3 / 1", borderRadius: "9999px", filter: "blur(90px)", background: "radial-gradient(ellipse at center, rgba(171,210,250,0.12), transparent 70%)" }}
         aria-hidden="true"
       />
       <div
@@ -167,7 +166,6 @@ function FloorGlow({ isLight }) {
 
 function AmbientDust({ isLight }) {
   if (isLight) return null;
-
   const particles = [
     { size: 8, top: "70%", left: "10%", delay: 0, dur: 11, gold: false },
     { size: 4, top: "85%", left: "30%", delay: 1.6, dur: 14, gold: false },
@@ -178,7 +176,6 @@ function AmbientDust({ isLight }) {
     { size: 4, top: "94%", left: "18%", delay: 0.4, dur: 15, gold: false },
     { size: 7, top: "55%", left: "20%", delay: 2.0, dur: 11.5, gold: false },
   ];
-
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-[3]" aria-hidden="true">
       {particles.map((p, i) => {
@@ -212,20 +209,10 @@ function HeroHeadline() {
         .hero-title-font { font-family: 'Bricolage Grotesque', sans-serif; font-optical-sizing: auto; }
         .hero-wordmark-font { font-family: 'Baloo 2', sans-serif; }
         .hero-line-1 { font-size: clamp(1.6rem, 5.4vw, 2.3rem); letter-spacing: -0.01em; }
-
-        .product-hero-img {
-          height: clamp(300px, 82cqw, 430px);
-          max-width: 92cqw;
-        }
-        @media (min-width: 640px) {
-          .product-hero-img { height: clamp(360px, 68cqw, 480px); max-width: 88cqw; }
-        }
-        @media (min-width: 768px) {
-          .product-hero-img { height: clamp(400px, 58cqw, 520px); max-width: 84cqw; }
-        }
-        @media (min-width: 1024px) {
-          .product-hero-img { height: 580px; max-width: none; }
-        }
+        .product-hero-img { height: clamp(300px, 82cqw, 430px); max-width: 92cqw; }
+        @media (min-width: 640px) { .product-hero-img { height: clamp(360px, 68cqw, 480px); max-width: 88cqw; } }
+        @media (min-width: 768px) { .product-hero-img { height: clamp(400px, 58cqw, 520px); max-width: 84cqw; } }
+        @media (min-width: 1024px) { .product-hero-img { height: 580px; max-width: none; } }
       `}</style>
     </div>
   );
@@ -235,12 +222,7 @@ function PortalGlow() {
   return (
     <motion.div
       className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
-      style={{
-        width: "min(64cqw, 620px)",
-        height: "min(64cqw, 620px)",
-        background: "radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 72%)",
-        filter: "blur(22px)",
-      }}
+      style={{ width: "min(64cqw, 620px)", height: "min(64cqw, 620px)", background: "radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 72%)", filter: "blur(22px)" }}
       initial={{ scale: 0.2, opacity: 0 }}
       animate={{ scale: 1, opacity: 1, transition: { duration: 1.3, ease: EASE } }}
       exit={{ scale: 0.45, opacity: 0, transition: { duration: 0.8, ease: EASE } }}
@@ -261,11 +243,7 @@ function ConcentricRings() {
         <motion.div
           key={i}
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{
-            width: "min(48cqw, 440px)",
-            height: "min(30cqw, 280px)",
-            border: "1px solid rgba(255,255,255,0.4)",
-          }}
+          style={{ width: "min(48cqw, 440px)", height: "min(30cqw, 280px)", border: "1px solid rgba(255,255,255,0.4)" }}
           initial={{ scale: r.startScale, opacity: 0 }}
           animate={{
             scale: [r.startScale, r.endScale],
@@ -283,11 +261,7 @@ function ProductShadow() {
   return (
     <motion.div
       className="absolute left-1/2 -translate-x-1/2 rounded-full pointer-events-none"
-      style={{
-        bottom: "3%",
-        background: "radial-gradient(ellipse at center, rgba(58,68,118,0.38), transparent 72%)",
-        filter: "blur(12px)",
-      }}
+      style={{ bottom: "3%", background: "radial-gradient(ellipse at center, rgba(58,68,118,0.38), transparent 72%)", filter: "blur(12px)" }}
       initial={{ width: "82%", height: "11%", opacity: 0.12 }}
       animate={{ width: "56%", height: "9%", opacity: 0.3, transition: { duration: 1.3, ease: EASE } }}
       exit={{ width: "80%", height: "10%", opacity: 0.08, transition: { duration: 0.8, ease: EASE } }}
@@ -309,10 +283,10 @@ function ProductStage({ slide, interactive }) {
     setTilt({ rx: py * -2, ry: px * 3 });
   };
 
-  const handleMouseMove = (e) => { if (!interactive) return; updateFromPoint(e.clientX, e.clientY); };
+  const handleMouseMove = (e) => { if (interactive) updateFromPoint(e.clientX, e.clientY); };
   const handleMouseLeave = () => setTilt({ rx: 0, ry: 0 });
-  const handleTouchStart = (e) => { if (!interactive) return; const t = e.touches[0]; if (t) updateFromPoint(t.clientX, t.clientY); };
-  const handleTouchMove = (e) => { if (!interactive) return; const t = e.touches[0]; if (!t) return; updateFromPoint(t.clientX, t.clientY); };
+  const handleTouchStart = (e) => { if (interactive && e.touches[0]) updateFromPoint(e.touches[0].clientX, e.touches[0].clientY); };
+  const handleTouchMove = (e) => { if (interactive && e.touches[0]) updateFromPoint(e.touches[0].clientX, e.touches[0].clientY); };
   const handleTouchEnd = () => setTilt({ rx: 0, ry: 0 });
 
   return (
@@ -333,18 +307,12 @@ function ProductStage({ slide, interactive }) {
         onTouchEnd={handleTouchEnd}
         style={{ perspective: 1200 }}
       >
-        <div
-          style={{
-            transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
-            transition: "transform 0.7s cubic-bezier(0.16,1,0.3,1)",
-            transformStyle: "preserve-3d",
-          }}
-        >
+        <div style={{ transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`, transition: "transform 0.7s cubic-bezier(0.16,1,0.3,1)", transformStyle: "preserve-3d" }}>
           <img
             src={slide.image}
             alt="Product"
             className="product-hero-img relative w-auto object-contain"
-            style={{ filter: "drop-shadow(0 24px 26px rgba(91,107,168,0.28))" }}
+            style={{ filter: "drop-shadow(0 24px 26px rgba(91,107,168,0.28))", transform: `scale(${slide.imageScale ?? 1})` }}
           />
         </div>
       </div>
@@ -354,7 +322,6 @@ function ProductStage({ slide, interactive }) {
 
 function TitleLayer({ slide }) {
   const fontSizeCqw = getTitleFontSizeCqw(slide.label);
-
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-0 px-4 select-none pointer-events-none">
       <div className="relative flex flex-col items-center">
@@ -362,15 +329,9 @@ function TitleLayer({ slide }) {
           <span key={i} className="block overflow-hidden leading-[1.1] lg:leading-[0.98]">
             <motion.span
               className="hero-wordmark-font font-extrabold uppercase tracking-tight whitespace-nowrap block"
-              style={{
-                fontSize: `clamp(min(2.4rem, 9cqw), min(${fontSizeCqw}cqw, 34cqh), 15.5rem)`,
-                color: slide.theme.text,
-              }}
+              style={{ fontSize: `clamp(min(2.4rem, 9cqw), min(${fontSizeCqw}cqw, 34cqh), 15.5rem)`, color: slide.theme.text }}
               initial={{ y: "112%", opacity: 0 }}
-              animate={{
-                y: "0%", opacity: 1,
-                transition: { duration: TITLE_LINE_DURATION, delay: TITLE_LINE_BASE_DELAY + i * TITLE_LINE_STAGGER, ease: EASE },
-              }}
+              animate={{ y: "0%", opacity: 1, transition: { duration: TITLE_LINE_DURATION, delay: TITLE_LINE_BASE_DELAY + i * TITLE_LINE_STAGGER, ease: EASE } }}
               exit={{ y: "-40%", opacity: 0, transition: TITLE_EXIT_TRANSITION }}
             >
               {line}
@@ -382,67 +343,59 @@ function TitleLayer({ slide }) {
   );
 }
 
-// DYNAMIC INGREDIENT BADGE WITH FLYING ENTRY & VECTOR EXIT
-function IngredientBadge({ ing, index }) {
-  // Vector flying exit calculation (bursts outward away from screen center)
-  const exitX = ing.x * 1.8;
-  const exitY = ing.y * 1.8;
+// IngredientBadge loops: emerges from behind the product, travels to its spot
+// with a tilt/shake wiggle, holds with a bob, then retreats — repeating for as
+// long as it's mounted. Unmount uses the same retreat motion for consistency.
+function IngredientBadge({ ing, index, orbitScale }) {
+  const tx = ing.x * orbitScale;
+  const ty = ing.y * orbitScale;
+  const hiddenRotate = ing.rotate - 70;
+  const floatAmt = 9 * orbitScale;
+
+  const outDuration = 0.55, holdDuration = 1.0, backDuration = 0.55;
+  const duration = outDuration + holdDuration + backDuration;
+  const t1 = outDuration / duration;
+  const tMid = (outDuration + holdDuration / 2) / duration;
+  const t2 = (outDuration + holdDuration) / duration;
 
   return (
-    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28">
+    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28">
       <motion.div
         className="w-full h-full flex items-center justify-center"
-        initial={{ x: 0, y: 0, scale: 0, rotate: ing.rotate - 60, opacity: 0 }}
+        initial={{ x: 0, y: 0, scale: 0, rotate: hiddenRotate, opacity: 0 }}
         animate={{
-          x: ing.x,
-          y: ing.y,
-          scale: ing.scale,
-          rotate: ing.rotate,
-          opacity: 1,
+          x: [0, tx, tx, 0],
+          y: [0, ty, ty - floatAmt, ty, 0],
+          scale: [0, ing.scale, ing.scale * 1.03, ing.scale, 0],
+          opacity: [0, 1, 1, 1, 0],
+          rotate: [hiddenRotate, ing.rotate + 28, ing.rotate, ing.rotate + 4, ing.rotate, ing.rotate - 24, hiddenRotate],
           transition: {
-            type: "spring",
-            stiffness: 140,
-            damping: 14,
-            delay: 0.25 + (ing.delay || index * 0.03),
-          }
+            default: { repeat: Infinity, delay: ing.delay },
+            x: { duration, times: [0, t1, t2, 1], ease: ["easeOut", "linear", "easeIn"] },
+            y: { duration, times: [0, t1, tMid, t2, 1], ease: ["easeOut", "easeInOut", "easeInOut", "easeIn"] },
+            scale: { duration, times: [0, t1, tMid, t2, 1], ease: ["easeOut", "easeInOut", "easeInOut", "easeIn"] },
+            opacity: { duration, times: [0, t1, tMid, t2, 1], ease: ["easeOut", "linear", "linear", "easeIn"] },
+            rotate: { duration, times: [0, t1 * 0.55, t1, tMid, t2, t2 + (1 - t2) * 0.5, 1], ease: "easeInOut" },
+          },
         }}
-        exit={{
-          x: exitX,
-          y: exitY,
-          scale: 0,
-          rotate: ing.rotate + 90,
-          opacity: 0,
-          transition: {
-            duration: 0.55,
-            ease: [0.32, 0, 0.67, 0],
-            delay: index * 0.015
-          }
-        }}
+        exit={{ x: 0, y: 0, scale: 0, rotate: hiddenRotate, opacity: 0, transition: { duration: 0.5, ease: EASE, delay: index * 0.015 } }}
       >
-        <motion.img
-          src={ing.image}
-          alt="Ingredient"
-          className="w-full h-full object-contain"
-          style={{ filter: "drop-shadow(0 14px 22px rgba(0,0,0,0.18))" }}
-          animate={{
-            y: [0, -14, 0],
-            rotate: [0, 5, -5, 0],
-          }}
-          transition={{
-            repeat: Infinity,
-            duration: 3.2 + (index % 4) * 0.4,
-            ease: "easeInOut",
-            delay: 0.8 + index * 0.04
-          }}
-        />
+        <img src={ing.image} alt="Ingredient" className="w-full h-full object-contain" style={{ filter: "drop-shadow(0 14px 22px rgba(0,0,0,0.18))" }} />
       </motion.div>
     </div>
   );
 }
 
-function ImageLayer({ slide }) {
+function ImageLayer({ slide, orbitScale }) {
   const fontSizeCqw = getTitleFontSizeCqw(slide.label);
   const [settled, setSettled] = useState(false);
+
+  // Product wrapper loops forever, so onAnimationComplete never fires — use a
+  // timer matched to the "arrival" point to switch on mouse-tilt interactivity.
+  useEffect(() => {
+    const t = setTimeout(() => setSettled(true), PRODUCT_OUT_DURATION * 1000);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4 select-none">
@@ -463,27 +416,30 @@ function ImageLayer({ slide }) {
           <PortalGlow />
           <ConcentricRings />
 
-          {/* Render 13 Ingredients Badges (6 Left, 7 Right) */}
           {slide.ingredients && slide.ingredients.map((ing, i) => (
-            <IngredientBadge key={ing.id} ing={ing} index={i} />
+            <IngredientBadge key={ing.id} ing={ing} index={i} orbitScale={orbitScale} />
           ))}
 
-          {/* Product main wrapper (z-20 ensures it stays in front of ingredients) */}
           <motion.div
             className="relative flex flex-col items-center z-20"
             style={{ transformStyle: "preserve-3d", transformPerspective: 1400 }}
             initial={{ opacity: 0, scale: 0.72, y: 40, rotateX: 8, filter: "blur(14px)" }}
             animate={{
-              opacity: 1, scale: 1, y: 0, rotateX: 0, filter: "blur(0px)",
-              transition: PRODUCT_ENTER_TRANSITION,
+              opacity: [0, 1, 1, 1, 0],
+              scale: [0.72, 1, 1.012, 1, 0.72],
+              y: [40, 0, -4, 0, 40],
+              rotateX: [8, 0, 0, 0, 8],
+              filter: ["blur(14px)", "blur(0px)", "blur(0px)", "blur(0px)", "blur(14px)"],
+              transition: {
+                default: { repeat: Infinity },
+                opacity: { duration: PRODUCT_LOOP_DURATION, times: PRODUCT_LOOP_TIMES, ease: ["easeOut", "linear", "linear", "easeIn"] },
+                scale: { duration: PRODUCT_LOOP_DURATION, times: PRODUCT_LOOP_TIMES, ease: ["easeOut", "easeInOut", "easeInOut", "easeIn"] },
+                y: { duration: PRODUCT_LOOP_DURATION, times: PRODUCT_LOOP_TIMES, ease: ["easeOut", "easeInOut", "easeInOut", "easeIn"] },
+                rotateX: { duration: PRODUCT_LOOP_DURATION, times: PRODUCT_LOOP_TIMES, ease: ["easeOut", "linear", "linear", "easeIn"] },
+                filter: { duration: PRODUCT_LOOP_DURATION, times: PRODUCT_LOOP_TIMES, ease: ["easeOut", "linear", "linear", "easeIn"] },
+              },
             }}
-            exit={{
-              opacity: 0, scale: 0.82, y: -10, filter: "blur(10px)",
-              transition: PRODUCT_EXIT_TRANSITION,
-            }}
-            onAnimationComplete={(definition) => {
-              if (typeof definition === "object" && definition.opacity === 1) setSettled(true);
-            }}
+            exit={{ opacity: 0, scale: 0.72, y: 30, filter: "blur(12px)", transition: PRODUCT_EXIT_TRANSITION }}
           >
             <ProductStage slide={slide} interactive={settled} />
             <ProductShadow />
@@ -494,24 +450,21 @@ function ImageLayer({ slide }) {
   );
 }
 
-function AnimatedStage({ activeIndex, imageVisible }) {
+function AnimatedStage({ activeIndex, imageVisible, orbitScale }) {
   const slide = SLIDES[activeIndex];
   const isLight = slide.theme.isLight;
-
   return (
     <div
       className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-full max-w-[1920px] h-[clamp(300px,58svh,460px)] sm:h-[clamp(340px,60svh,520px)] lg:h-[clamp(420px,68svh,760px)]"
       style={{ containerType: "size" }}
     >
       <AmbientDust isLight={isLight} />
-
       <div className="absolute inset-0">
         <AnimatePresence initial={false}>
           <TitleLayer key={activeIndex} slide={slide} />
         </AnimatePresence>
-
         <AnimatePresence>
-          {imageVisible && <ImageLayer key={`img-${activeIndex}`} slide={slide} />}
+          {imageVisible && <ImageLayer key={`img-${activeIndex}`} slide={slide} orbitScale={orbitScale} />}
         </AnimatePresence>
       </div>
     </div>
@@ -522,12 +475,10 @@ export default function ProductShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [tagsVisible, setTagsVisible] = useState(false);
   const [imageVisible, setImageVisible] = useState(false);
+  const orbitScale = useBadgeOrbitScale();
 
   useEffect(() => {
-    SLIDES.forEach((s) => {
-      const img = new Image();
-      img.src = s.image;
-    });
+    SLIDES.forEach((s) => { const img = new Image(); img.src = s.image; });
   }, []);
 
   useEffect(() => {
@@ -536,13 +487,9 @@ export default function ProductShowcase() {
 
     const showTags = setTimeout(() => setTagsVisible(true), TAGS_IN_DELAY);
     const hideTags = setTimeout(() => setTagsVisible(false), Math.max(TAGS_IN_DELAY + 400, HOLD_MS - TAGS_OUT_BEFORE_END));
-
     const showImg = setTimeout(() => setImageVisible(true), IMAGE_SHOW_DELAY);
     const hideImg = setTimeout(() => setImageVisible(false), IMAGE_HIDE_DELAY);
-
-    const advanceSlide = setTimeout(() => {
-      setActiveIndex((current) => (current + 1) % SLIDES.length);
-    }, HOLD_MS);
+    const advanceSlide = setTimeout(() => setActiveIndex((current) => (current + 1) % SLIDES.length), HOLD_MS);
 
     return () => {
       clearTimeout(showTags);
@@ -569,7 +516,7 @@ export default function ProductShowcase() {
       </div>
 
       <div className="relative z-10 flex-1 min-h-0 w-full flex items-center justify-center px-4 pt-4 pb-12 sm:pt-12 sm:pb-16 lg:pt-10 lg:pb-4">
-        <AnimatedStage activeIndex={activeIndex} imageVisible={imageVisible} />
+        <AnimatedStage activeIndex={activeIndex} imageVisible={imageVisible} orbitScale={orbitScale} />
       </div>
     </section>
   );
