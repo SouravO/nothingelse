@@ -254,7 +254,7 @@ const CATEGORIES = [
     slug: "tea",
     name: "Tea",
     tagline: "Leaves first. Everything else, nothing else.",
-    items: ["Black Tea", "Green Tea", "Masala Chai", "Herbal Infusion"],
+    items: ["Black Tea", "Green Tea", "Masala Tea", "Herbal Infusion"],
   },
 ];
 
