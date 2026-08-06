@@ -34,6 +34,13 @@ function GithubIcon(props) {
   );
 }
 
+// Business contact details — kept in sync with the Contact section
+const CONTACT_EMAIL = "bynothingelse@gmail.com";
+const CONTACT_PHONE_DISPLAY = "1800-000-000";
+const CONTACT_PHONE_HREF = "+911800000000";
+const CONTACT_ADDRESS =
+  "Total Mall, opposite Madiwala, Koramangala 2nd Block, Koramangala, Bengaluru, Karnataka 560068";
+
 export default function Footer() {
   const socials = [
     { icon: InstagramIcon, href: "https://instagram.com/nothingelse", label: "Instagram" },
@@ -44,55 +51,55 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-white/10 bg-[#0C4DD5]">
-      <div className="mx-auto max-w-[1280px] px-6 py-16 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.2fr_1fr_1fr_1fr]">
+      <div className="mx-auto max-w-[1280px] px-6 pt-8 pb-10 lg:px-8">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-9 md:grid-cols-[1.3fr_1.1fr_0.8fr_0.8fr] md:gap-x-8 md:gap-y-10">
           {/* Brand */}
-          <div>
-            <p className="mb-3 font-head text-2xl font-extrabold tracking-tight text-white">
-              NOTHING ELSE<span className="text-white/60">.</span>
+          <div className="col-span-2 md:col-span-1">
+            <p className="mb-2 font-head text-2xl font-extrabold tracking-tight text-white">
+              NOTHING ELSE<span className="text-white/70">.</span>
             </p>
-            <p className="max-w-[240px] text-sm leading-relaxed text-white/50">
+            <p className="max-w-[280px] text-sm leading-relaxed text-white/80">
               Building things that don&apos;t need anything else.
             </p>
           </div>
 
           {/* Contact */}
-          <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-white/40">
+          <div className="col-span-2 md:col-span-1">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/60">
               Contact
             </p>
-            <ul className="space-y-3 text-sm text-white/70">
+            <ul className="space-y-2.5 text-sm text-white/90">
               <li>
                 <a
-                  href="mailto:hello@nothingelse.com"
-                  className="flex items-center gap-2 transition-colors hover:text-white"
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="flex items-center gap-2 break-all transition-colors hover:text-white"
                 >
-                  <Mail size={14} className="text-white/40" />
-                  hello@nothingelse.com
+                  <Mail size={14} className="shrink-0 text-white/60" />
+                  {CONTACT_EMAIL}
                 </a>
               </li>
               <li>
                 <a
-                  href="tel:+911234567890"
+                  href={`tel:${CONTACT_PHONE_HREF}`}
                   className="flex items-center gap-2 transition-colors hover:text-white"
                 >
-                  <Phone size={14} className="text-white/40" />
-                  +91 12345 67890
+                  <Phone size={14} className="shrink-0 text-white/60" />
+                  {CONTACT_PHONE_DISPLAY}
                 </a>
               </li>
-              <li className="flex items-start gap-2">
-                <MapPin size={14} className="mt-0.5 shrink-0 text-white/40" />
-                Bengaluru, Karnataka, India
+              <li className="flex items-start gap-2 leading-relaxed">
+                <MapPin size={14} className="mt-0.5 shrink-0 text-white/60" />
+                {CONTACT_ADDRESS}
               </li>
             </ul>
           </div>
 
           {/* Explore */}
           <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-white/40">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/60">
               Explore
             </p>
-            <ul className="space-y-3 text-sm text-white/70">
+            <ul className="space-y-2.5 text-sm text-white/90">
               <li>
                 <a href="#about" className="transition-colors hover:text-white">
                   About
@@ -118,10 +125,10 @@ export default function Footer() {
 
           {/* Social */}
           <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-white/40">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/60">
               Follow
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               {socials.map(({ icon: Icon, href, label }) => (
                 <a
                   key={label}
@@ -143,7 +150,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-14 flex flex-col items-center justify-between gap-6 border-t border-white/10 pt-8 text-xs text-white/40 md:flex-row">
+        <div className="mt-8 flex flex-col items-start gap-4 border-t border-white/10 pt-5 text-xs text-white/60 md:flex-row md:items-center md:justify-between">
           <p>© {new Date().getFullYear()} Nothing Else Private Limited. All rights reserved.</p>
 
           <button

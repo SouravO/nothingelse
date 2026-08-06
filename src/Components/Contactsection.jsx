@@ -27,6 +27,13 @@ const SERVICES = [
   "General Inquiry",
 ];
 
+// Business contact details — update here if they ever change
+const CONTACT_EMAIL = "bynothingelse@gmail.com";
+const CONTACT_PHONE_DISPLAY = "1800-000-000";
+const CONTACT_PHONE_HREF = "+911800000000";
+const CONTACT_ADDRESS =
+  "Total Mall, Police Station, opposite to Madiwala, Sidharata Colony, Santhosapuram, Koramangala 2nd Block, Koramangala, Bengaluru, Karnataka 560068";
+
 /* Custom dropdown, matches the floating-label input style */
 function ServiceDropdown({ value, onChange }) {
   const [open, setOpen] = useState(false);
@@ -109,9 +116,34 @@ function ServiceDropdown({ value, onChange }) {
 function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const [service, setService] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Build a pre-filled email and hand it off to whatever mail app
+    // is registered on the user's device (Gmail, Outlook, Apple Mail, etc.)
+    // NOTE: the "I'm Interested In" dropdown value is intentionally left out
+    // of the email for now (frozen/unused) — the field stays visible in the
+    // form, it's just not wired into the mail content yet.
+    const subject = `New Inquiry (${name})`;
+    const body = [
+      `Name: ${name}`,
+      `Email: ${email}`,
+      "",
+      "Message:",
+      message,
+    ].join("\n");
+
+    const mailtoUrl = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
+
+    // Opens the user's default mail client/app with the fields pre-filled
+    window.location.href = mailtoUrl;
+
     setSubmitted(true);
   };
 
@@ -141,6 +173,8 @@ function ContactForm() {
                     type="text"
                     id="name"
                     placeholder=" "
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className="peer w-full bg-black/[0.03] border border-black/10 rounded-2xl px-5 py-4 text-[#111111] text-sm outline-none focus:border-[#0C4DD5] transition-all placeholder-transparent"
                   />
                   <label
@@ -161,6 +195,8 @@ function ContactForm() {
                     type="email"
                     id="email"
                     placeholder=" "
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="peer w-full bg-black/[0.03] border border-black/10 rounded-2xl px-5 py-4 text-[#111111] text-sm outline-none focus:border-[#0C4DD5] transition-all placeholder-transparent"
                   />
                   <label
@@ -185,6 +221,8 @@ function ContactForm() {
                   id="message"
                   rows={4}
                   placeholder=" "
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                   className="peer w-full bg-black/[0.03] border border-black/10 rounded-2xl px-5 py-4 text-[#111111] text-sm outline-none focus:border-[#0C4DD5] transition-all placeholder-transparent resize-none"
                 />
                 <label
@@ -223,9 +261,7 @@ function ContactForm() {
             <h4 className="text-[#111111] text-2xl font-bold font-head mb-3">
               Message Sent!
             </h4>
-            <p className="text-black/60 text-sm max-w-xs leading-relaxed">
-              Thank you for reaching out. A representative from Nothing Else will connect with you shortly.
-            </p>
+            
           </motion.div>
         )}
       </AnimatePresence>
@@ -249,9 +285,7 @@ export default function ContactSection() {
           {/* Left Side branding + cards */}
           <Reveal className="flex flex-col justify-between h-full">
             <div>
-              <p className="font-body text-[12px] tracking-[0.25em] uppercase text-[#0C4DD5] font-semibold mb-4">
-                Connect
-              </p>
+             
               <h2 className="font-head font-bold text-[#111111] text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.08] mb-8">
                 Good product. <br />
                 Fair price. <br />
@@ -262,29 +296,29 @@ export default function ContactSection() {
             {/* Quick Contact Info Cards */}
             <div className="grid gap-4 sm:grid-cols-2">
               <a 
-                href="mailto:hello@nothingelse.co.in" 
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="group rounded-2xl border border-black/10 bg-black/[0.02] p-5 hover:border-[#0C4DD5]/40 hover:bg-black/[0.04] transition-all duration-300"
               >
                 <div className="p-2.5 bg-black/5 rounded-xl text-[#0C4DD5] w-fit mb-4 group-hover:bg-[#0C4DD5] group-hover:text-white transition-all duration-300">
                   <Mail size={16} />
                 </div>
                 <p className="text-[11px] uppercase tracking-[0.18em] text-black/40 mb-1">Email</p>
-                <p className="font-semibold text-[#111111] text-sm">hello@nothingelse.co.in</p>
+                <p className="font-semibold text-[#111111] text-sm break-words">{CONTACT_EMAIL}</p>
               </a>
 
               <a 
-                href="tel:+911800000000" 
+                href={`tel:${CONTACT_PHONE_HREF}`}
                 className="group rounded-2xl border border-black/10 bg-black/[0.02] p-5 hover:border-[#0C4DD5]/40 hover:bg-black/[0.04] transition-all duration-300"
               >
                 <div className="p-2.5 bg-black/5 rounded-xl text-[#0C4DD5] w-fit mb-4 group-hover:bg-[#0C4DD5] group-hover:text-white transition-all duration-300">
                   <Phone size={16} />
                 </div>
                 <p className="text-[11px] uppercase tracking-[0.18em] text-black/40 mb-1">Phone</p>
-                <p className="font-semibold text-[#111111] text-sm">1800-000-000</p>
+                <p className="font-semibold text-[#111111] text-sm">{CONTACT_PHONE_DISPLAY}</p>
               </a>
 
               <a 
-                href="https://instagram.com/nothing_else" 
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT_ADDRESS)}`}
                 target="_blank" 
                 rel="noreferrer" 
                 className="group rounded-2xl border border-black/10 bg-black/[0.02] p-5 hover:border-[#0C4DD5]/40 hover:bg-black/[0.04] transition-all duration-300 sm:col-span-2"
@@ -294,7 +328,7 @@ export default function ContactSection() {
                 </div>
                 <p className="text-[11px] uppercase tracking-[0.18em] text-black/40 mb-1">Visit Us</p>
                 <p className="font-semibold text-[#111111] text-sm leading-relaxed">
-                  Nothing Else House, Andheri East, Mumbai 400069
+                  {CONTACT_ADDRESS}
                 </p>
               </a>
             </div>

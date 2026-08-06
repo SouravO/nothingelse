@@ -85,7 +85,7 @@ function PrincipleCard({ principle, index }) {
       <motion.h3
         variants={itemVariants}
         className={[
-          "relative principle-serif text-xl sm:text-2xl md:text-[1.7rem] leading-tight mb-2 sm:mb-2.5",
+          "relative font-head font-bold text-xl sm:text-2xl md:text-[1.7rem] leading-tight mb-2 sm:mb-2.5",
           isDark ? "text-white" : "text-[#0C4DD5]",
         ].join(" ")}
       >
@@ -123,11 +123,6 @@ export default function DesignSection() {
       ref={sectionRef}
       className="section-paint-lazy relative bg-[#FAFBFF] pt-10 sm:pt-14 lg:pt-16 pb-20 sm:pb-28 lg:pb-32 px-6 sm:px-10 overflow-hidden"
     >
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..600&display=swap');
-        .principle-serif { font-family: 'Fraunces', serif; font-optical-sizing: auto; }
-      `}</style>
-
       {/* soft concentric fan of blue, anchored to the bottom-right corner —
           a calmer echo of the reference mood, purely decorative. It's
           drawn in a scaled SVG viewBox so it stays responsive at any

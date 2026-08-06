@@ -209,10 +209,36 @@ function HeroHeadline() {
         .hero-title-font { font-family: 'Bricolage Grotesque', sans-serif; font-optical-sizing: auto; }
         .hero-wordmark-font { font-family: 'Baloo 2', sans-serif; }
         .hero-line-1 { font-size: clamp(1.6rem, 5.4vw, 2.3rem); letter-spacing: -0.01em; }
-        .product-hero-img { height: clamp(300px, 82cqw, 430px); max-width: 92cqw; }
-        @media (min-width: 640px) { .product-hero-img { height: clamp(360px, 68cqw, 480px); max-width: 88cqw; } }
-        @media (min-width: 768px) { .product-hero-img { height: clamp(400px, 58cqw, 520px); max-width: 84cqw; } }
-        @media (min-width: 1024px) { .product-hero-img { height: 580px; max-width: none; } }
+        
+        /* Mobile View Adjustments: Reduced size and pushed down to overlap 2nd text line */
+        .product-hero-img { 
+          height: clamp(220px, 60cqw, 320px); 
+          max-width: 80cqw; 
+          margin-top: clamp(50px, 15cqw, 80px);
+        }
+
+        /* Tablet and PC View (Kept exactly as original) */
+        @media (min-width: 640px) { 
+          .product-hero-img { 
+            height: clamp(360px, 68cqw, 480px); 
+            max-width: 88cqw; 
+            margin-top: 0;
+          } 
+        }
+        @media (min-width: 768px) { 
+          .product-hero-img { 
+            height: clamp(400px, 58cqw, 520px); 
+            max-width: 84cqw; 
+            margin-top: 0;
+          } 
+        }
+        @media (min-width: 1024px) { 
+          .product-hero-img { 
+            height: 580px; 
+            max-width: none; 
+            margin-top: 0;
+          } 
+        }
       `}</style>
     </div>
   );
@@ -471,6 +497,44 @@ function AnimatedStage({ activeIndex, imageVisible, orbitScale }) {
   );
 }
 
+// Bottom slide indicator — one pill per slide. The active pill widens and its
+// inner bar fills left-to-right over HOLD_MS, so it's synced with the actual
+// autoplay timing instead of just marking position. Track opacity + shadow
+// bumped up for visibility against all three pastel theme backgrounds.
+function SlideIndicators({ activeIndex, theme }) {
+  return (
+    <div className="absolute bottom-5 sm:bottom-7 lg:bottom-9 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5 sm:gap-3" aria-hidden="true">
+      {SLIDES.map((_, i) => {
+        const isActive = i === activeIndex;
+        return (
+          <div
+            key={i}
+            className="relative h-2 sm:h-2.5 rounded-full overflow-hidden"
+            style={{
+              width: isActive ? 40 : 10,
+              backgroundColor: theme.text,
+              opacity: 0.45,
+              boxShadow: "0 1px 4px rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.3)",
+              transition: "width 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease",
+            }}
+          >
+            {isActive && (
+              <motion.div
+                key={activeIndex}
+                className="absolute inset-y-0 left-0 rounded-full"
+                style={{ backgroundColor: theme.text, boxShadow: "0 0 8px rgba(0,0,0,0.3)" }}
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: HOLD_MS / 1000, ease: "linear" }}
+              />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function ProductShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [tagsVisible, setTagsVisible] = useState(false);
@@ -504,20 +568,22 @@ export default function ProductShowcase() {
   const isLight = slide.theme.isLight;
 
   return (
-    <section id="hero" className="relative min-h-[100svh] w-full overflow-hidden flex flex-col" style={{ backgroundColor: slide.theme.bg }}>
+    <section id="hero" className="relative min-h-[70svh] sm:min-h-[100svh] w-full overflow-hidden flex flex-col" style={{ backgroundColor: slide.theme.bg }}>
       <SlideBackgrounds activeIndex={activeIndex} />
       <FloorGlow isLight={isLight} />
       <GrainOverlay />
 
-      <div className="relative z-20 flex flex-col items-center gap-1 pt-10 sm:pt-12 px-6">
+      <div className="relative z-20 flex flex-col items-center gap-1 pt-6 sm:pt-12 px-6">
         <div className="mt-4">
           <HeroHeadline isLight={isLight} />
         </div>
       </div>
 
-      <div className="relative z-10 flex-1 min-h-0 w-full flex items-center justify-center px-4 pt-4 pb-12 sm:pt-12 sm:pb-16 lg:pt-10 lg:pb-4">
+      <div className="relative z-10 flex-1 min-h-0 w-full flex items-center justify-center px-4 pt-2 pb-6 sm:pt-12 sm:pb-16 lg:pt-10 lg:pb-4">
         <AnimatedStage activeIndex={activeIndex} imageVisible={imageVisible} orbitScale={orbitScale} />
       </div>
+
+      <SlideIndicators activeIndex={activeIndex} theme={slide.theme} />
     </section>
   );
 }
