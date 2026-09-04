@@ -125,7 +125,7 @@ export default function Navbar() {
           : "bg-transparent border-b border-transparent"
       }`}
     >
-      <div className="mx-auto max-w-[1280px] px-5 sm:px-8 h-[68px] sm:h-[76px] flex items-center justify-between">
+      <div className="mx-auto max-w-[1280px] px-5 sm:px-8 h-[100px] sm:h-[76px] flex items-center justify-between">
 
         {/* Logo */}
         <a
