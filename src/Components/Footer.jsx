@@ -55,8 +55,8 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-x-8 gap-y-9 md:grid-cols-[1.3fr_1.1fr_0.8fr_0.8fr] md:gap-x-8 md:gap-y-10">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <p className="mb-2 font-head text-2xl font-extrabold tracking-tight text-white">
-              NOTHING ELSE<span className="text-white/70">.</span>
+            <p className="mb-2 font-logo text-2xl font-extrabold tracking-[-0.03em] text-white">
+              nothing else
             </p>
             <p className="max-w-[280px] text-sm leading-relaxed text-white/80">
               Building things that don&apos;t need anything else.
@@ -129,13 +129,10 @@ export default function Footer() {
               Follow
             </p>
             <div className="flex flex-wrap gap-3">
-              {socials.map(({ icon: Icon, href, label }) => (
-                <a
+              {socials.map(({ icon: Icon, label }) => (
+                <span
                   key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
+                  title={label}
                   className="group flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-1 ring-inset ring-white/25 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-white hover:ring-white hover:shadow-[0_0_20px_rgba(255,255,255,0.35)]"
                 >
                   <Icon
@@ -143,7 +140,7 @@ export default function Footer() {
                     height={16}
                     className="text-white transition-colors duration-300 group-hover:text-[#0C4DD5]"
                   />
-                </a>
+                </span>
               ))}
             </div>
           </div>

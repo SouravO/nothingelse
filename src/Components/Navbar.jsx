@@ -132,11 +132,9 @@ export default function Navbar() {
           href="#hero"
           aria-label="Nothing Else — Home"
           onClick={(e) => onNavClick(e, "hero")}
-          className="group font-logo font-extrabold text-[19px] tracking-[-0.02em] select-none transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]"
+          className="group font-logo text-[27px] font-extrabold tracking-[-0.03em] text-[#0C4DD5] select-none transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]"
         >
-          <span className="transition-colors duration-500 text-[#111111]">nothing</span>{" "}
-          <span className="transition-colors duration-500 text-[#111111]/70 group-hover:text-[#111111]">else</span>
-          <span className="text-[#0C4DD5]">.</span>
+          nothing else
         </a>
 
         {/* Desktop Navigation */}
@@ -181,11 +179,8 @@ export default function Navbar() {
             whileTap={{ scale: 0.95 }}
             href="#contact"
             onClick={(e) => onNavClick(e, "contact")}
-            className={`ml-4 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 font-body font-semibold text-[13.5px] transition-all duration-300 shadow-sm ${
-              isSolid
-                ? "bg-[#0C4DD5] text-white hover:bg-[#0A3FB0] hover:shadow-md"
-                : "bg-white text-[#0A3FB0] hover:bg-white/90 hover:shadow-md"
-            }`}
+            className="ml-4 inline-flex items-center gap-1.5 rounded-full bg-white px-5 py-2.5 font-body font-semibold text-[13.5px] text-[#0C4DD5] shadow-sm transition-all duration-300 hover:bg-white/90 hover:shadow-md"
+            style={{ color: "#0C4DD5" }}
           >
             Get in touch
           </motion.a>
@@ -249,7 +244,8 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={(e) => onNavClick(e, "contact")}
-                  className="w-full inline-flex items-center justify-center rounded-xl bg-[#0C4DD5] px-4 py-3.5 font-body text-[15px] font-semibold text-white shadow-md transition-all active:scale-[0.98] hover:bg-[#0A3FB0]"
+                  className="w-full inline-flex items-center justify-center rounded-xl bg-white px-4 py-3.5 font-body text-[15px] font-semibold text-[#0C4DD5] shadow-md transition-all active:scale-[0.98] hover:bg-white/90"
+                  style={{ color: "#0C4DD5" }}
                 >
                   Get in touch
                 </button>

@@ -29,7 +29,7 @@ const SERVICES = [
 
 // Business contact details — update here if they ever change
 const CONTACT_EMAIL = "bynothingelse@gmail.com";
-const CONTACT_PHONE_DISPLAY = "1800-000-000";
+const CONTACT_PHONE_DISPLAY = "9786-876-456";
 const CONTACT_PHONE_HREF = "+911800000000";
 const CONTACT_ADDRESS =
   "Total Mall, Police Station, opposite to Madiwala, Sidharata Colony, Santhosapuram, Koramangala 2nd Block, Koramangala, Bengaluru, Karnataka 560068";
