@@ -32,6 +32,17 @@ function buildIngredientPair(prefix, imageA, imageB) {
   }));
 }
 
+// Same as buildIngredientPair, but for slides with 3 ingredient images
+// instead of 2 — cycles through all three across the 6 badge slots.
+function buildIngredientTriple(prefix, imageA, imageB, imageC) {
+  const images = [imageA, imageB, imageC];
+  return BADGE_SLOTS.map((slot, i) => ({
+    id: `${prefix}-${slot.id}`,
+    image: images[i % images.length],
+    x: slot.x, y: slot.y, scale: slot.scale, rotate: slot.rotate, delay: slot.delay,
+  }));
+}
+
 // SLIDES — 3 ingredient badges per side (6 total) orbiting each product.
 // imageScale lets a single slide's product image be sized down/up relative
 // to the shared .product-hero-img box without touching the other slides.
@@ -60,6 +71,14 @@ const SLIDES = [
     description: "Good everyday products. Honest pricing. Nothing else.",
     theme: { bg: THEME_COLORS.icy, text: BRAND.ink, descText: BRAND.inkSoft, spotlight: "rgba(255,255,255,0.55)", isLight: true },
     ingredients: buildIngredientPair("c", "/chillis.png", "/chillis1.png"),
+  },
+  {
+    image: "/coffee.png",
+    label: ["FARM TO", "YOUR CUP"],
+    tags: ["100% Arabica", "Farm Direct Sourcing", "Small Batch Roasted", "No Artificial Additives", "Freshly Ground"],
+    description: "Coffee sourced direct from farms and roasted in small batches — nothing added, nothing else.",
+    theme: { bg: THEME_COLORS.cornflower, text: BRAND.ink, descText: BRAND.inkSoft, spotlight: "rgba(255,255,255,0.45)", isLight: true },
+    ingredients: buildIngredientTriple("cf", "/seed1.png", "/seed2.png", "/seed3.png"),
   },
 ];
 
@@ -568,7 +587,7 @@ export default function ProductShowcase() {
   const isLight = slide.theme.isLight;
 
   return (
-    <section id="hero" className="relative min-h-[70svh] sm:min-h-[100svh] w-full overflow-hidden flex flex-col" style={{ backgroundColor: slide.theme.bg }}>
+    <section id="hero" className="relative h-[85svh] min-h-[85svh] sm:h-auto sm:min-h-[100svh] w-full overflow-hidden flex flex-col" style={{ backgroundColor: slide.theme.bg }}>
       <SlideBackgrounds activeIndex={activeIndex} />
       <FloorGlow isLight={isLight} />
       <GrainOverlay />
