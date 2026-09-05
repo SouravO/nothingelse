@@ -108,6 +108,20 @@ function getTitleFontSizeCqw(labelLines) {
   return Math.min(FONT_MAX_CQW, Math.max(FONT_MIN_CQW, FONT_FIT_CONSTANT / longest));
 }
 
+// Mobile-only line breakdown: on small screens the final label line splits into
+// one word per line (e.g. "TEN CATEGORIES" -> "TEN" / "CATEGORIES") so the
+// title uses the vertical space better and clears the product image below.
+// Tablet & desktop keep the original lines untouched.
+function getMobileTitleLines(label) {
+  const lastIndex = label.length - 1;
+  const lastWords = label[lastIndex].split(" ");
+  return {
+    headLines: label.slice(0, lastIndex),
+    lastWords,
+    hasSplit: lastWords.length > 1,
+  };
+}
+
 // Responsive travel-distance scale — shrinks badge orbit radius on small screens
 // without touching their visual size (handled by the badge wrapper classes).
 function getBadgeOrbitScale() {
@@ -229,11 +243,11 @@ function HeroHeadline() {
         .hero-wordmark-font { font-family: 'Baloo 2', sans-serif; }
         .hero-line-1 { font-size: clamp(1.6rem, 5.4vw, 2.3rem); letter-spacing: -0.01em; }
         
-        /* Mobile View Adjustments: Reduced size and pushed down to overlap 2nd text line */
+        /* Mobile View Adjustments: Reduced size, pushed down below the text (no overlap) */
         .product-hero-img { 
           height: clamp(220px, 60cqw, 320px); 
           max-width: 80cqw; 
-          margin-top: clamp(50px, 15cqw, 80px);
+          margin-top: clamp(155px, 36cqw, 195px);
         }
 
         /* Tablet and PC View (Kept exactly as original) */
@@ -367,22 +381,36 @@ function ProductStage({ slide, interactive }) {
 
 function TitleLayer({ slide }) {
   const fontSizeCqw = getTitleFontSizeCqw(slide.label);
+  const { headLines, lastWords, hasSplit } = getMobileTitleLines(slide.label);
+  const mobileLines = hasSplit ? [...headLines, ...lastWords] : slide.label;
+  // Recomputed against the actual mobile line set (not the desktop pair) —
+  // otherwise a lone word like "CATEGORIES" inherits a size calibrated for
+  // the longer joined desktop line and overflows the screen width.
+  const mobileFontSizeCqw = getTitleFontSizeCqw(mobileLines);
+
+  const renderLine = (line, i, sizeCqw) => (
+    <span key={i} className="block overflow-hidden leading-[1.1] lg:leading-[0.98]">
+      <motion.span
+        className="hero-wordmark-font font-extrabold uppercase tracking-tight whitespace-nowrap block"
+        style={{ fontSize: `clamp(min(2.4rem, 9cqw), min(${sizeCqw}cqw, 34cqh), 15.5rem)`, color: slide.theme.text }}
+        initial={{ y: "112%", opacity: 0 }}
+        animate={{ y: "0%", opacity: 1, transition: { duration: TITLE_LINE_DURATION, delay: TITLE_LINE_BASE_DELAY + i * TITLE_LINE_STAGGER, ease: EASE } }}
+        exit={{ y: "-40%", opacity: 0, transition: TITLE_EXIT_TRANSITION }}
+      >
+        {line}
+      </motion.span>
+    </span>
+  );
+
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-0 px-4 select-none pointer-events-none">
-      <div className="relative flex flex-col items-center">
-        {slide.label.map((line, i) => (
-          <span key={i} className="block overflow-hidden leading-[1.1] lg:leading-[0.98]">
-            <motion.span
-              className="hero-wordmark-font font-extrabold uppercase tracking-tight whitespace-nowrap block"
-              style={{ fontSize: `clamp(min(2.4rem, 9cqw), min(${fontSizeCqw}cqw, 34cqh), 15.5rem)`, color: slide.theme.text }}
-              initial={{ y: "112%", opacity: 0 }}
-              animate={{ y: "0%", opacity: 1, transition: { duration: TITLE_LINE_DURATION, delay: TITLE_LINE_BASE_DELAY + i * TITLE_LINE_STAGGER, ease: EASE } }}
-              exit={{ y: "-40%", opacity: 0, transition: TITLE_EXIT_TRANSITION }}
-            >
-              {line}
-            </motion.span>
-          </span>
-        ))}
+      {/* Mobile only: last line split into its own words/lines, sized against the mobile line set */}
+      <div className="relative flex flex-col items-center sm:hidden">
+        {mobileLines.map((line, i) => renderLine(line, i, mobileFontSizeCqw))}
+      </div>
+      {/* Tablet & desktop: original layout and sizing, untouched */}
+      <div className="relative hidden sm:flex flex-col items-center">
+        {slide.label.map((line, i) => renderLine(line, i, fontSizeCqw))}
       </div>
     </div>
   );
@@ -433,6 +461,9 @@ function IngredientBadge({ ing, index, orbitScale }) {
 
 function ImageLayer({ slide, orbitScale }) {
   const fontSizeCqw = getTitleFontSizeCqw(slide.label);
+  const { headLines, lastWords, hasSplit } = getMobileTitleLines(slide.label);
+  const mobileLabelLines = hasSplit ? [...headLines, ...lastWords] : slide.label;
+  const mobileFontSizeCqw = getTitleFontSizeCqw(mobileLabelLines);
   const [settled, setSettled] = useState(false);
 
   // Product wrapper loops forever, so onAnimationComplete never fires — use a
@@ -442,19 +473,26 @@ function ImageLayer({ slide, orbitScale }) {
     return () => clearTimeout(t);
   }, []);
 
+  const renderSpacerLine = (line, i, sizeCqw) => (
+    <span
+      key={i}
+      className="hero-wordmark-font font-extrabold uppercase leading-[1.1] lg:leading-[0.98] tracking-tight whitespace-nowrap invisible"
+      style={{ fontSize: `clamp(min(2.4rem, 9cqw), min(${sizeCqw}cqw, 34cqh), 15.5rem)` }}
+    >
+      {line}
+    </span>
+  );
+
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4 select-none">
       <div className="relative flex flex-col items-center w-full">
-        <div className="flex flex-col items-center w-full" aria-hidden="true">
-          {slide.label.map((line, i) => (
-            <span
-              key={i}
-              className="hero-wordmark-font font-extrabold uppercase leading-[1.1] lg:leading-[0.98] tracking-tight whitespace-nowrap invisible"
-              style={{ fontSize: `clamp(min(2.4rem, 9cqw), min(${fontSizeCqw}cqw, 34cqh), 15.5rem)` }}
-            >
-              {line}
-            </span>
-          ))}
+        {/* Mobile only: reserve space matching the mobile title's line count and sizing */}
+        <div className="flex flex-col items-center w-full sm:hidden" aria-hidden="true">
+          {mobileLabelLines.map((line, i) => renderSpacerLine(line, i, mobileFontSizeCqw))}
+        </div>
+        {/* Tablet & desktop: original spacer, untouched */}
+        <div className="hidden sm:flex flex-col items-center w-full" aria-hidden="true">
+          {slide.label.map((line, i) => renderSpacerLine(line, i, fontSizeCqw))}
         </div>
 
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
