@@ -3,9 +3,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Square } from "lucide-react";
 import gsap from "gsap";
 
-const PRODUCT_IMAGES = ["/pdt1.png", "/pdt2.png", "/pdt3.png", "/pdt4.png", "/pdt5.png"];
-const PRODUCT_NAMES = ["Shampoo", "Rice", "Dishwash", "Oils", "Tea"];
-const PRODUCT_SLUGS = ["shampoo", "rice", "dishwash", "oils", "tea"];
+const PRODUCT_IMAGES = ["/pdt5.png", "/pdt1.png", "/pdt2.png", "/pdt3.png", "/pdt4.png"];
+const PRODUCT_NAMES = ["Shampoo", "Rice", "Dishwash", "Flour", "Tea"];
+const PRODUCT_SLUGS = ["shampoo", "rice", "dishwash", "flour", "tea"];
 
 const SHOWCASE_COUNT = PRODUCT_IMAGES.length;
 const INTRO_START_DELAY = 0.1;

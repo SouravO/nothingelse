@@ -132,9 +132,13 @@ export default function Navbar() {
           href="#hero"
           aria-label="Nothing Else — Home"
           onClick={(e) => onNavClick(e, "hero")}
-          className="group font-logo text-[27px] font-extrabold tracking-[-0.03em] text-[#0C4DD5] select-none transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]"
+          className="group block select-none transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]"
         >
-          nothing else
+          <img
+            src="/Nothingelse Blue Logo.png"
+            alt="Nothing Else"
+            className="h-auto w-[135px] sm:w-[155px]"
+          />
         </a>
 
         {/* Desktop Navigation */}

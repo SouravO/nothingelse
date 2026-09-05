@@ -245,10 +245,10 @@ const CATEGORIES = [
     items: ["Lemon", "Lime & Mint", "Regular", "Concentrate"],
   },
   {
-    slug: "oils",
-    name: "Oils",
-    tagline: "Cold-pressed honesty, bottle after bottle.",
-    items: ["Sunflower Oil", "Mustard Oil", "Groundnut Oil", "Cold-Pressed Olive Oil"],
+    slug: "flour",
+    name: "Flour",
+    tagline: "Simple grains, milled for everyday cooking.",
+    items: ["Whole Wheat Flour", "All-Purpose Flour", "Multigrain Flour", "Gram Flour"],
   },
   {
     slug: "tea",
@@ -318,7 +318,7 @@ function CategoryBlock({ slug, name, tagline, items, tinted }) {
 export default function ProductsPage() {
   const { hash } = useLocation();
 
-  // When arriving via a category button (e.g. /products#oils), jump to that block.
+  // When arriving via a category button (e.g. /products#flour), jump to that block.
   useEffect(() => {
     if (!hash) {
       window.scrollTo({ top: 0, behavior: "auto" });

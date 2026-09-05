@@ -5,8 +5,18 @@ import gsap from "gsap";
 
 const NAV_LOGO_SELECTOR = 'header a[aria-label="Nothing Else — Home"]';
 const BRAND_DEEP = "#0E1E42"; // darker navy, matches hero background — no color jump on reveal
+
+function whenImageReady(img) {
+  if (!img) return Promise.resolve();
+  if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+  return new Promise((resolve) => {
+    img.addEventListener("load", resolve, { once: true });
+    img.addEventListener("error", resolve, { once: true });
+  });
+}
+
 export default function SiteIntro() {
-  const overlayRef = useRef(null);
+  const bgRef = useRef(null);
   const titleRef = useRef(null);
   const [done, setDone] = useState(false);
 
@@ -14,6 +24,7 @@ export default function SiteIntro() {
     if (done) return;
 
     const navLogo = document.querySelector(NAV_LOGO_SELECTOR);
+    const navImg = navLogo ? navLogo.querySelector("img") : null;
 
     // Hide the real navbar logo before the browser ever paints, so there's
     // zero chance of it flashing into view underneath the intro.
@@ -28,13 +39,29 @@ export default function SiteIntro() {
     const start = () => {
       if (cancelled) return;
 
+      // Measured only once both logo images are fully decoded and the
+      // resulting layout has painted. An unloaded <img> reports a stale
+      // box (wrong height, sometimes wrong position) — that stale box was
+      // what made the traveling logo land next to, not on top of, the
+      // real navbar logo.
       const target = (() => {
         if (!navLogo || !titleRef.current) return null;
         const rect = navLogo.getBoundingClientRect();
+        const titleRect = titleRef.current.getBoundingClientRect();
+        if (!rect.width || !rect.height || !titleRect.width || !titleRect.height) return null;
+
+        // Contain-fit: don't assume the two logo files share one exact
+        // aspect ratio. Scaling by the tighter of the two axis-ratios
+        // keeps the traveling mark inside the navbar slot instead of
+        // overshooting it on one axis.
+        const scale = Math.min(rect.width / titleRect.width, rect.height / titleRect.height);
+
+        // Center-to-center delta, measured directly off both live rects —
+        // no assumption that the traveling logo starts at window-center.
         return {
-          x: rect.left + rect.width / 2 - window.innerWidth / 2,
-          y: rect.top + rect.height / 2 - window.innerHeight / 2,
-          scale: rect.width / (titleRef.current.offsetWidth || 1),
+          x: rect.left + rect.width / 2 - (titleRect.left + titleRect.width / 2),
+          y: rect.top + rect.height / 2 - (titleRect.top + titleRect.height / 2),
+          scale,
         };
       })();
 
@@ -60,19 +87,40 @@ export default function SiteIntro() {
           scale: target ? target.scale : 1,
           ease: "power3.inOut",
         })
-        // Overlay only starts clearing once the title is essentially home,
-        // and finishes exactly as it lands — no gap for the real logo
-        // (or anything else on the page) to show through early.
-        .to(overlayRef.current, { opacity: 0, duration: 0.35, ease: "power1.out" }, "-=0.3");
+        // The traveling logo stays fully opaque for the entire move, so it
+        // arrives crisp — only once it's sitting exactly on top of the real
+        // navbar logo do the two cross-dissolve into each other.
+        .to(titleRef.current, { opacity: 0, duration: 0.28, ease: "power1.inOut" });
+
+      if (navLogo) {
+        tl.fromTo(
+          navLogo,
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.28, ease: "power1.inOut" },
+          "<" // exactly in sync with the traveling logo's fade-out
+        );
+      }
+
+      // The dark backdrop only starts clearing once the handoff is underway,
+      // and finishes just after — so the rest of the page is never revealed
+      // before the logo has actually landed in the navbar.
+      tl.to(bgRef.current, { opacity: 0, duration: 0.4, ease: "power1.out" }, "<");
     };
 
-    // Wait for web fonts so the measured logo/title size is accurate —
-    // otherwise a late font swap can make the title land in the wrong spot.
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(start);
-    } else {
-      start();
-    }
+    Promise.all([
+      document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve(),
+      whenImageReady(navImg),
+      whenImageReady(titleRef.current),
+    ]).then(() => {
+      // Two rAFs: the first lets the browser flush the reflow triggered by
+      // the image loads above, the second guarantees we measure a fully
+      // painted frame rather than one mid-reflow.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!cancelled) start();
+        });
+      });
+    });
 
     return () => {
       cancelled = true;
@@ -84,19 +132,17 @@ export default function SiteIntro() {
   if (done) return null;
 
   return (
-    <div
-      ref={overlayRef}
-      className="fixed inset-0 z-[90] flex items-center justify-center pointer-events-none"
-      style={{ backgroundColor: BRAND_DEEP }}
-    >
-      <h1
-        ref={titleRef}
-        className="font-display font-extrabold tracking-[-0.02em] whitespace-nowrap text-white select-none pointer-events-none"
-        style={{ fontSize: "min(13vw, 140px)", opacity: 0 }}
-      >
-        nothing <span className="text-white/90">else</span>
-        <span className="text-[#3B5BDB]">.</span>
-      </h1>
+    <div className="fixed inset-0 z-[90] pointer-events-none">
+      <div ref={bgRef} className="absolute inset-0" style={{ backgroundColor: BRAND_DEEP }} />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <img
+          ref={titleRef}
+          src="/Nothingelse White logo.png"
+          alt="Nothing Else"
+          className="h-auto w-[min(78vw,560px)] select-none pointer-events-none"
+          style={{ opacity: 0 }}
+        />
+      </div>
     </div>
   );
 }

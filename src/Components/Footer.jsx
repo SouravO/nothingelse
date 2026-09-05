@@ -55,9 +55,11 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-x-8 gap-y-9 md:grid-cols-[1.3fr_1.1fr_0.8fr_0.8fr] md:gap-x-8 md:gap-y-10">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <p className="mb-2 font-logo text-2xl font-extrabold tracking-[-0.03em] text-white">
-              nothing else
-            </p>
+              <img
+                src="/Nothingelse White logo.png"
+                alt="Nothing Else"
+                className="mb-2 h-auto w-[150px]"
+              />
             <p className="max-w-[280px] text-sm leading-relaxed text-white/80">
               Building things that don&apos;t need anything else.
             </p>
