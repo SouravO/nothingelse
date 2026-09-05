@@ -538,7 +538,7 @@ function AnimatedStage({ activeIndex, imageVisible, orbitScale }) {
   const isLight = slide.theme.isLight;
   return (
     <div
-      className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-full max-w-[1920px] h-[clamp(300px,58svh,460px)] sm:h-[clamp(340px,60svh,520px)] lg:h-[clamp(420px,68svh,760px)]"
+      className="absolute left-1/2 -translate-x-1/2 top-[43%] -translate-y-1/2 sm:top-1/2 w-full max-w-[1920px] h-[clamp(300px,58svh,460px)] sm:h-[clamp(340px,60svh,520px)] lg:h-[clamp(420px,68svh,760px)]"
       style={{ containerType: "size" }}
     >
       <AmbientDust isLight={isLight} />
