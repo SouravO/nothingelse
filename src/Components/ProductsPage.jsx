@@ -229,36 +229,41 @@ const CATEGORIES = [
   {
     slug: "shampoo",
     name: "Shampoo",
+    image: "/pdt5.png",
     tagline: "Everyday hair care, without the markup.",
     items: ["Everyday Care", "Anti-Dandruff", "Herbal Strength", "Smooth & Shine"],
   },
   {
     slug: "rice",
     name: "Rice",
+    image: "/pdt1.png",
     tagline: "Grain quality you can see, priced like it should be.",
     items: ["Basmati", "Sona Masoori", "Brown Rice", "Steam Rice"],
   },
   {
     slug: "dishwash",
     name: "Dishwash",
+    image: "/pdt2.png",
     tagline: "Cuts grease, not corners.",
     items: ["Lemon", "Lime & Mint", "Regular", "Concentrate"],
   },
   {
     slug: "flour",
     name: "Flour",
+    image: "/pdt3.png",
     tagline: "Simple grains, milled for everyday cooking.",
     items: ["Whole Wheat Flour", "All-Purpose Flour", "Multigrain Flour", "Gram Flour"],
   },
   {
     slug: "tea",
     name: "Tea",
+    image: "/pdt4.png",
     tagline: "Leaves first. Everything else, nothing else.",
     items: ["Black Tea", "Green Tea", "Masala Tea", "Herbal Infusion"],
   },
 ];
 
-function CategoryBlock({ slug, name, tagline, items, tinted }) {
+function CategoryBlock({ slug, name, image, tagline, items, tinted }) {
   return (
     <section
       id={slug}
@@ -290,7 +295,7 @@ function CategoryBlock({ slug, name, tagline, items, tinted }) {
                 <div className="relative w-full h-[140px] sm:h-[200px] flex items-end justify-center mb-4 sm:mb-5">
                   <div className="absolute bottom-2 h-8 w-24 rounded-full bg-[#0C4DD5]/10 blur-lg" />
                   <img
-                    src={PRODUCT_IMAGES[i % PRODUCT_IMAGES.length]}
+                    src={image}
                     alt={item}
                     loading="lazy"
                     decoding="async"
